@@ -21,7 +21,7 @@
 
     <!-- vendor css -->
     <link rel="stylesheet" href="/assets/css/style.css">
-
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<script src="https://code.jquery.com/jquery-3.7.1.slim.js" integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc=" crossorigin="anonymous"></script>
 	<style>
 		.input-border-none{
@@ -43,16 +43,39 @@
 		<div class="navbar-wrapper  ">
 			<div class="navbar-content scroll-div " >
 
-				
 				<ul class="nav pcoded-inner-navbar ">
 					<li class="nav-item pcoded-menu-caption">
-						<label>임시용 링크</label>
+						<label>물류관리</label>
 					</li>
-					<li class="nav-item"><a href="/inv/receiving" class="nav-link"><span class="pcoded-mtext">입고처리</span> </a> </li>
-					<li class="nav-item"><a href="/inv/statement" class="nav-link"><span class="pcoded-mtext">거래명세서</span> </a> </li>
-					<li class="nav-item"><a href="/inv/releasing" class="nav-link"><span class="pcoded-mtext">출고처리</span> </a> </li>
-					<li class="nav-item"><a href="/inv/inv-calc" class="nav-link"><span class="pcoded-mtext">재고산출</span> </a> </li>
-					<li class="nav-item"><a href="/inv/inv-amount" class="nav-link"><span class="pcoded-mtext">재고금액현황리포트</span> </a> </li>
+					<li class="nav-item">
+						<a href="/main/main" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">메인포탈</span></a>
+					</li>
+					<li class="nav-item pcoded-hasmenu">
+						<a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-layout"></i></span><span class="pcoded-mtext">조달관리</span></a>
+						<ul class="pcoded-submenu">
+							<li><a href="/reg/item" >품목정보등록</a></li>
+							<li><a href="/reg/contract" >계약등록</a></li>
+							<li><a href="/reg/plan" >조달계획등록</a></li>
+						</ul>
+					</li>
+					<li class="nav-item pcoded-hasmenu">
+						<a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-layout"></i></span><span class="pcoded-mtext">발주관리</span></a>
+						<ul class="pcoded-submenu">
+							<li><a href="/order/pur-order" >구매발주서발행</a></li>
+							<li><a href="/order/progress-check" >진척검수처리</a></li>
+							<li><a href="/order/pur-order-report" >발주진행현황</a></li>
+						</ul>
+					</li>
+					<li class="nav-item pcoded-hasmenu">
+						<a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-layout"></i></span><span class="pcoded-mtext">자재관리</span></a>
+						<ul class="pcoded-submenu">
+							<li><a href="/inv/receiving" >자재입고</a></li>
+							<li><a href="/inv/statement" >거래명세서발행</a></li>
+							<li><a href="/inv/releasing" >자재출고</a></li>
+							<li><a href="/inv/inv-calc" >재고산출</a></li>
+							<li><a href="/inv/inv-amount" >재고(금액)관리</a></li>
+						</ul>
+					</li>
 				</ul>
 				
 				
@@ -66,7 +89,7 @@
 			
 			<div class="m-header">
 				<a class="mobile-menu" id="mobile-collapse" href="#!"><span></span></a>
-				<a href="#!" class="b-brand">
+				<a href="/main/main" class="b-brand">
 					<!-- ========   change your logo hear   ============ -->
 					<img src="/assets/images/logo-annotaion.png" alt="" class="logo">
 					<img src="/assets/images/logo-icon.png" alt="" class="logo-thumb">
