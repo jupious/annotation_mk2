@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/layout::setContent(~{::content})}">
+    <th:block th:fragment="content">
+        <div class="pcoded-content">
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="page-header-title">
+                                <h5 class="m-b-10">입고처리</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>입고예정 항목</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-sm">
+                                            <thead>
+                                            <tr>
+                                                <th  class="align-middle" rowspan="2">품목코드</th>
+                                                <th  class="align-middle" rowspan="2">품목명</th>
+                                                <th  class="align-middle" rowspan="2">발주 수량</th>
+                                                <th colspan="2" >입고 수량</th>
+                                            </tr>
+                                            <tr>
+                                                <th>정품</th>
+                                                <th>반품</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr >
+                                                <td>a12</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td><input type="number" class="input-border-none"></td>
+                                                <td><input type="number" class="input-border-none"></td>
+                                            </tr>
+                                            <tr >
+                                                <td>a13</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td><input type="number" class="input-border-none"></td>
+                                                <td><input type="number" class="input-border-none"></td>
+                                            </tr>
+                                            <tr >
+                                                <td>a14</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td><input type="number" class="input-border-none"></td>
+                                                <td><input type="number" class="input-border-none"></td>
+                                            </tr>
+                                            <tr >
+                                                <td>a15</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td><input type="number" class="input-border-none"></td>
+                                                <td><input type="number" class="input-border-none"></td>
+                                            </tr>
+                                            <tr >
+                                                <td>a16</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td><input type="number" class="input-border-none"></td>
+                                                <td><input type="number" class="input-border-none"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-auto">
+                                    <button class="btn  btn-primary">저장</button><br/><br/>
+                                    <button class="btn  btn-primary">마감</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>입고 예정 발주</h5>
+                        </div>
+                        <div class="card-body">
+                            <div>
+                                <span class="badge badge-primary">납기일 선택</span>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <input type="date" class="form-control-sm" value="2023-1-12"> ~
+                                    <input type="date" class="form-control-sm" value="2023-2-12">
+                                    <button class="btn  btn-primary btn-sm">조회</button>
+                                </div>
+                                <div class="col-md-auto">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" aria-expanded="false">
+                                                Dropdown
+                                            </button>
+                                            <div class="dropdown-menu" x-placement="bottom-start"  style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 45px, 0px);">
+                                                <a class="dropdown-item" href="#">품목명</a>
+                                                <a class="dropdown-item" href="#">협력회사명</a>
+                                            </div>
+                                        </div>
+                                        <input type="text" class="form-control-sm" aria-label="Text input with dropdown button">
+                                        <button class="btn btn-primary btn-sm"><i class="feather icon-search"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th class="align-middle" >발주번호</th>
+                                        <th class="align-middle" >협력회사명</th>
+                                        <th class="align-middle" >품목명</th>
+                                        <th class="align-middle" >발주일</th>
+                                        <th class="align-middle" >발주 납기</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination justify-content-end">
+                                        <li class="page-item">
+                                            <a class="page-link" href="#" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                                <span class="sr-only">Previous</span>
+                                            </a>
+                                        </li>
+                                        <li class="page-item"><a class="page-link" href="#!">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">3</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#!" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                                <span class="sr-only">Next</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $('th').addClass('text-center');
+            $('td').addClass('text-center');
+        </script>
+    </th:block>
+</th:block>
+</html>

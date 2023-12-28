@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>거래명세서 발행</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="">
+    <meta name="author" content="Phoenixcoded" />
+    <!-- Favicon icon -->
+    <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.js" integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc=" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="col-xl-12">
+    <div class="card">
+        <div class="card-header">
+            <h5>거래명세서 발행</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered border-primary table-sm ">
+                    <tr>
+                        <th colspan="8" class="align-middle h2"> 거래명세서 </th>
+                    </tr>
+                    <tr>
+                        <th rowspan="2" class="align-middle table-success">거래일자</th>
+                        <td rowspan="2" class="align-middle"></td>
+                        <th rowspan="5" class="align-middle table-success">공<br/>급<br/>받<br/>는<br/>자<br/></th>
+                        <td>사업자번호</td>
+                        <td></td>
+                        <th rowspan="5" class="align-middle table-success">공<br/>급<br/>자</th>
+                        <td>사업자번호</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>회사명</td>
+                        <td></td>
+                        <td>회사명</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th rowspan="2" class="align-middle table-success">담당자</th>
+                        <td rowspan="2" class="align-middle"></td>
+                        <td>주소</td>
+                        <td></td>
+                        <td>주소</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>전화번호</td>
+                        <td></td>
+                        <td rowspan="2" class="align-middle">전화번호</td>
+                        <td rowspan="2" class="align-middle"></td>
+                    </tr>
+                    <tr>
+                        <th class="table-success">발주번호</th>
+                        <td></td>
+                        <td>합계금액</td>
+                        <td>&#92;</td>
+                    </tr>
+                </table>
+                <table class="table table-bordered table-sm border-dark">
+                    <tr class="table-success">
+                        <th rowspan="2" class="align-middle">NO.</th>
+                        <th rowspan="2" class="align-middle">품목코드</th>
+                        <th rowspan="2" class="align-middle">품목명</th>
+                        <th rowspan="2" class="align-middle">단가</th>
+                        <th colspan="2" >수량</th>
+                        <th rowspan="2" class="align-middle">공급가액</th>
+                        <th rowspan="2" class="align-middle">비고</th>
+                    </tr>
+                    <tr class="table-success">
+                        <th>정품</th>
+                        <th>반품</th>
+                    </tr>
+                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                    <tr>
+                        <th rowspan="5" class="align-middle table-success">특이사항</th>
+                        <td rowspan="5" colspan="7" class="align-middle"><textarea rows="5" style="resize:none; width:100%; border:none;" ></textarea></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-md-auto">
+                    <button class="btn btn-primary justify-content-end">발행</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/assets/js/vendor-all.min.js"></script>
+<script src="/assets/js/plugins/bootstrap.min.js"></script>
+<script src="/assets/js/pcoded.min.js"></script>
+<script>
+    $('th').addClass('text-center');
+    $('td').addClass('text-center');
+</script>
+</body>
+</html>

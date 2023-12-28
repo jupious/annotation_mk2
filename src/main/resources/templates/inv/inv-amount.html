@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/layout::setContent(~{::content})}">
+    <th:block th:fragment="content">
+        <div class="pcoded-content">
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="page-header-title">
+                                <h5 class="m-b-10">재고금액 현황관리 리포트</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>재고현황 차트</h5>
+                    </div>
+                    <div class="card-body">
+                        <span class="badge badge-primary">조회 월 선택</span>
+                        <div class="row">
+                            <div class="col">
+                                <input type="date" class="form-control-sm" value="2023-1-12">
+                                <button class="btn btn-primary btn-sm">조회</button>
+                            </div>
+                            <div class="col-md-auto">
+                                <ul class="nav nav-tabs mb-3" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active text-uppercase" data-toggle="tab" href="#unit" role="tab" aria-controls="unit" aria-selected="true">대분류</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-uppercase" data-toggle="tab" href="#assy" role="tab" aria-controls="assy" aria-selected="false">중분류</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-uppercase" data-toggle="tab" href="#part" role="tab" aria-controls="part" aria-selected="false">소분류</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-xl-12 bg-light d-inline-block mr-2 border border-primary" >
+                             <div id="bar-chart-1"></div>
+                        </div>
+                        <div class="col-xl-12 bg-light d-inline-block mr-2 border border-primary" >
+                            <div id="pie-chart-1"></div>
+                        </div>
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/assets/js/plugins/apexcharts.min.js"></script>
+        <script src="/assets/js/pages/chart-apex.js"></script>
+
+    </th:block>
+</th:block>
+</html>
