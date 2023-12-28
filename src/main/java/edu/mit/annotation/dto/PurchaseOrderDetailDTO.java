@@ -8,10 +8,12 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class PurchaseOrderDetailDTO {
+    //발주서번호
+    private String poCode;
     //조달계획번호
     private String prcCode;
     //발주수량
-    private String orderQuantity;
+    private Integer orderQuantity;
     //비고
     private String etc;
 }

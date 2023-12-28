@@ -8,6 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class ProductItemDTO {
+    //제품코드
+    private String productCode;
     //품목코드
     private String itemCode;
     //품목수량

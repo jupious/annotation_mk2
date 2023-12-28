@@ -10,6 +10,8 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class ReleaseDetailDTO {
+    //출고번호
+    private Integer releaseNum;
     //품목코드
     private String itemCode;
     //출고일

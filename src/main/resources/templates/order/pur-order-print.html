@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>발주서출력</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        h1 {
+            text-decoration: underline;
+            margin: 20px 0;
+        }
+        h1 u {
+            display: block;
+        }
+        fieldset {
+            width: 90%; /* Widened the outer fieldset */
+            margin: 0 auto; /* Center-align the fieldset */
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        legend {
+            text-align: left;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .total {
+            text-align: right;
+            font-weight: bold;
+        }
+        textarea {
+            width: 100%;
+            resize: vertical;
+        }
+        p {
+            text-align: right;
+            margin-right: 20px;
+        }
+        p.left-align {
+            text-align: left;
+            margin-left: 20px;
+        }
+        /* Added styles for two column layout */
+        .two-columns {
+            display: flex;
+            justify-content: space-between;
+        }
+        .two-columns fieldset {
+            width: 48%;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+<fieldset>
+    <h1><u>발   주   서</u></h1>
+    <p>2019-01-19</p>
+
+    <div class="two-columns">
+        <fieldset>
+            <legend class="left-align"><h3>수급인</h3></legend>
+            <p class="left-align">
+                발주번호: <span id="orderNumber">12345</span><br>
+                업체명: <span id="companyName">ABC 주식회사</span><br>
+                대표자: <span id="representative">홍길동</span><br>
+                발주납기일: <span id="dueDate">2023-12-31</span><br>
+                <span>아래와 같이 납품하여 주시기 바랍니다.  </span>
+            </p>
+        </fieldset>
+
+        <fieldset>
+            <legend class="left-align"><h3>발주자</h3></legend>
+            <p class="left-align">
+                <span id="ourCompanyName">㈜이노테이션</span><br>
+                대표자: <span id="ourRepresentative">곽 동 규</span><br>
+                <span id="ourAddress">수원시 영통구 태장로 01길 33 (해피 프라자) 305호 엠아이티능력개발원  </span><br>
+                <span id="ourPhoneNumber">☎ 031-000-0000 , FAX 031-273-0000</span><br>
+            </p>
+        </fieldset>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>순번</th>
+            <th>품목코드</th>
+            <th>품목명</th>
+            <th>수량</th>
+            <th>단가</th>
+            <th>공급가</th>
+            <th>비고</th>
+        </tr>
+        </thead>
+        <tbody id="itemTable">
+        <!-- 물품 정보는 JavaScript로 동적으로 추가됩니다. -->
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="5" class="total">합계</td>
+            <td id="totalAmount"></td>
+            <td></td>
+        </tr>
+        </tfoot>
+    </table>
+
+    <p>
+        특이사항:<br>
+        <textarea id="specialNotes" rows="4" cols="50"></textarea>
+    </p>
+</fieldset>
+
+<script>
+    // 물품 정보 배열 (테스트 데이터)
+    const items = [];
+    for (let i = 1; i <= 10; i++) {
+        items.push({
+            순번: i,
+            물품코드: `CODE${i}`,
+            품목명: `물품 ${i}`,
+            수량: Math.floor(Math.random() * 10) + 1,
+            단가: Math.floor(Math.random() * 50000) + 10000,
+            공급가: 0, // 임시 값
+            비고: `비고 ${i}`
+        });
+    }
+
+    // 발주서 정보 채우기 (이전 코드와 동일)
+
+    // 물품 정보 채우기
+    const itemTable = document.getElementById('itemTable');
+    let totalAmount = 0;
+
+    items.forEach(item => {
+        item.공급가 = item.수량 * item.단가; // 공급가 계산
+        const row = document.createElement('tr');
+        Object.values(item).forEach(value => {
+            const cell = document.createElement('td');
+            cell.textContent = value;
+            row.appendChild(cell);
+        });
+        itemTable.appendChild(row);
+        totalAmount += item['공급가'];
+    });
+
+    document.getElementById('totalAmount').innerText = totalAmount.toLocaleString() + '원';
+</script>
+</body>
+</html>

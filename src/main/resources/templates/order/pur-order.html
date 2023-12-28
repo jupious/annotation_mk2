@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/layout::setContent(~{::content})}">
+
+
+    <th:block th:fragment="content">
+        <div class="pcoded-content">
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="page-header-title">
+                                <h5>구매발주서발행</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- [ basic-table ] start -->
+                <div class="col-xl-10 col-md-12">
+                    <div class="card">
+
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col">
+                                    <h5>조달계획리스트 </h5>
+                                </div>
+
+                                <div class="col-md-auto">
+                                    <button type="button" class="btn btn-primary btn-sm" id="popbtn">발주</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body table-border-style">
+                            <div class="row">
+                                <div class="col">
+                                    <input class="form-control-sm" type="date"> ~ <input class="form-control-sm" type="date"><button class="btn  btn-primary btn-sm" type="submit">조회</button>
+                                </div>
+                                <div class="col-md-auto">
+                                    <select id="inputState" class="form-control-sm">
+                                        <option selected>조달계획번호</option>
+                                        <option>업체명</option>
+                                        <option>품목명</option>
+                                        <option>조달납기일</option>
+                                        <option>진행단계</option>
+                                    </select>
+
+                                    <input type="text" class="form-control-sm" id="inputZip">
+                                    <button class="btn  btn-primary btn-sm" type="submit">검색</button>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>조달계획번호</th>
+                                        <th>업체명</th>
+                                        <th>품목명</th>
+                                        <th>조달납기일</th>
+                                        <th>진행단계</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                                <label class="custom-control-label" for="customCheck1"></label>
+                                            </div>
+                                        </td>
+                                        <td>J-00001</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>모니터</td>
+                                        <td>2019-01-16</td>
+                                        <td>발주진행중</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheck2">
+                                                <label class="custom-control-label" for="customCheck2"></label>
+                                            </div>
+                                        </td>
+                                        <td>J-00001</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>모니터</td>
+                                        <td>2019-01-16</td>
+                                        <td>발주진행중</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheck3">
+                                                <label class="custom-control-label" for="customCheck3"></label>
+                                            </div>
+                                        </td>
+                                        <td>J-00001</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>모니터</td>
+                                        <td>2019-01-16</td>
+                                        <td>발주진행중</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheck4">
+                                                <label class="custom-control-label" for="customCheck4"></label>
+                                            </div>
+                                        </td>
+                                        <td>J-00001</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>모니터</td>
+                                        <td>2019-01-16</td>
+                                        <td>발주진행중</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheck5">
+                                                <label class="custom-control-label" for="customCheck5"></label>
+                                            </div>
+                                        </td>
+                                        <td>J-00001</td>
+                                        <td>(주)그린피앤엘
+                                        </td>
+                                        <td>모니터</td>
+                                        <td>2019-01-16</td>
+                                        <td>발주진행중</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-end">
+                                        <li class="page-item"><a class="page-link" href="#!" aria-label="Previous"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">3</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">4</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">5</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-10 col-md-11">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col">
+                                    <h5>구매발주서리스트</h5>
+                                </div>
+                                <div class="col-md-auto">
+                                    <button type="button" class="btn  btn-primary btn-sm">전송</button>
+                                    <button type="button" class="btn  btn-danger btn-sm">삭제</button>
+                                    <button type="button" class="btn  btn-secondary btn-sm" id="printbtn">출력</button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="card-body table-border-style">
+                            <div class="row">
+                                <div class="col">
+                                    <input class="form-control-sm" type="date"> ~ <input class="form-control-sm" type="date"><button class="btn  btn-primary btn-sm" type="submit">조회</button>
+                                </div>
+                                <div class="col-md-auto">
+                                    <select id="inputState1" class="form-control-sm">
+                                        <option selected>발주번호</option>
+                                        <option>업체명</option>
+                                        <option>품목명</option>
+                                        <option>발주일</option>
+                                        <option>발주납기일</option>
+                                    </select>
+
+                                    <input type="text" class="form-control-sm" id="inputZip1">
+                                    <button class="btn  btn-primary btn-sm" type="submit">검색</button>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>발주번호</th>
+                                        <th>업체명</th>
+                                        <th>품목명</th>
+                                        <th>발주일</th>
+                                        <th>발주납기일</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckB1">
+                                                <label class="custom-control-label" for="customCheckB1"></label>
+                                            </div>
+                                        </td>
+                                        <td>P-00001</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>마우스.헤드셋...</td>
+                                        <td>2019-01-16</td>
+                                        <td>2019-01-20</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckB2">
+                                                <label class="custom-control-label" for="customCheckB2"></label>
+                                            </div>
+                                        </td>
+                                        <td>P-00002</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>마우스</td>
+                                        <td>2019-01-16</td>
+                                        <td>2019-01-20</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckB3">
+                                                <label class="custom-control-label" for="customCheckB3"></label>
+                                            </div>
+                                        </td>
+                                        <td>P-00003</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>마우스</td>
+                                        <td>2019-01-16</td>
+                                        <td>2019-01-20</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckB4">
+                                                <label class="custom-control-label" for="customCheckB4"></label>
+                                            </div>
+                                        </td>
+                                        <td>P-00004</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>마우스</td>
+                                        <td>2019-01-16</td>
+                                        <td>2019-01-20</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckB5">
+                                                <label class="custom-control-label" for="customCheckB5"></label>
+                                            </div>
+                                        </td>
+                                        <td>P-00005</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>마우스</td>
+                                        <td>2019-01-16</td>
+                                        <td>2019-01-20</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-end">
+                                        <li class="page-item"><a class="page-link" href="#!" aria-label="Previous"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">3</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">4</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">5</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $("#popbtn").on('click',function(){
+              let popOption = "width = 1000px, height = 700px, top = 300px, left = 300px, scrollbars=yes";
+              let popUrl = '/order/pur-order-pop';
+              window.open(popUrl,'pop',popOption);
+            })
+        </script>
+        <script>
+            $("#printbtn").on('click', function () {
+                let popOption = "width=1000,height=700,top=300,left=300,scrollbars=yes";
+                let popUrl = '/order/pur-order-print';
+                let newWindow = window.open(popUrl, 'pop', popOption);
+
+                if (newWindow) {
+                    newWindow.onload = function () {
+                        newWindow.print();
+                    };
+                } else {
+                    alert("팝업이 차단되었습니다. 팝업 차단을 해제하고 다시 시도해주세요.");
+                }
+            });
+        </script>
+
+    </th:block>
+
+</th:block>
+</html>

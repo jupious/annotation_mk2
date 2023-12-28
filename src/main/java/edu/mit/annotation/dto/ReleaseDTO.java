@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 public class ReleaseDTO {
     //출고번호
-    private Integer releaseNumber;
+    private Integer releaseNum;
     //출고내용 리스트
     private List<ReleaseDetailDTO> releaseDetailList;
 }

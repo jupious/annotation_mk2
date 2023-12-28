@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/layout::setContent(~{::content})}">
+
+
+    <th:block th:fragment="content">
+        <div class="pcoded-content">
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="page-header-title">
+                                <h5>발주 현황 관리리포트</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- [ basic-table ] start -->
+                <div class="col-xl-10 col-md-11">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col">
+                                    <h5>구매발주서리스트</h5>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="card-body table-border-style">
+                            <div class="row">
+                                <div class="col">
+                                    <input class="form-control-sm" type="date"> ~ <input class="form-control-sm" type="date"><button class="btn  btn-primary btn-sm" type="submit">조회</button>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>발주번호</th>
+                                        <th>업체명</th>
+                                        <th>품목명</th>
+                                        <th>발주일</th>
+                                        <th>발주납기일</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckB1">
+                                                <label class="custom-control-label" for="customCheckB1"></label>
+                                            </div>
+                                        </td>
+                                        <td>P-00001</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>마우스.헤드셋...</td>
+                                        <td>2019-01-16</td>
+                                        <td>2019-01-20</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckB2">
+                                                <label class="custom-control-label" for="customCheckB2"></label>
+                                            </div>
+                                        </td>
+                                        <td>P-00002</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>마우스</td>
+                                        <td>2019-01-16</td>
+                                        <td>2019-01-20</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckB3">
+                                                <label class="custom-control-label" for="customCheckB3"></label>
+                                            </div>
+                                        </td>
+                                        <td>P-00003</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>마우스</td>
+                                        <td>2019-01-16</td>
+                                        <td>2019-01-20</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckB4">
+                                                <label class="custom-control-label" for="customCheckB4"></label>
+                                            </div>
+                                        </td>
+                                        <td>P-00004</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>마우스</td>
+                                        <td>2019-01-16</td>
+                                        <td>2019-01-20</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckB5">
+                                                <label class="custom-control-label" for="customCheckB5"></label>
+                                            </div>
+                                        </td>
+                                        <td>P-00005</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>마우스</td>
+                                        <td>2019-01-16</td>
+                                        <td>2019-01-20</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-end">
+                                        <li class="page-item"><a class="page-link" href="#!" aria-label="Previous"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">3</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">4</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">5</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pcoded-content">
+            <div class="page-header">
+                <div class="col-xl-6 col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>발주현황 그래프</h5>
+                        </div>
+                        <div class="card-body" style="position: relative;">
+                            <div id="bar-chart-1" style="min-height: 365px;">
+                                <div id="apexchartsx6deuf3y" class="apexcharts-canvas apexchartsx6deuf3y light" style="width: 600px; height: 350px;">
+                                    <!-- 바 차트를 그릴 캔버스 요소 -->
+                                    <canvas id="myChart" style="width: 600px; height: 350px;"></canvas>
+                                    <script>
+                                        // 바 차트 데이터
+                                        var ctx = document.getElementById('myChart').getContext('2d');
+                                        var myChart = new Chart(ctx, {
+                                            type: 'bar',
+                                            data: {
+                                                labels: ['발주서발행', '진행중', '마감완료'],
+                                                datasets: [{
+                                                    label: '발행수',
+                                                    data: [32, 19, 13],
+                                                    backgroundColor: [
+                                                        // 'rgba(255, 99, 132, 0.5)',
+                                                        'rgba(54, 162, 235, 0.9)',
+                                                        'rgba(255, 206, 86, 0.9)',
+                                                        'rgba(75, 192, 192, 0.9)',
+                                                        // 'rgba(153, 102, 255, 0.2)',
+                                                        // 'rgba(255, 159, 64, 0.2)'
+                                                    ],
+                                                    borderColor: [
+                                                        // 'rgba(255, 99, 132, 1)',
+                                                        'rgba(54, 162, 235, 1)',
+                                                        'rgba(255, 206, 86, 1)',
+                                                        'rgba(75, 192, 192, 1)',
+                                                        // 'rgba(153, 102, 255, 1)',
+                                                        // 'rgba(255, 159, 64, 1)'
+                                                    ],
+                                                    borderWidth: 1
+                                                }]
+                                            },
+                                            options: {
+                                                scales: {
+                                                    y: {
+                                                        beginAtZero: true
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    </script>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </div>
+        </div>
+        </div>
+    </th:block>
+
+</th:block>
+</html>

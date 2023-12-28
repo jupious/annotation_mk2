@@ -8,6 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class ContractDetailDTO {
+    //계약서번호
+    private String cCode;
     //품목코드
     private String itemCode;
     //L/T

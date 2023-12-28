@@ -10,6 +10,8 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class ProgressCheckDTO {
+    //발주번호
+    private String poCode;
     //검수번호
     private String progressCheckCode;
     //차수

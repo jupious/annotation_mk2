@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/layout::setContent(~{::content})}">
+    <th:block th:fragment="content">
+        <div class="pcoded-content">
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="page-header-title">
+                                <h5>진척검수관리</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- [ basic-table ] start -->
+                <div class="col-xl-10 col-md-11">
+                    <div class="card">
+
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col">
+                                    <h5>진척검수</h5>
+                                </div>
+                                <div class="col-md-auto">
+                                    <button type="button" class="btn  btn-primary btn-sm">저장</button>
+                                    <button type="button" class="btn  btn-danger btn-sm">취소</button>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="card-body table-border-style">
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th colspan="4">공급자정보</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <th>발주번호</th>
+                                        <td colspan="3">PO-00006</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th>발주일</th>
+                                        <td>2019-02-01</td>
+                                        <th>발주납기일</th>
+                                        <td>2019-02-10</td>
+                                    </tr>
+                                    <tr>
+                                        <th>업체명</th>
+                                        <td>(주)그린피앤엘</td>
+                                        <th>사업자번호</th>
+                                        <td>198-81-00081</td>
+                                    </tr>
+                                    <tr>
+                                        <th>담당자</th>
+                                        <td>김동석</td>
+
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="card-body table-border-style">
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th colspan="7">품목정보</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <th>순번</th>
+                                        <th>품목코드</th>
+                                        <th>품목명</th>
+                                        <th>수량</th>
+                                        <th>단가</th>
+                                        <th>공급가격</th>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <th>A21</th>
+                                        <td>의자</td>
+                                        <td>3</td>
+                                        <td>10,500</td>
+                                        <td>31,500</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <th>A21</th>
+                                        <td>의자</td>
+                                        <td>3</td>
+                                        <td>10,500</td>
+                                        <td>31,500</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="card-body table-border-style">
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th colspan="6">
+                                            <div class="row">
+                                                <div class="col">
+                                                    검수처리
+                                                </div>
+                                                <div class="col-md-auto">
+                                                    <button type="button" class="btn  btn-danger btn-sm">삭제</button>
+                                                </div>
+
+                                            </div>
+
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <th></th>
+                                        <th>차수</th>
+                                        <th>검수일정</th>
+                                        <th>검수결과</th>
+                                        <th>제작수량합계</th>
+                                        <th>보완사항</th>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckC1">
+                                                <label class="custom-control-label" for="customCheckC1"></label>
+                                            </div>
+                                        </td>
+                                        <td>1</td>
+                                        <td><input type="date"></td>
+                                        <td><input class="input-border-none" type="text"></td>
+                                        <td><input class="input-border-none" type="text"></td>
+                                        <td><input class="input-border-none" type="text"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckC2">
+                                                <label class="custom-control-label" for="customCheckC2"></label>
+                                            </div>
+                                        </td>
+                                        <td>2</td>
+                                        <td><input type="date"></td>
+                                        <td><input class="input-border-none" type="text"></td>
+                                        <td><input class="input-border-none" type="text"></td>
+                                        <td><input class="input-border-none" type="text"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-10 col-md-11">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col">
+                                    <h5>구매발주서리스트</h5>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="card-body table-border-style">
+                            <div class="row">
+                                <div class="col">
+                                    <!-- 날짜 입력과 조회 버튼 -->
+                                    <input class="form-control-sm" type="date"> ~ <input class="form-control-sm" type="date">
+                                    <button class="btn btn-primary btn-sm" type="submit">조회</button>
+                                </div>
+
+                                <div class="col-md-auto">
+                                    <!-- 체크박스와 뱃지 -->
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge badge-primary">검수결과값 필요만 보기</span>
+                                        <div class="custom-control custom-checkbox ml-1">
+                                            <input type="checkbox" class="custom-control-input" id="customCheckaa" checked>
+                                            <label class="custom-control-label" for="customCheckaa"></label>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge badge-primary">검수일정 미등록만 보기</span>
+                                        <div class="custom-control custom-checkbox ml-1">
+                                            <input type="checkbox" class="custom-control-input" id="customCheckbb" checked>
+                                            <label class="custom-control-label" for="customCheckbb"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-auto">
+                                    <!-- 셀렉트 박스, 입력 필드, 검색 버튼 -->
+                                    <select id="inputState1" class="form-control-sm">
+                                        <option selected>발주번호</option>
+                                        <option>업체명</option>
+                                        <option>품목명</option>
+                                        <option>검수진행</option>
+                                        <option>발주납기일</option>
+                                    </select>
+
+                                    <input type="text" class="form-control-sm" id="inputZip1">
+                                    <button class="btn btn-primary btn-sm" type="submit">검색</button>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>발주번호</th>
+                                        <th>업체명</th>
+                                        <th>품목명</th>
+                                        <th>검수진행</th>
+                                        <th>진척도</th>
+                                        <th>발주납기일</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckP1">
+                                                <label class="custom-control-label" for="customCheckP1"></label>
+                                            </div>
+                                        </td>
+                                        <td>P-00001</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>마우스.헤드셋...</td>
+                                        <td>3차완료</td>
+                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">80%</div></td>
+                                        <td>2019-01-01</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckP2">
+                                                <label class="custom-control-label" for="customCheckP2"></label>
+                                            </div>
+                                        </td>
+                                        <td>P-00001</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>마우스.헤드셋...</td>
+                                        <td>3차완료</td>
+                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 66%;" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100">66%</div></td>
+                                        <td>2019-01-01</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckP3">
+                                                <label class="custom-control-label" for="customCheckP3"></label>
+                                            </div>
+                                        </td>
+                                        <td>P-00001</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>마우스.헤드셋...</td>
+                                        <td>3차완료</td>
+                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div></td>
+                                        <td>2019-01-01</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckP4">
+                                                <label class="custom-control-label" for="customCheckP4"></label>
+                                            </div>
+                                        </td>
+                                        <td>P-00001</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>마우스.헤드셋...</td>
+                                        <td>3차완료</td>
+                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0%;" aria-valuenow="00" aria-valuemin="0" aria-valuemax="100">0%</div></td>
+                                        <td>2019-01-01</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customCheckP5">
+                                                <label class="custom-control-label" for="customCheckP5"></label>
+                                            </div>
+                                        </td>
+                                        <td>P-00001</td>
+                                        <td>(주)그린피앤엘</td>
+                                        <td>마우스.헤드셋...</td>
+                                        <td>3차완료</td>
+                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">80%</div></td>
+                                        <td>2019-01-01</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-end">
+                                        <li class="page-item"><a class="page-link" href="#!" aria-label="Previous"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">3</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">4</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">5</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+</html>

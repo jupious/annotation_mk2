@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/layout-pop::setContent(~{::content})}">
+    <th:block th:fragment="content">
+        <!-- [ basic-table ] start -->
+        <div class="card-body table-border-style">
+            <div>
+                <div class="card">
+
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col">
+                                <h5>▶발주서 작성/수정 </h5>
+                            </div>
+                            <div class="col-md-auto">
+                                <button type="button" class="btn  btn-primary btn-sm">저장</button>
+                                <button type="button" class="btn  btn-danger btn-sm">취소</button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card-body table-border-style">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-sm">
+                                <thead>
+                                <tr>
+                                    <th colspan="4">공급자정보</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <th>발주번호</th>
+                                    <td colspan="3">PO-00006</td>
+
+                                </tr>
+                                <tr>
+                                    <th>발주일</th>
+                                    <td>2019-02-01</td>
+                                    <th>발주납기일</th>
+                                    <td><input type="date"></td>
+                                </tr>
+                                <tr>
+                                    <th>업체명</th>
+                                    <td>(주)그린피앤엘</td>
+                                    <th>사업자번호</th>
+                                    <td>198-81-00081</td>
+                                </tr>
+                                <tr>
+                                    <th>담당자</th>
+                                    <td>김동석</td>
+
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card-body table-border-style">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-sm">
+                                <thead>
+                                <tr>
+                                    <th colspan="8">품목정보</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <th></th>
+                                    <th>순번</th>
+                                    <th>품목코드</th>
+                                    <th>품목명</th>
+                                    <th>수량</th>
+                                    <th>단가</th>
+                                    <th>공급가격</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label class="check-task custom-control custom-checkbox d-flex justify-content-center done-task">
+                                            <input type="checkbox" class="custom-control-input">
+                                            <span class="custom-control-label"></span>
+                                        </label>
+                                    </td>
+                                    <td>1</td>
+                                    <th>A21</th>
+                                    <td>의자</td>
+                                    <td><input class="input-border-none" type="text"></td>
+                                    <td>10,500</td>
+                                    <td>31,500</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label class="check-task custom-control custom-checkbox d-flex justify-content-center done-task">
+                                            <input type="checkbox" class="custom-control-input">
+                                            <span class="custom-control-label"></span>
+                                        </label>
+                                    </td>
+                                    <td>1</td>
+                                    <th>A21</th>
+                                    <td>의자</td>
+                                    <td><input class="input-border-none" type="text"></td>
+                                    <td>10,500</td>
+                                    <td>31,500</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label class="check-task custom-control custom-checkbox d-flex justify-content-center done-task">
+                                            <input type="checkbox" class="custom-control-input">
+                                            <span class="custom-control-label"></span>
+                                        </label>
+                                    </td>
+                                    <td>1</td>
+                                    <th>A21</th>
+                                    <td>의자</td>
+                                    <td><input class="input-border-none" type="text"></td>
+                                    <td>10,500</td>
+                                    <td>31,500</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label class="check-task custom-control custom-checkbox d-flex justify-content-center done-task">
+                                            <input type="checkbox" class="custom-control-input">
+                                            <span class="custom-control-label"></span>
+                                        </label>
+                                    </td>
+                                    <td></td>
+                                    <th></th>
+                                    <td></td>
+                                    <td>sum1</td>
+                                    <td>sum2</td>
+                                    <td>sum3</td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+</html>
