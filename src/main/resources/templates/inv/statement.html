@@ -25,20 +25,17 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                <input type="date" class="form-control-sm" value="2023-1-12"> ~
-                                <input type="date" class="form-control-sm" value="2023-2-12">
+                                <input type="date" class="form-control-sm" value="2023-12-01"> ~
+                                <input type="date" class="form-control-sm" value="2023-12-10">
                                 <button class="btn  btn-primary btn-sm">조회</button>
                             </div>
                             <div class="col-md-auto">
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
-                                        <button class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" aria-expanded="false">
-                                            Dropdown
-                                        </button>
-                                        <div class="dropdown-menu" x-placement="bottom-start"  style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 45px, 0px);">
-                                            <a class="dropdown-item" href="#">품목명</a>
-                                            <a class="dropdown-item" href="#">협력회사명</a>
-                                        </div>
+                                        <select name="category" class="btn btn-primary dropdown-toggle dropdown-toggle-split btn-sm">
+                                            <option value="itemName">품목명</option>
+                                            <option value="companyName">업체명</option>
+                                        </select>
                                     </div>
                                     <input type="text" class="form-control-sm" aria-label="Text input with dropdown button">
                                     <button class="btn btn-primary btn-sm"><i class="feather icon-search"></i></button>
@@ -50,21 +47,21 @@
                                 <thead>
                                 <tr>
                                     <th class="align-middle" >발주번호</th>
-                                    <th class="align-middle" >협력회사명</th>
+                                    <th class="align-middle" >업체명</th>
                                     <th class="align-middle" >품목명</th>
                                     <th class="align-middle" >발주일</th>
                                     <th class="align-middle" >발주 납기</th>
                                     <th class="align-middle" style="width:30px;">명세서</th>
                                 </tr>
                                 </thead>
-                                <tbody>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td><button class="btn btn-secondary btn-sm" id="popuptest">발행</button></td>
+                                <tbody id = "poTbody">
+                                <tr th:each="purchaseorder,poStat : ${data}">
+                                    <td th:text="${purchaseorder.poCode}"></td>
+                                    <td th:text="${purchaseorder.companyName}"></td>
+                                    <td><th:block th:each="itemname : ${purchaseorder.itemNameList}"><span th:text="${itemname} + ','"></span> </th:block> </td>
+                                    <td th:text="${#dates.format(purchaseorder.poDate,'yyyy-MM-dd')}"></td>
+                                    <td th:text="${#dates.format(purchaseorder.poDueDate,'yyyy-MM-dd')}"></td>
+                                    <td class="print"><button class="btn  btn-secondary btn-sm" th:id="${poStat.index}" >발행</button></td>
                                 </tr>
                                 <tr>
                                     <td></td>
@@ -72,48 +69,9 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <td><button class="btn btn-secondary btn-sm">발행</button></td>
+                                    <td></td>
                                 </tr>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td><button class="btn btn-secondary btn-sm">발행</button></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td><button class="btn btn-secondary btn-sm">발행</button></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td><button class="btn btn-secondary btn-sm">발행</button></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td><button class="btn btn-secondary btn-sm">발행</button></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td><button class="btn btn-secondary btn-sm">발행</button></td>
-                                </tr>
+                            
 
                                 </tbody>
                             </table>
@@ -142,9 +100,11 @@
             </div>
         </div>
         <script>
-            $('#popuptest').on("click",function(){
+           
+            $('.btn').on("click",function(){
+                console.log("여기다 애송이",$(this));
                 let popOption = "width = 1550px, height = 900px, top = 300px, left = 300px, scrollbars=yes";
-                let popUrl = '/inv/statement-preview';
+                let popUrl = '/inv/statement-preview/'+$(this).attr('id');
                 window.open(popUrl,'pop',popOption);
             })
         </script>

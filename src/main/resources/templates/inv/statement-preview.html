@@ -29,39 +29,39 @@
                     </tr>
                     <tr>
                         <th rowspan="2" class="align-middle table-success">거래일자</th>
-                        <td rowspan="2" class="align-middle"></td>
+                        <td rowspan="2" class="align-middle" th:text="${#dates.format(compInfo.today,'yyyy-MM-dd')}"></td>
                         <th rowspan="5" class="align-middle table-success">공<br/>급<br/>받<br/>는<br/>자<br/></th>
                         <td>사업자번호</td>
-                        <td></td>
+                        <td th:text="${compInfo.compNum}">사업자번호 형식이 정해져있었다니</td>
                         <th rowspan="5" class="align-middle table-success">공<br/>급<br/>자</th>
                         <td>사업자번호</td>
-                        <td></td>
+                        <td>092-102-9102-13</td>
                     </tr>
                     <tr>
                         <td>회사명</td>
-                        <td></td>
+                        <td th:text="${compInfo.compName}"></td>
                         <td>회사명</td>
-                        <td></td>
+                        <td>(주)어노테이션</td>
                     </tr>
                     <tr>
                         <th rowspan="2" class="align-middle table-success">담당자</th>
-                        <td rowspan="2" class="align-middle"></td>
+                        <td rowspan="2" class="align-middle" th:text="${compInfo.managerName}"></td>
                         <td>주소</td>
-                        <td></td>
+                        <td th:text="${compInfo.address}"></td>
                         <td>주소</td>
-                        <td></td>
+                        <td>수원시 어쩌구 저쩌동</td>
                     </tr>
                     <tr>
                         <td>전화번호</td>
-                        <td></td>
+                        <td th:text="${compInfo.tel}"></td>
                         <td rowspan="2" class="align-middle">전화번호</td>
-                        <td rowspan="2" class="align-middle"></td>
+                        <td rowspan="2" class="align-middle">010-1234-5678</td>
                     </tr>
                     <tr>
                         <th class="table-success">발주번호</th>
-                        <td></td>
+                        <td id = "poNum"></td>
                         <td>합계금액</td>
-                        <td>&#92;</td>
+                        <td th:text="${totalPrice} + '원'"></td>
                     </tr>
                 </table>
                 <table class="table table-bordered table-sm border-dark">
@@ -78,15 +78,16 @@
                         <th>정품</th>
                         <th>반품</th>
                     </tr>
-                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                    <tr th:each="itemInfo, itemNum : ${itemList}">
+                        <td th:text="${itemNum.count}">1</td>
+                        <td th:text="${itemInfo.itemCode}">나는품목코드다 하하</td>
+                        <td th:text="${itemInfo.itemName}">품목이름은 이거임</td>
+                        <td th:text="${itemInfo.price}">3000</td>
+                        <td th:text="${itemInfo.fairQuantity}">200</td>
+                        <td th:text="${itemInfo.returnQuantity}">12</td>
+                        <td th:text="${itemInfo.itemTotalPrice}">600000</td>
+                        <td></td>
+                    </tr>
                     <tr>
                         <th rowspan="5" class="align-middle table-success">특이사항</th>
                         <td rowspan="5" colspan="7" class="align-middle"><textarea rows="5" style="resize:none; width:100%; border:none;" ></textarea></td>
@@ -96,7 +97,7 @@
             <div class="row">
                 <div class="col"></div>
                 <div class="col-md-auto">
-                    <button class="btn btn-primary justify-content-end">발행</button>
+                    <button class="btn btn-primary justify-content-end" id="print">발행</button>
                 </div>
             </div>
         </div>
@@ -109,6 +110,16 @@
 <script>
     $('th').addClass('text-center');
     $('td').addClass('text-center');
+    var poNum = 'po-'+[[${id}]];
+    $('#poNum').text(poNum)
+</script>
+<script th:inline="javascript">
+    $('#print').on("click",function(){
+        var result = confirm("명세서를 발행하시겠습니까?\n 1부는 이메일로 전송되며, 1부는 저장됩니다.");
+        if(result){
+            window.close();
+        }
+    })
 </script>
 </body>
 </html>

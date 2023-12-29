@@ -23,7 +23,7 @@
                         <div>
                             <span class="badge badge-primary">생산일자 선택</span>
                         </div>
-                        <input type="date" class="form-control-sm" value="2023-1-12">
+                        <input type="date" class="form-control-sm" value="2023-12-01">
                         <button class="btn  btn-primary btn-sm">조회</button>
                         <div class="row">
                             <div class="col">
@@ -38,12 +38,12 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr><td></td><td></td><td></td><td><input type="number" class="input-border-none"></td></tr>
-                                        <tr><td></td><td></td><td></td><td><input type="number" class="input-border-none"></td></tr>
-                                        <tr><td></td><td></td><td></td><td><input type="number" class="input-border-none"></td></tr>
-                                        <tr><td></td><td></td><td></td><td><input type="number" class="input-border-none"></td></tr>
-                                        <tr><td></td><td></td><td></td><td><input type="number" class="input-border-none"></td></tr>
-                                        <tr><td></td><td></td><td></td><td><input type="number" class="input-border-none"></td></tr>
+                                        <tr th:each="item : ${releaseList}">
+                                            <td width="10%" th:text="${item.itemCode}">품목코드</td>
+                                            <td th:text="${item.itemName}">밀가루</td>
+                                            <td width="15%" th:text="${item.invQuantity}">1231241</td>
+                                            <td width="15%"><input type="number" class="input-border-none" th:value="${item.releaseQuantity}"/></td>
+                                        </tr>
                                         </tbody>
                                     </table>
                                     <nav aria-label="Page navigation">
@@ -79,6 +79,7 @@
         <script>
             $('th').addClass('text-center');
             $('td').addClass('text-center');
+            $('input').addClass('text-center');
         </script>
     </th:block>
 </th:block>

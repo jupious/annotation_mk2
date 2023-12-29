@@ -26,53 +26,46 @@
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-sm">
                                             <thead>
-                                            <tr>
-                                                <th  class="align-middle" rowspan="2">품목코드</th>
-                                                <th  class="align-middle" rowspan="2">품목명</th>
-                                                <th  class="align-middle" rowspan="2">발주 수량</th>
-                                                <th colspan="2" >입고 수량</th>
-                                            </tr>
-                                            <tr>
-                                                <th>정품</th>
-                                                <th>반품</th>
-                                            </tr>
+                                                <tr>
+                                                    <th  class="align-middle" rowspan="2">품목코드</th>
+                                                    <th  class="align-middle" rowspan="2">품목명</th>
+                                                    <th  class="align-middle" rowspan="2">발주 수량</th>
+                                                    <th colspan="2" >입고 수량</th>
+                                                </tr>
+                                                <tr>
+                                                    <th>정품</th>
+                                                    <th>반품</th>
+                                                </tr>
                                             </thead>
-                                            <tbody>
-                                            <tr >
-                                                <td>a12</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td><input type="number" class="input-border-none"></td>
-                                                <td><input type="number" class="input-border-none"></td>
-                                            </tr>
-                                            <tr >
-                                                <td>a13</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td><input type="number" class="input-border-none"></td>
-                                                <td><input type="number" class="input-border-none"></td>
-                                            </tr>
-                                            <tr >
-                                                <td>a14</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td><input type="number" class="input-border-none"></td>
-                                                <td><input type="number" class="input-border-none"></td>
-                                            </tr>
-                                            <tr >
-                                                <td>a15</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td><input type="number" class="input-border-none"></td>
-                                                <td><input type="number" class="input-border-none"></td>
-                                            </tr>
-                                            <tr >
-                                                <td>a16</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td><input type="number" class="input-border-none"></td>
-                                                <td><input type="number" class="input-border-none"></td>
-                                            </tr>
+                                            <tbody id="itemsTbody">
+                                                <tr >
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr >
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr >
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr >
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -97,94 +90,42 @@
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <input type="date" class="form-control-sm" value="2023-1-12"> ~
-                                    <input type="date" class="form-control-sm" value="2023-2-12">
+                                    <input type="date" id="sDate" class="form-control-sm" value="2023-12-01"> ~
+                                    <input type="date" id="eDate" class="form-control-sm" value="2023-12-10">
                                     <button class="btn  btn-primary btn-sm">조회</button>
                                 </div>
                                 <div class="col-md-auto">
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
-                                            <button class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" aria-expanded="false">
-                                                Dropdown
-                                            </button>
-                                            <div class="dropdown-menu" x-placement="bottom-start"  style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 45px, 0px);">
-                                                <a class="dropdown-item" href="#">품목명</a>
-                                                <a class="dropdown-item" href="#">협력회사명</a>
-                                            </div>
+                                            <select name="category" class="btn btn-primary dropdown-toggle dropdown-toggle-split btn-sm">
+                                                <option value="itemName">품목명</option>
+                                                <option value="companyName">업체명</option>
+                                            </select>
                                         </div>
                                         <input type="text" class="form-control-sm" aria-label="Text input with dropdown button">
-                                        <button class="btn btn-primary btn-sm"><i class="feather icon-search"></i></button>
+                                        <button id="searchBtn" class="btn btn-primary btn-sm"><i class="feather icon-search"></i></button>
                                     </div>
                                 </div>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-bordered table-hover table-sm">
                                     <thead>
-                                    <tr>
-                                        <th class="align-middle" >발주번호</th>
-                                        <th class="align-middle" >협력회사명</th>
-                                        <th class="align-middle" >품목명</th>
-                                        <th class="align-middle" >발주일</th>
-                                        <th class="align-middle" >발주 납기</th>
-                                    </tr>
+                                        <tr>
+                                            <th class="align-middle" >발주번호</th>
+                                            <th class="align-middle" >업체명</th>
+                                            <th class="align-middle" >품목명</th>
+                                            <th class="align-middle" >발주일</th>
+                                            <th class="align-middle" >발주 납기</th>
+                                        </tr>
                                     </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
+                                    <tbody id="poTbody">
+                                        <tr th:each="purchaseorder,poStat : ${data}" th:id="${poStat.index}">
+                                            <td th:text="${purchaseorder.poCode}"></td>
+                                            <td th:text="${purchaseorder.companyName}"></td>
+                                            <td><th:block th:each="itemname : ${purchaseorder.itemNameList}"><span th:text="${itemname} + ','"></span> </th:block> </td>
+                                            <td th:text="${#dates.format(purchaseorder.poDate,'yyyy-MM-dd')}"></td>
+                                            <td th:text="${#dates.format(purchaseorder.poDueDate,'yyyy-MM-dd')}"></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                                 <nav aria-label="Page navigation">
@@ -215,6 +156,40 @@
         <script>
             $('th').addClass('text-center');
             $('td').addClass('text-center');
+        </script>
+        <script th:inline="javascript">
+            $(function(){
+                var data = [[${data}]];
+                
+               
+                $('#poTbody').on("click","tr",function(){
+                    var idx = $(this).attr('id');
+                    var dataList = data[idx].receiveItemList;
+                    console.log("리스트 이거맞냐",dataList);
+                    var itemTableStr = "";
+                    for(let i = 0; i < dataList.length; i++){
+                        itemTableStr += "<tr><td>"+dataList[i].itemCode+"</td><td>"+dataList[i].itemName+"</td><td>"+dataList[i].poItemQuantity+"</td><td><input type='number' id='fair'"+i+" class='input-border-none' /></td><td><input type='number' id='return'"+i+" class='input-border-none' /></td></tr>";
+                    }
+                    $('#itemsTbody').html(itemTableStr);
+                    
+                })
+
+                $('#sDate').change(function(){
+                    console.log("날짜바뀜");
+                    var sDate = $(this).val();
+                    var eDate = $('#eDate').val();
+                    if(eDate < sDate){
+                        $('#eDate').val(sDate);
+                    }
+                })
+                $('#eDate').change(function(){
+                    var sDate = $('#sDate').val();
+                    var eDate = $(this).val();
+                    if(eDate < sDate){
+                        $('#sDate').val(eDate);
+                    }
+                })
+            })
         </script>
     </th:block>
 </th:block>

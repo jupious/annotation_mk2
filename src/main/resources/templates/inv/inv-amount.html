@@ -23,19 +23,19 @@
                         <span class="badge badge-primary">조회 월 선택</span>
                         <div class="row">
                             <div class="col">
-                                <input type="date" class="form-control-sm" value="2023-1-12">
+                                <input type="date" class="form-control-sm" value="2023-12-01">
                                 <button class="btn btn-primary btn-sm">조회</button>
                             </div>
                             <div class="col-md-auto">
                                 <ul class="nav nav-tabs mb-3" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active text-uppercase" data-toggle="tab" href="#unit" role="tab" aria-controls="unit" aria-selected="true">대분류</a>
+                                        <a class="nav-link active text-uppercase" data-toggle="tab" href="#unit" role="tab" aria-controls="unit" aria-selected="true" id="unitBtn">대분류</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link text-uppercase" data-toggle="tab" href="#assy" role="tab" aria-controls="assy" aria-selected="false">중분류</a>
+                                        <a class="nav-link text-uppercase" data-toggle="tab" href="#assy" role="tab" aria-controls="assy" aria-selected="false" id="assyBtn">중분류</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link text-uppercase" data-toggle="tab" href="#part" role="tab" aria-controls="part" aria-selected="false">소분류</a>
+                                        <a class="nav-link text-uppercase" data-toggle="tab" href="#part" role="tab" aria-controls="part" aria-selected="false" id="partBtn">소분류</a>
                                     </li>
                                 </ul>
                             </div>
@@ -55,7 +55,38 @@
             </div>
         </div>
         <script src="/assets/js/plugins/apexcharts.min.js"></script>
-        <script src="/assets/js/pages/chart-apex.js"></script>
+<!--        <script src="/assets/js/pages/chart-apex.js"></script>-->
+        <script src="/assets/js/pages/chart-annotation.js"></script>
+        <script th:inline="javascript">
+            $(function(){
+                getChart(uCate,uAmount);
+            })
+            function getChart(categories,amounts){
+                $('#bar-chart-1').empty();
+                $('#pie-chart-1').empty();
+                invChart.barChart(categories,amounts);
+                invChart.pieChart(categories,amounts);
+            }
+            var uCate = [[${unitCategories}]];
+            var uAmount = [[${unitAmounts}]];
+
+            var aCate = [[${assyCategories}]];
+            var aAmount = [[${assyAmounts}]];
+
+            var pCate = [[${partCategories}]];
+            var pAmount = [[${partAmounts}]];
+
+            $('#unitBtn').on("click",function(){
+                getChart(uCate,uAmount);
+            })
+            $('#assyBtn').on("click",function(){
+                getChart(aCate,aAmount);
+            })
+            $('#partBtn').on("click",function(){
+                getChart(pCate,pAmount);
+            })
+
+        </script>
 
     </th:block>
 </th:block>

@@ -25,20 +25,16 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                <input type="date" class="form-control-sm" value="2023-1-12">
+                                <input type="date" class="form-control-sm" value="2023-12-01">
                                 <button class="btn btn-primary btn-sm">조회</button>
                             </div>
                             <div class="col-md-auto">
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
-                                        <button class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" aria-expanded="false">
-                                            Dropdown
-                                        </button>
-                                        <div class="dropdown-menu" x-placement="bottom-start"  style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 45px, 0px);">
-                                            <a class="dropdown-item" href="#">품목코드</a>
-                                            <a class="dropdown-item" href="#">품목명</a>
-                                            <a class="dropdown-item" href="#">재질</a>
-                                        </div>
+                                        <select name="category" class="btn btn-primary dropdown-toggle dropdown-toggle-split btn-sm">
+                                            <option value="itemName">품목명</option>
+                                            <option value="companyName">재질</option>
+                                        </select>
                                     </div>
                                     <input type="text" class="form-control-sm" aria-label="Text input with dropdown button">
                                     <button class="btn btn-primary btn-sm"><i class="feather icon-search"></i></button>
@@ -60,13 +56,16 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr th:each="data : ${invCalc}">
+                                        <td th:text="${data.itemCode}">코오드</td>
+                                        <td th:text="${data.itemName}">이이름</td>
+                                        <td th:text="${data.size}">규우격</td>
+                                        <td th:text="${data.material}">재애질</td>
+                                        <td th:text="${data.originQuantity}">기본재애고</td>
+                                        <td th:text="${data.receiveQuantity}">입고수우량</td>
+                                        <td th:text="${data.releaseQuantity}">출고수우량</td>
+                                        <td th:text="${data.calculatedQuantity}">산출재애고</td>
+                                    </tr>
                                 </tbody>
                             </table>
                             <nav aria-label="Page navigation">
