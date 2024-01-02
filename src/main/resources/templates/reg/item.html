@@ -1,0 +1,261 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/layout::setContent(~{::content})}">
+    <th:block th:fragment = "content">
+        <!-- 메인 시작 -->
+
+        <div class="pcoded-content">
+            <!-- 본문내용 시작 -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-header">품목정보등록</h5>
+                    <div class="card-body table-border-style">
+                        <div class="table-responsive">
+                            <table id="table1" class="table table-bordered table-sm" width="100%;">
+                                <tr>
+                                    <td bgcolor="#f6f6f6" rowspan="3" width="1%" align="center" valign="middle">품목코드</td>
+                                    <td width="1%" align="center" valign="middle">대분류</td>
+                                    <td width="6%" align="center" valign="middle">
+                                        <select name="대분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" id="unitCode">
+                                            <option value="">선택</option>
+                                            <option value="직접입력">직접입력</option>
+                                            <option value="장착부">장착부</option>
+                                            <option value="제어부">제어부</option>
+                                            <option value="투입부">투입부</option>
+                                        </select>
+                                    </td>
+                                    <td align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;"></td>
+                                </tr>
+                                <tr>
+                                    <td width="1%" align="center" valign="middle">중분류</td>
+                                    <td width="6%" align="center" valign="middle">
+                                        <select name="중분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" id="assyCode">
+                                            <option value="">선택</option>
+                                            <option value="직접입력">직접입력</option>
+                                            <option value="감지기">감지기</option>
+                                            <option value="구동축">구동축</option>
+                                            <option value="커넥터">커넥터</option>
+                                        </select>
+                                    </td>
+                                    <td align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;"></td>
+                                </tr>
+                                <tr>
+                                    <td width="1%" align="center" valign="middle">소분류</td>
+                                    <td width="6%" align="center" valign="middle">
+                                        <select name="소분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" id="partCode">
+                                            <option value="">선택</option>
+                                            <option value="직접입력">직접입력</option>
+                                            <option value="PLC">PLC</option>
+                                            <option value="GEAR">GEAR</option>
+                                            <option value="CABLE">CABLE</option>
+                                        </select>
+                                    </td>
+                                    <td align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;"></td>
+                                </tr>
+                                <tr>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle">품목명</td>
+                                    <td colspan="3" align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;" id="itemName"></td>
+                                </tr>
+                                <tr>
+                                    <td bgcolor="#f6f6f6" rowspan="3" align="center" valign="middle">규격<br>(mm)</td>
+                                    <td align="center" valign="middle">가로</td>
+                                    <td align="center" valign="middle"><input type="number" class="text-center" style="width:100%; height:100%; border:none;" id="width"></td>
+                                </tr>
+                                <tr>
+                                    <td align="center" valign="middle">세로</td>
+                                    <td align="center" valign="middle"><input type="number"  class="text-center" style="width:100%; height:100%; border:none;" id="length"></td>
+                                </tr>
+                                <tr>
+                                    <td align="center" valign="middle">높이</td>
+                                    <td align="center" valign="middle"><input type="number"  class="text-center" style="width:100%; height:100%; border:none;" id="height"></td>
+                                </tr>
+                                <tr>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle">재질</td>
+                                    <td colspan="3" align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;" id="material"></td>
+                                </tr>
+                                <tr>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle">도면</td>
+                                    <td colspan="3" align="center" valign="middle"><div class="custom-file" ><input type="file" class="custom-file-input" id="inputGroupFile01"><label class="custom-file-label" for="inputGroupFile01"></label></div></td>
+                                </tr>
+                            </table>
+                            <button type="submit" class="btn btn-danger btn-sm" style="float:right;" data-toggle="modal" data-target="#deleteModal">삭제</button>
+                            <button type="submit" class="btn btn-warning btn-sm" style="float:right;" data-toggle="modal" data-target="#modifyModal">수정</button>
+                            <button type="submit" class="btn btn-primary btn-sm" style="float:right;" data-toggle="modal" data-target="#registerModal" onclick="send()">등록</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-header">품목정보관리</h5>
+                    <div class="card-body table-border-style">
+                        <div class="table-responsive">
+                            <button type="button" class="btn  btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float:left;">선택<span class="sr-only"></span></button>
+                            <div class="dropdown-menu" style="float:left;">
+                                <a class="dropdown-item">품목코드</a>
+                                <a class="dropdown-item">품목명</a>
+                            </div>
+                            <input type="text" class="form-control-sm" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;">
+                            <button class="btn btn-primary btn-sm" type="button" style="float:left;">검색</button>
+                            <button type="button" class="btn btn-primary btn-sm" style="float:right;">전체보기</button>
+                            <table id="table2" class="table table-bordered table-sm" width="100%;">
+                                <tr>
+                                    <td width="2%" align="center" valign="middle">품목코드</td>
+                                    <td width="20%" align="center" valign="middle">품목명</td>
+                                    <td width="5%" align="center" valign="middle">규격</td>
+                                    <td width="5%" align="center" valign="middle">재질</td>
+                                </tr>
+                            </table>
+                            <nav>
+                                <ul class="pagination">
+                                    <li class="page-item disabled"><span class="page-link">이전</span></li>
+                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item active"><span class="page-link">2<span class="sr-only">현재</span></span></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item"><span class="page-link">다음</span></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                <!-- 모달창 -->
+                <div class="card-body">
+                    <div id="registerModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="registerModal" style="display: none;" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="registerSuccess">등록완료</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="mb-0">
+                                        등록된 품목 :
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn  btn-secondary" id="closeModal1">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="modifyModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="registerModal" style="display: none;" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modifySuccess">수정완료</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="mb-0">
+                                        수정된 품목 :
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn  btn-secondary" id="closeModal2">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="deleteModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="registerModal" style="display: none;" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteSuccess">삭제완료</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="mb-0">
+                                        삭제된 품목 :
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn  btn-secondary" id="closeModal3">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 본문내용 종료 -->
+        </div>
+
+        <!-- 메인 종료 -->
+
+        <!-- 모달창 스크립트 -->
+<script>
+    $('#registerModal').on('click', function() {
+        $('#registerModal').modal('show');
+    });
+
+    $('#closeModal1').on('click', function() {
+        $('#registerModal').modal('hide');
+    });
+<!--  -->
+
+    $('#modifyModal').on('click', function() {
+        $('#modifyModal').modal('show');
+    });
+
+    $('#closeModal2').on('click', function() {
+        $('#modifyModal').modal('hide');
+    });
+
+    $('#deleteModal').on('click', function() {
+        $('#deleteModal').modal('show');
+    });
+
+    $('#closeModal3').on('click', function() {
+            $('#deleteModal').modal('hide');
+    });
+
+
+</script>
+        <!-- 품목정보등록 ajax로 데이터 전송 -->
+<script>
+    function send() {
+            var unitCode=$("#unitCode").val();
+            var assyCode=$("#assyCode").val();
+            var partCode=$("#partCode").val();
+            var itemName=$("#itemName").val();
+            var width=$("#width").val();
+            var length=$("#length").val();
+            var height=$("#height").val();
+            var material=$("#material").val();
+
+            var data = {
+                "unitCode": unitCode,
+                "assyCode": assyCode,
+                "partCode": partCode,
+                "itemName": itemName,
+                "width": width,
+                "length": length,
+                "height": height,
+                "material": material
+            };
+
+        $.ajax({
+            type:"POST",
+            url:"/reg/itemInput",
+            contentType:"application/json",
+            data:JSON.stringify(data),
+            success:function(response) {
+                console.log("전송 성공");
+                console.log(response);
+                var newRow = "<tr><td  class='text-center' >" +unitCode + assyCode + partCode + "</td><td  class='text-center' >" + itemName + "</td><td  class='text-center' >" + width +"x"+ length +"x"+ height + "</td><td  class='text-center' >" + material + "</td></tr>";
+                $("#table2").append(newRow);
+                var modalContent =
+                    "<p class='mb-0'>등록된 품목: " + unitCode + assyCode + partCode + " - " + itemName + "</p>";
+                $("#registerModal .modal-body").html(modalContent);
+                $('#registerModal').modal('show');
+            },
+            error:function(error) {
+                console.error("전송 실패");
+                console.error(error);
+            }
+        });
+    }
+</script>
+<script>
+
+</script>
+    </th:block>
+</th:block>
+</html>
