@@ -1,28 +1,38 @@
 package edu.mit.annotation.controller;
 
-import edu.mit.annotation.service.RegisterService;
+import edu.mit.annotation.dto.TestContractDTO;
+import edu.mit.annotation.dto.TestItemDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
+@RequestMapping("/reg")
 public class RegisterController {
 
-    RegisterService service;
-
-    @GetMapping("/reg/item")
+    @GetMapping("/item")
     public void item()   {
     }
 
-    @GetMapping("/reg/contract")
+    @PostMapping("/reg/itemInput")
+    public String itemInput(TestItemDTO dto, Model model)    {
+        model.addAttribute("item", dto);
+        return "redirect:/table2";
+    }
+
+    @PostMapping("/reg/contractInput")
+    public String contractInput(TestContractDTO dto, Model model)    {
+        model.addAttribute("contract", dto);
+        return "redirect:/table2";
+    }
+
+    @GetMapping("/contract")
     public void contract()   {
     }
 
-    @GetMapping("/reg/plan")
+    @GetMapping("/plan")
     public void plan()   {
     }
+
 
 }

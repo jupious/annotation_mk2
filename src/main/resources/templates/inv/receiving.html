@@ -27,10 +27,10 @@
                                         <table class="table table-bordered table-sm">
                                             <thead>
                                                 <tr>
-                                                    <th  class="align-middle" rowspan="2">품목코드</th>
+                                                    <th  class="align-middle" rowspan="2" width="12%">품목코드</th>
                                                     <th  class="align-middle" rowspan="2">품목명</th>
-                                                    <th  class="align-middle" rowspan="2">발주 수량</th>
-                                                    <th colspan="2" >입고 수량</th>
+                                                    <th  class="align-middle" rowspan="2" width="15%">발주 수량</th>
+                                                    <th colspan="2" width="30%">입고 수량</th>
                                                 </tr>
                                                 <tr>
                                                     <th>정품</th>
@@ -98,7 +98,7 @@
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <select name="category" class="btn btn-primary dropdown-toggle dropdown-toggle-split btn-sm">
-                                                <option value="itemName">품목명</option>
+                                                <option value="itemName" >품목명</option>
                                                 <option value="companyName">업체명</option>
                                             </select>
                                         </div>
@@ -154,8 +154,11 @@
             </div>
         </div>
         <script>
-            $('th').addClass('text-center');
-            $('td').addClass('text-center');
+            $(function(){
+                $('th').addClass('text-center');
+                $('td').addClass('text-center');
+            })
+
         </script>
         <script th:inline="javascript">
             $(function(){
@@ -168,7 +171,7 @@
                     console.log("리스트 이거맞냐",dataList);
                     var itemTableStr = "";
                     for(let i = 0; i < dataList.length; i++){
-                        itemTableStr += "<tr><td>"+dataList[i].itemCode+"</td><td>"+dataList[i].itemName+"</td><td>"+dataList[i].poItemQuantity+"</td><td><input type='number' id='fair'"+i+" class='input-border-none' /></td><td><input type='number' id='return'"+i+" class='input-border-none' /></td></tr>";
+                        itemTableStr += "<tr><td class='text-center'>"+dataList[i].itemCode+"</td><td class='text-center'>"+dataList[i].itemName+"</td><td class='text-center' >"+dataList[i].poItemQuantity+"</td><td><input type='number' id='fair'"+i+" class='input-border-none text-center' /></td><td><input type='number' id='return'"+i+" class='input-border-none text-center' /></td></tr>";
                     }
                     $('#itemsTbody').html(itemTableStr);
                     

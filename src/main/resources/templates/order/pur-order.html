@@ -41,7 +41,6 @@
                                         <option selected>조달계획번호</option>
                                         <option>업체명</option>
                                         <option>품목명</option>
-                                        <option>조달납기일</option>
                                         <option>진행단계</option>
                                     </select>
 
@@ -83,10 +82,10 @@
                                                 <label class="custom-control-label" for="customCheck2"></label>
                                             </div>
                                         </td>
-                                        <td>J-00001</td>
+                                        <td>J-00002</td>
                                         <td>(주)그린피앤엘</td>
-                                        <td>모니터</td>
-                                        <td>2019-01-16</td>
+                                        <td>마우스</td>
+                                        <td>2019-01-17</td>
                                         <td>발주진행중</td>
                                     </tr>
                                     <tr>
@@ -96,10 +95,10 @@
                                                 <label class="custom-control-label" for="customCheck3"></label>
                                             </div>
                                         </td>
-                                        <td>J-00001</td>
+                                        <td>J-00003</td>
                                         <td>(주)그린피앤엘</td>
-                                        <td>모니터</td>
-                                        <td>2019-01-16</td>
+                                        <td>키보드</td>
+                                        <td>2019-01-18</td>
                                         <td>발주진행중</td>
                                     </tr>
                                     <tr>
@@ -109,10 +108,10 @@
                                                 <label class="custom-control-label" for="customCheck4"></label>
                                             </div>
                                         </td>
-                                        <td>J-00001</td>
+                                        <td>J-00004</td>
                                         <td>(주)그린피앤엘</td>
-                                        <td>모니터</td>
-                                        <td>2019-01-16</td>
+                                        <td>노트북</td>
+                                        <td>2019-01-19</td>
                                         <td>발주진행중</td>
                                     </tr>
                                     <tr>
@@ -122,11 +121,11 @@
                                                 <label class="custom-control-label" for="customCheck5"></label>
                                             </div>
                                         </td>
-                                        <td>J-00001</td>
+                                        <td>J-00005</td>
                                         <td>(주)그린피앤엘
                                         </td>
-                                        <td>모니터</td>
-                                        <td>2019-01-16</td>
+                                        <td>스피커</td>
+                                        <td>2019-01-22</td>
                                         <td>발주진행중</td>
                                     </tr>
                                     </tbody>
@@ -192,7 +191,8 @@
                                         <th>발주납기일</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="modify">
+
                                     <tr>
                                         <td>
                                             <div class="custom-control custom-checkbox">
@@ -202,10 +202,11 @@
                                         </td>
                                         <td>P-00001</td>
                                         <td>(주)그린피앤엘</td>
-                                        <td>마우스.헤드셋...</td>
+                                        <td>모니터.마우스...</td>
+                                        <td>2019-01-11</td>
                                         <td>2019-01-16</td>
-                                        <td>2019-01-20</td>
                                     </tr>
+
                                     <tr>
                                         <td>
                                             <div class="custom-control custom-checkbox">
@@ -216,8 +217,8 @@
                                         <td>P-00002</td>
                                         <td>(주)그린피앤엘</td>
                                         <td>마우스</td>
-                                        <td>2019-01-16</td>
-                                        <td>2019-01-20</td>
+                                        <td>2019-01-12</td>
+                                        <td>2019-01-17</td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -228,9 +229,9 @@
                                         </td>
                                         <td>P-00003</td>
                                         <td>(주)그린피앤엘</td>
-                                        <td>마우스</td>
-                                        <td>2019-01-16</td>
-                                        <td>2019-01-20</td>
+                                        <td>키보드</td>
+                                        <td>2019-01-12</td>
+                                        <td>2019-01-18</td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -241,9 +242,9 @@
                                         </td>
                                         <td>P-00004</td>
                                         <td>(주)그린피앤엘</td>
-                                        <td>마우스</td>
-                                        <td>2019-01-16</td>
-                                        <td>2019-01-20</td>
+                                        <td>노트북</td>
+                                        <td>2019-01-13</td>
+                                        <td>2019-01-19</td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -254,9 +255,9 @@
                                         </td>
                                         <td>P-00005</td>
                                         <td>(주)그린피앤엘</td>
-                                        <td>마우스</td>
+                                        <td>스피커</td>
                                         <td>2019-01-16</td>
-                                        <td>2019-01-20</td>
+                                        <td>2019-01-22</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -279,7 +280,14 @@
         </div>
         <script>
             $("#popbtn").on('click',function(){
-              let popOption = "width = 1000px, height = 700px, top = 300px, left = 300px, scrollbars=yes";
+              let popOption = "width = 1200px, height = 800px, top = 400px, left = 400px, scrollbars=yes";
+              let popUrl = '/order/pur-order-pop';
+              window.open(popUrl,'pop',popOption);
+            })
+        </script>
+        <script>
+            $("#modify").on('click',"tr",function(){
+              let popOption = "width = 1200px, height = 800px, top = 400px, left = 400px, scrollbars=yes";
               let popUrl = '/order/pur-order-pop';
               window.open(popUrl,'pop',popOption);
             })
