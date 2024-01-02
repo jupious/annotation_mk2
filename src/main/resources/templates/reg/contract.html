@@ -17,20 +17,38 @@
                                     <td align="center" valign="middle"><div class="custom-file" ><input type="file" class="custom-file-input-sm" id="inputGroupFile01"><label class="custom-file-label" for="inputGroupFile01"></label></div></td>
                                 </tr>
                                 <tr>
-                                    <td bgcolor="#f6f6f6" height="50px;" align="center" valign="middle">업체명</td>
-                                    <td align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;" id="companyName"></td>
+                                    <td bgcolor="#f6f6f6" height="50px;" align="center" valign="middle">사업자번호</td>
+                                    <td align="left" valign="middle">
+                                        <input type="text" style="width:7%; height:100%; border:none;" maxlength="3" id="businessNumber1" list="example2" oninput="updateBusinessNumber(this); displayCompanyName();">  -
+                                        <input type="text" style="width:7%; height:100%; border:none;" maxlength="2" id="businessNumber2">  -
+                                        <input type="text" style="width:7%; height:100%; border:none;" maxlength="5" id="businessNumber3">
+                                        <datalist id="example2">
+                                            <option value="403-81-80895">403-81-80895</option>
+                                            <option value="130-86-14788">130-86-14788</option>
+                                            <option value="442-88-00181">442-88-00181</option>
+                                            <option value="312-81-40374" >312-81-40374</option>
+                                            <option value="615-81-61720">615-81-61720</option>
+                                            <option value="198-81-00081">198-81-00081</option>
+                                            <option value="609-81-33710">609-81-33710</option>
+                                            <option value="114-86-35933">114-86-35933</option>
+                                            <option value="606-85-46077">606-85-46077</option>
+                                            <option value="140-81-69515">140-81-69515</option>
+                                        </datalist>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td bgcolor="#f6f6f6" height="50px;" align="center" valign="middle">사업자번호</td>
-                                    <td align="left" valign="middle"><input type="text" style="width:7%; height:100%; border:none;" maxlength="3" id="businessNumber1">  -  <input type="text" style="width:7%; height:100%; border:none;" maxlength="2" id="businessNumber2">  -  <input type="text" style="width:7%; height:100%; border:none;" maxlength="5" id="businessNumber3"></td>
+                                    <td bgcolor="#f6f6f6" height="50px;" align="center" valign="middle">업체명</td>
+                                    <td align="center" valign="middle">
+                                        <input type="text" style="width:100%; height:100%; border:none;" id="companyName" readonly>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td bgcolor="#f6f6f6" height="50px;" align="center" valign="middle">계좌정보</td>
-                                    <td align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;" id="accountNumber"></td>
+                                    <td align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;" id="accountNumber" readonly></td>
                                 </tr>
                                 <tr>
                                     <td bgcolor="#f6f6f6" height="50px;" align="center" valign="middle">계약번호</td>
-                                    <td align="center" valign="middle"></td>
+                                    <td align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;"  id="cCode"></td>
                                 </tr>
                                 <tr>
                                     <td bgcolor="#f6f6f6" height="50px;" align="center" valign="middle">비고</td>
@@ -39,6 +57,7 @@
                             </table>
                             <button type="submit" class="btn btn-primary btn-sm" style="float:right;" onclick="send()">저장</button>
                             <table id="table1" class="table table-bordered table-sm" width="100%">
+                                <thead>
                                 <tr>
                                     <td bgcolor="#f6f6f6" align='center' valign='middle'>품목코드</td>
                                     <td bgcolor="#f6f6f6" align='center' valign='middle'>품목명</td>
@@ -46,76 +65,18 @@
                                     <td bgcolor="#f6f6f6" align='center' valign='middle'>L/T</td>
                                     <td bgcolor="#f6f6f6" align='center' valign='middle'>세부사항</td>
                                 </tr>
+                                </thead>
+                                <tbody id="contBody">
+                                </tbody>
+                                <tbody>
                                 <tr>
-                                    <td>
-                                        <input type="text" class="input-border-none text-center" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="input-border-none text-center" />
-                                    </td>
-                                    <td>
-                                        <input type="number" class="input-border-none text-center" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="input-border-none text-center" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="input-border-none text-center" />
-                                    </td>
+                                    <td align='center' valign='middle'><input type="text" class="text-center" style="width:100%; height:100%; border:none;" id="itemCode"></td>
+                                    <td align='center' valign='middle'><input type="text" class="text-center" style="width:100%; height:100%; border:none;" id="itemName"></td>
+                                    <td align='center' valign='middle'><input type="text" class="text-center" style="width:100%; height:100%; border:none;" id="price"></td>
+                                    <td align='center' valign='middle'><input type="text" class="text-center" style="width:100%; height:100%; border:none;" id="leadTime"></td>
+                                    <td align='center' valign='middle'><input type="text" class="text-center" style="width:100%; height:100%; border:none;" id="detail"></td>
                                 </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" class="input-border-none text-center" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="input-border-none text-center" />
-                                    </td>
-                                    <td>
-                                        <input type="number" class="input-border-none text-center" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="input-border-none text-center" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="input-border-none text-center" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" class="input-border-none text-center" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="input-border-none text-center" />
-                                    </td>
-                                    <td>
-                                        <input type="number" class="input-border-none text-center" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="input-border-none text-center" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="input-border-none text-center" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" class="input-border-none text-center" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="input-border-none text-center" />
-                                    </td>
-                                    <td>
-                                        <input type="number" class="input-border-none text-center" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="input-border-none text-center" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="input-border-none text-center" />
-                                    </td>
-                                </tr>
-
-
+                                </tbody>
                             </table>
                             <ul class="pagination">
                                 <li class="page-item disabled"><span class="page-link">이전</span></li>
@@ -144,12 +105,13 @@
                             </select>
                             <input type="text" class="form-control-sm" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;">
                             <button class="btn btn-primary btn-sm" type="button" style="float:left;">검색</button>
-                            <button type="button" class="btn btn-primary btn-sm" style="float:right;" id="print" onclick="window.print()">저장 및 인쇄</button>
+                            <button type="button" class="btn btn-primary btn-sm" style="float:right;" id="print" onclick="window.print()">인쇄</button>
                             <button type="button" class="btn btn-primary btn-sm" style="float:right;"data-toggle="modal" data-target="#exampleModalLive">이메일 보내기</button>
                             <button type="button" class="btn btn-danger btn-sm" style="float:right;">미완료건만보기</button>
                             <button type="button" class="btn btn-primary btn-sm" style="float:right;">전체보기</button>
 
                             <table id="table2" class="table table-bordered table-sm" width="100%;">
+                                <thead>
                                 <tr>
                                     <td bgcolor="#f6f6f6" width="1%;"></td>
                                     <td bgcolor="#f6f6f6" width="10%;" align='center' valign='middle'>계약번호</td>
@@ -159,23 +121,25 @@
                                     <td bgcolor="#f6f6f6" width="15%;" align='center' valign='middle'>사업자번호</td>
                                     <td bgcolor="#f6f6f6" width="5%;" align='center' valign='middle'>단가</td>
                                     <td bgcolor="#f6f6f6" width="5%;" align='center' valign='middle'>L/T</td>
-                                    <td bgcolor="#f6f6f6" width="15%;" align='center' valign='middle'>세부사항</td>
                                     <td bgcolor="#f6f6f6" width="5%;" align='center' valign='middle'>계약여부</td>
                                     <td bgcolor="#f6f6f6" width="3%;" align='center' valign='middle'>삭제</td>
                                 </tr>
-                                <tr>
+                                </thead>
+                                <tbody id="itemBody">
+                                <tr th:each="item, itemStat : ${cList}" th:id="${itemStat.index}">
                                     <td align='center' valign='middle'><input type='checkbox' class='checkbox'></td>
-                                    <td>001</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>엠아이티</td>
-                                    <td>123-45-78910</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>완료</td>
-                                    <td align='center' valign='middle'><button class='btn btn-danger btn-sm' style='height:27px;' onclick='deleteRow(this)'>삭제</button></td>
+                                    <td class="text-center" th:text="${item.cCode}"></td>
+                                    <td class="text-center" th:text="${item.itemCode}"></td>
+                                    <td class="text-center" th:text="${item.itemName}"></td>
+                                    <td class="text-center" th:text="${item.compName}"></td>
+                                    <td class="text-center" th:text="${item.compNum}"></td>
+                                    <td class="text-center" th:text="${item.price} == -1 ? '-' : ${item.price}"></td>
+                                    <td class="text-center" th:text="${item.leadTime} == -1 ? '-' : ${item.leadTime} + '일'"></td>
+                                    <td class="text-center" th:text="${item.contDone} ? '완료' : '미완료' "></td>
+                                    <td align='center' valign='middle' class="text-center"><button class='btn btn-danger btn-sm' style='height:27px;' onclick='deleteRow(this)'>삭제</button></td>
                                 </tr>
+                                </tbody>
+
                             </table>
                             <ul class="pagination">
                                 <li class="page-item disabled"><span class="page-link">이전</span></li>
@@ -240,15 +204,15 @@
 
             for (let i = 1; i < rows.length; i++) {
             const cells = rows[i].getElementsByTagName('td');
-            const statusValue = cells[9].textContent.trim();
+            const statusValue = cells[8].textContent.trim();
 
             // 값에 따라 배경색을 변경
             switch (statusValue) {
                 case '완료':
-                cells[9].style.backgroundColor = '#aaffaa'; // 녹색
+                cells[8].style.backgroundColor = '#aaffaa'; // 녹색
                 break;
                 case '미완료':
-                cells[9].style.backgroundColor = '#ffaaaa'; // 빨간색
+                cells[8].style.backgroundColor = '#ffaaaa'; // 빨간색
                 break;
                 default:
                 // 다른 경우에 대한 처리 (여기서는 아무 처리도 하지 않음)
@@ -256,47 +220,123 @@
                 }
             }
         </script>
-<script>
-function deleteRow(btn) {
-  var row = btn.parentNode.parentNode;
-  var table = document.getElementById("table2");
-  table.deleteRow(row.rowIndex);
-}
+        <script>
+            function deleteRow(btn) {
+              var row = btn.parentNode.parentNode;
+              var table = document.getElementById("table2");
+              table.deleteRow(row.rowIndex);
+            }
 
-function send() {
-    var businessNumber1=$("#businessNumber1").val();
-    var businessNumber2=$("#businessNumber2").val();
-    var businessNumber3=$("#businessNumber3").val();
-    var companyName=$("#companyName").val();
-    var accountNumber=$("#businessNumber").val();
-    var cCode=$("#cCode").val();
+            function send() {
+                var businessNumber1=$("#businessNumber1").val();
+                var businessNumber2=$("#businessNumber2").val();
+                var businessNumber3=$("#businessNumber3").val();
+                var itemCode=$("#itemCode").val();
+                var itemName=$("#itemName").val();
+                var companyName=$("#companyName").val();
+                var accountNumber=$("#businessNumber").val();
+                var price=$("#price").val();
+                var leadTime=$("#leadTime").val();
+                var cCode=$("#cCode").val();
 
-    var data = {
-        "businessNumber1" : businessNumber1,
-        "businessNumber2" : businessNumber2,
-        "businessNumber3" : businessNumber3,
-        "companyName" : companyName,
-        "accountNumber" : accountNumber,
-        "cCode" : cCode
-    }
-    $.ajax({
-        type:"POST",
-        url:"/reg/itemInput",
-        contentType:"application/json",
-        data:JSON.stringify(data),
-        success:function(response) {
-            console.log("전송 성공");
-            console.log(response);
-            var newRow = "<tr><td align='center' valign='middle' class='text-center' ><input type='checkbox' class='checkbox'></td><td class='text-center'>" + cCode + "</td><td class='text-center'></td><td class='text-center'></td><td align='center' valign='middle' class='text-center'>" +companyName + "</td><td align='center' valign='middle' class='text-center'>" + businessNumber1 +"-" + businessNumber2 + "-" + businessNumber3 + "</td><td class='text-center'></td><td class='text-center'></td><td class='text-center'></td><td align='center' class='text-center' valign='middle' style='background-Color : #ffaaaa;'>" + "미완료" + "</td><td align='center' valign='middle' class='text-center'><button class='btn btn-danger btn-sm' style='height:27px;' onclick='deleteRow(this)'>삭제</button></td></>tr>";
-            $("#table2").append(newRow);
-    },
-        error:function(error) {
-            console.error("전송 실패");
-            console.error(error);
-        }
-    });
-}
-</script>
+                var data = {
+                    "businessNumber1" : businessNumber1,
+                    "businessNumber2" : businessNumber2,
+                    "businessNumber3" : businessNumber3,
+                    "itemCode" : itemCode,
+                    "itemName" : itemName,
+                    "companyName" : companyName,
+                    "accountNumber" : accountNumber,
+                    "price" : price,
+                    "leadTime" : leadTime,
+                    "cCode" : cCode
+                }
+                $.ajax({
+                    type:"POST",
+                    url:"/reg/itemInput",
+                    contentType:"application/json",
+                    data:JSON.stringify(data),
+                    success:function(response) {
+                        console.log("전송 성공");
+                        console.log(response);
+                        var newRow = "<tr><td align='center' valign='middle'><input type='checkbox' class='checkbox'></td><td class='text-center'>" + cCode + "</td><td class='text-center'>" + itemCode + "</td><td class='text-center'>" + itemName +  "</td><td align='center' valign='middle'  class='text-center'>" +companyName + "</td><td align='center' valign='middle'  class='text-center'>" + businessNumber1 +"-" + businessNumber2 + "-" + businessNumber3 + "</td><td class='text-center'>" + price + "</td><td class='text-center'>" + leadTime + "</td><td align='center' valign='middle' style='background-Color : #aaffaa;' class='text-center'>" + "완료" + "</td><td align='center' valign='middle'  class='text-center'><button class='btn btn-danger btn-sm' style='height:27px;' onclick='deleteRow(this)'>삭제</button></td></tr>";
+                        $("#table2").append(newRow);
+                },
+                    error:function(error) {
+                        console.error("전송 실패");
+                        console.error(error);
+                    }
+                });
+            }
+        </script>
+        <script>
+            function updateBusinessNumber(inputElement) {
+            var inputValue = inputElement.value;
+            var datalist = document.getElementById("example2");
+
+            // datalist의 옵션 중에서 가장 비슷한 값을 찾음
+            var matchedOption = Array.from(datalist.options).find(function (option) {
+              return option.value.includes(inputValue);
+            });
+
+            if (matchedOption) {
+              var businessNumberParts = matchedOption.value.split("-");
+              document.getElementById("businessNumber1").value = businessNumberParts[0];
+              document.getElementById("businessNumber2").value = businessNumberParts[1];
+              document.getElementById("businessNumber3").value = businessNumberParts[2];
+            }
+          }
+        </script>
+        <script>
+            function displayCompanyName() {
+               var businessNumber = document.getElementById('businessNumber1').value+document.getElementById('businessNumber2').value+document.getElementById('businessNumber3').value;
+               var registrationNumber =businessNumber.match(/\d+/);
+
+               if (registrationNumber) {
+                 var companyNames = {
+                   "4038180895": ["(유)길승산업","123456789"],
+                   "1308614788": ["(주) 제이아이테크","49492902"],
+                   "4428800181": ["(주)KDC","484928390"],
+                   "3128140374": ["(주)경도전자","45324353"],
+                   "6158161720": ["(주)경신이티엠","252342123"],
+                   "1988100081": ["(주)그린피앤엘","5523411"],
+                   "6098133710": ["(주)남성기계","2352342"],
+                   "1148635933": ["(주)넥스큐브","12312"],
+                   "6068546077": ["(주)뉴텍웰니스김해지점","3423411"],
+                   "1408169515": ["(주)니즈원","123124"]
+                 };
+
+                 var companyName = companyNames[registrationNumber[0]][0];
+                 var compAccount = companyNames[registrationNumber[0]][1];
+
+                 if (companyName) {
+                   document.getElementById('companyName').value = companyName;
+                   document.getElementById('accountNumber').value = compAccount;
+                 } else {
+                   document.getElementById('companyName').value = '';
+                 }
+               } else {
+                 document.getElementById('companyName').value = '';
+               }
+             }
+        </script>
+        <script th:inline="javascript">
+            var cList = [[${cList}]];
+            var addedList = [];
+            $('#itemBody').on("click","tr",function(){
+                var idx = $(this).attr('id');
+                var thisItem = cList[idx];
+                var appendStr = "";
+            
+                if(!(thisItem.contDone)&&!(addedList.includes(thisItem.itemCode))){
+                    appendStr = "<tr><td>"+thisItem.itemCode+"</td><td>"+thisItem.itemName+"</td><td><input type='text' class='text-center' style='width:100%; height:100%; border:none;' id='price'></td><td><input type='text' class='text-center' style='width:100%; height:100%; border:none;' id='leadTime'></td><td><input type='text' class='text-center' style='width:100%; height:100%; border:none;' id='detail'></td></tr>";
+                    $('#contBody').append(appendStr);
+                    addedList.push(thisItem.itemCode);
+                }
+                
+            })
+
+        </script>
     </th:block>
 </th:block>
 </html>

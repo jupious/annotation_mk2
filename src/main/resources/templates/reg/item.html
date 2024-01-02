@@ -24,7 +24,7 @@
                                             <option value="투입부">투입부</option>
                                         </select>
                                     </td>
-                                    <td align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;"></td>
+                                    <td align="center" valign="middle" colspan="4"><input type="text" style="width:100%; height:100%; border:none;"></td>
                                 </tr>
                                 <tr>
                                     <td width="1%" align="center" valign="middle">중분류</td>
@@ -37,7 +37,7 @@
                                             <option value="커넥터">커넥터</option>
                                         </select>
                                     </td>
-                                    <td align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;"></td>
+                                    <td align="center" valign="middle" colspan="4"><input type="text" style="width:100%; height:100%; border:none;"></td>
                                 </tr>
                                 <tr>
                                     <td width="1%" align="center" valign="middle">소분류</td>
@@ -50,32 +50,28 @@
                                             <option value="CABLE">CABLE</option>
                                         </select>
                                     </td>
-                                    <td align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;"></td>
+                                    <td align="center" valign="middle" colspan="4"><input type="text" style="width:100%; height:100%; border:none;"></td>
                                 </tr>
                                 <tr>
                                     <td bgcolor="#f6f6f6" align="center" valign="middle">품목명</td>
-                                    <td colspan="3" align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;" id="itemName"></td>
+                                    <td colspan="6" align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;" id="itemName"></td>
                                 </tr>
                                 <tr>
-                                    <td bgcolor="#f6f6f6" rowspan="3" align="center" valign="middle">규격<br>(mm)</td>
-                                    <td align="center" valign="middle">가로</td>
-                                    <td align="center" valign="middle"><input type="number" class="text-center" style="width:100%; height:100%; border:none;" id="width"></td>
-                                </tr>
-                                <tr>
-                                    <td align="center" valign="middle">세로</td>
-                                    <td align="center" valign="middle"><input type="number"  class="text-center" style="width:100%; height:100%; border:none;" id="length"></td>
-                                </tr>
-                                <tr>
-                                    <td align="center" valign="middle">높이</td>
-                                    <td align="center" valign="middle"><input type="number"  class="text-center" style="width:100%; height:100%; border:none;" id="height"></td>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle">규격<br>(mm)</td>
+                                    <td align="center" valign="middle" style="width:8%;">가로</td>
+                                    <td><input type="number" style="width: 100%; height:100%; border:none;" id="width"></td>
+                                    <td align="center" valign="middle" style="width:8%;">세로</td>
+                                    <td><input type="number" style="width: 100%; height:100%; border:none;" id="length"></td>
+                                    <td align="center" valign="middle" style="width:8%;">높이</td>
+                                    <td><input type="number" style="width: 100%; height:100%; border:none;" id="height"></td>
                                 </tr>
                                 <tr>
                                     <td bgcolor="#f6f6f6" align="center" valign="middle">재질</td>
-                                    <td colspan="3" align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;" id="material"></td>
+                                    <td colspan="6" align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;" id="material"></td>
                                 </tr>
                                 <tr>
                                     <td bgcolor="#f6f6f6" align="center" valign="middle">도면</td>
-                                    <td colspan="3" align="center" valign="middle"><div class="custom-file" ><input type="file" class="custom-file-input" id="inputGroupFile01"><label class="custom-file-label" for="inputGroupFile01"></label></div></td>
+                                    <td colspan="6" align="center" valign="middle"><div class="custom-file" ><input type="file" class="custom-file-input" id="inputGroupFile01"><label class="custom-file-label" for="inputGroupFile01"></label></div></td>
                                 </tr>
                             </table>
                             <button type="submit" class="btn btn-danger btn-sm" style="float:right;" data-toggle="modal" data-target="#deleteModal">삭제</button>
@@ -99,8 +95,10 @@
                             <input type="text" class="form-control-sm" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;">
                             <button class="btn btn-primary btn-sm" type="button" style="float:left;">검색</button>
                             <button type="button" class="btn btn-primary btn-sm" style="float:right;">전체보기</button>
+                            <button type="button" class="btn btn-danger btn-sm" style="float:right;">리스트에서제거</button>
                             <table id="table2" class="table table-bordered table-sm" width="100%;">
                                 <tr>
+                                    <td width="1%" align="center" valign="middle"></td>
                                     <td width="2%" align="center" valign="middle">품목코드</td>
                                     <td width="20%" align="center" valign="middle">품목명</td>
                                     <td width="5%" align="center" valign="middle">규격</td>
@@ -180,82 +178,85 @@
         <!-- 메인 종료 -->
 
         <!-- 모달창 스크립트 -->
-<script>
-    $('#registerModal').on('click', function() {
-        $('#registerModal').modal('show');
-    });
-
-    $('#closeModal1').on('click', function() {
-        $('#registerModal').modal('hide');
-    });
-<!--  -->
-
-    $('#modifyModal').on('click', function() {
-        $('#modifyModal').modal('show');
-    });
-
-    $('#closeModal2').on('click', function() {
-        $('#modifyModal').modal('hide');
-    });
-
-    $('#deleteModal').on('click', function() {
-        $('#deleteModal').modal('show');
-    });
-
-    $('#closeModal3').on('click', function() {
-            $('#deleteModal').modal('hide');
-    });
-
-
-</script>
-        <!-- 품목정보등록 ajax로 데이터 전송 -->
-<script>
-    function send() {
-            var unitCode=$("#unitCode").val();
-            var assyCode=$("#assyCode").val();
-            var partCode=$("#partCode").val();
-            var itemName=$("#itemName").val();
-            var width=$("#width").val();
-            var length=$("#length").val();
-            var height=$("#height").val();
-            var material=$("#material").val();
-
-            var data = {
-                "unitCode": unitCode,
-                "assyCode": assyCode,
-                "partCode": partCode,
-                "itemName": itemName,
-                "width": width,
-                "length": length,
-                "height": height,
-                "material": material
-            };
-
-        $.ajax({
-            type:"POST",
-            url:"/reg/itemInput",
-            contentType:"application/json",
-            data:JSON.stringify(data),
-            success:function(response) {
-                console.log("전송 성공");
-                console.log(response);
-                var newRow = "<tr><td  class='text-center' >" +unitCode + assyCode + partCode + "</td><td  class='text-center' >" + itemName + "</td><td  class='text-center' >" + width +"x"+ length +"x"+ height + "</td><td  class='text-center' >" + material + "</td></tr>";
-                $("#table2").append(newRow);
-                var modalContent =
-                    "<p class='mb-0'>등록된 품목: " + unitCode + assyCode + partCode + " - " + itemName + "</p>";
-                $("#registerModal .modal-body").html(modalContent);
+        <script>
+            $('#registerModal').on('click', function() {
                 $('#registerModal').modal('show');
-            },
-            error:function(error) {
-                console.error("전송 실패");
-                console.error(error);
-            }
-        });
-    }
-</script>
-<script>
+            });
 
-</script>
+            $('#closeModal1').on('click', function() {
+                $('#registerModal').modal('hide');
+            });
+        <!--  -->
+
+            $('#modifyModal').on('click', function() {
+                $('#modifyModal').modal('show');
+            });
+
+            $('#closeModal2').on('click', function() {
+                $('#modifyModal').modal('hide');
+            });
+
+            $('#deleteModal').on('click', function() {
+                $('#deleteModal').modal('show');
+            });
+
+            $('#closeModal3').on('click', function() {
+                    $('#deleteModal').modal('hide');
+            });
+
+
+        </script>
+        <!-- 품목정보등록 ajax로 데이터 전송 -->
+        <script>
+            function send() {
+                    var unitCode=$("#unitCode").val();
+                    var assyCode=$("#assyCode").val();
+                    var partCode=$("#partCode").val();
+                    var itemName=$("#itemName").val();
+                    var width=$("#width").val();
+                    var length=$("#length").val();
+                    var height=$("#height").val();
+                    var material=$("#material").val();
+
+                    var data = {
+                        "unitCode": unitCode,
+                        "assyCode": assyCode,
+                        "partCode": partCode,
+                        "itemName": itemName,
+                        "width": width,
+                        "length": length,
+                        "height": height,
+                        "material": material
+                    };
+
+                $.ajax({
+                    type:"POST",
+                    url:"/reg/itemInput",
+                    contentType:"application/json",
+                    data:JSON.stringify(data),
+                    success:function(response) {
+                        console.log("전송 성공");
+                        console.log(response);
+                        var newRow = "<tr><td></td><td>" +unitCode + assyCode + partCode + "</td><td>" + itemName + "</td><td>" + width +"x"+ length +"x"+ height + "</td><td>" + material + "</td></tr>";
+                        $("#table2").append(newRow);
+                        var modalContent = "<p class='mb-0'>등록된 품목: " + unitCode + assyCode + partCode + " - " + itemName + "</p>";
+                        $("#registerModal .modal-body").html(modalContent);
+                        $('#registerModal').modal('show');
+
+                    },
+                    error:function(error) {
+                        console.error("전송 실패");
+                        console.error(error);
+                    }
+                });
+            }
+        </script>
+        <script>
+            $('th').addClass('text-center');
+            $('td').addClass('text-center');
+            $('th').addClass('align-middle');
+            $('td').addClass('align-middle');
+        </script>
     </th:block>
 </th:block>
 </html>

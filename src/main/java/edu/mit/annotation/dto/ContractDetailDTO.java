@@ -13,7 +13,9 @@ public class ContractDetailDTO {
     //품목코드
     private String itemCode;
     //L/T
-    private Integer LeadTime;
+    private Integer leadTime;
+    //단가
+    private Integer price;
     //세부내용
     private String detail;
 }

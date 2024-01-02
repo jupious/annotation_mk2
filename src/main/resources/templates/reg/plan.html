@@ -16,10 +16,10 @@
                         <button type="button" class="btn btn-primary btn-sm" style="float:right;">조달계획등록</button>
                         <button type="button" class="btn btn-danger btn-sm" style="float:right;">리스트에서제거</button>
                         <div class="table-responsive">
-                            <table id="table1" class="table table-bordered table-sm" width="100%">
+                            <table id="table1" class="table table-bordered table-sm text-center" width="100%">
                                 <thead>
                                 <tr>
-                                    <th></th>
+                                    <th><input type="checkbox" id="check_all"></th>
                                     <th>품목코드</th>
                                     <th>품목명</th>
                                     <th>소요수량</th>
@@ -58,19 +58,19 @@
                         <input type="text" class="form-control-sm" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;">
                         <button class="btn btn-primary btn-sm" type="button" style="float:left;">검색</button>
                         <button type="button" class="btn  btn-primary btn-sm" style="float:right;" onclick="moveSelectedRows()">리스트에추가</button>
-                        <button type="button" class="btn  btn-danger btn-sm" style="float:right;">미완료건만보기</button>
+                        <button type="button" class="btn  btn-danger btn-sm" style="float:right;">미등록건만보기</button>
                         <button type="button" class="btn  btn-primary btn-sm" style="float:right;">전체보기</button>
                         <div class="table-responsive">
                             <table id="table2" class="table table-bordered table-sm" width="100%">
                                 <thead>
                                 <tr>
-                                    <th></th>
-                                    <th>품목코드</th>
-                                    <th>품목명</th>
-                                    <th>소요수량</th>
-                                    <th>소요예정일</th>
-                                    <th>조달납기일</th>
-                                    <th>진행단계</th>
+                                    <th class="text-center"></th>
+                                    <th class="text-center">품목코드</th>
+                                    <th class="text-center">품목명</th>
+                                    <th class="text-center">소요수량</th>
+                                    <th class="text-center">소요예정일</th>
+                                    <th class="text-center">조달납기일</th>
+                                    <th class="text-center">진행단계</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -81,7 +81,7 @@
                                     <td align="center" valign="middle">00000</td>
                                     <td align="center" valign="middle">0000-00-00</td>
                                     <td align="center" valign="middle">0000-00-00</td>
-                                    <td align="center" valign="middle" >조달미예정</td>
+                                    <td align="center" valign="middle" >조달계획미등록</td>
                                 </tr>
                                 <tr>
                                     <td align="center" valign="middle"><input type="checkbox" class="checkbox"></td>
@@ -99,7 +99,7 @@
                                     <td align="center" valign="middle">22222</td>
                                     <td align="center" valign="middle">0000-00-00</td>
                                     <td align="center" valign="middle">0000-00-00</td>
-                                    <td align="center" valign="middle">조달준비완료</td>
+                                    <td align="center" valign="middle">조달계획등록완료</td>
                                 </tr><tr>
                                     <td align="center" valign="middle"><input type="checkbox" class="checkbox"></td>
                                     <td align="center" valign="middle">44444</td>
@@ -107,9 +107,8 @@
                                     <td align="center" valign="middle">44444</td>
                                     <td align="center" valign="middle">0000-00-00</td>
                                     <td align="center" valign="middle">0000-00-00</td>
-                                    <td align="center" valign="middle">조달진행중</td>
+                                    <td align="center" valign="middle">발주진행중</td>
                                 </tr>
-
                                 </tbody>
                             </table>
                         </div>
@@ -131,58 +130,56 @@
         <!-- 메인 종료 -->
 
         <!-- 스크립트 -->
-<script>
-    function changeProgress(progress) {
-    document.querySelector('.btn-outline-primary').innerHTML = progress + '<span class="sr-only"></span>';
-    }
+        <script>
+            function changeProgress(progress) {
+            document.querySelector('.btn-outline-primary').innerHTML = progress + '<span class="sr-only"></span>';
+            }
 
-    function moveSelectedRows() {
-    const checkboxes = document.querySelectorAll('#table2 .checkbox:checked');
-    const table1Body = document.querySelector('#table1 tbody');
+            function moveSelectedRows() {
+            const checkboxes = document.querySelectorAll('#table2 .checkbox:checked');
+            const table1Body = document.querySelector('#table1 tbody');
 
-    checkboxes.forEach(checkbox => {
-    const row = checkbox.closest('tr');
+            checkboxes.forEach(checkbox => {
+            const row = checkbox.closest('tr');
 
-    if (!row.classList.contains('moved')) {
-        const clonedRow = row.cloneNode(true);
-        clonedRow.querySelector('.checkbox').remove();
-        table1Body.appendChild(clonedRow);
-        row.classList.add('moved');
-        checkbox.checked = false;
-    }
-    });
-}
-</script>
-<script>
-    // JavaScript를 사용하여 각 셀의 값을 확인하고 배경색을 조절
-    const table = document.getElementById('table2');
-    const rows = table.getElementsByTagName('tr');
+            if (!row.classList.contains('moved')) {
+                const clonedRow = row.cloneNode(true);
+                clonedRow.querySelector('.checkbox').remove();
+                table1Body.appendChild(clonedRow);
+                row.classList.add('moved');
+                checkbox.checked = false;
+            }
+            });
+        }
+        </script>
+        <script>
+            const table = document.getElementById('table2');
+            const rows = table.getElementsByTagName('tr');
 
-    for (let i = 1; i < rows.length; i++) {
-      const cells = rows[i].getElementsByTagName('td');
-      const statusValue = cells[6].textContent.trim();
+            for (let i = 1; i < rows.length; i++) {
+              const cells = rows[i].getElementsByTagName('td');
+              const statusValue = cells[6].textContent.trim();
 
-      switch (statusValue) {
-        case '조달완료':
-          cells[6].style.backgroundColor = '#aaffaa'; // 녹색
-          break;
-        case '조달진행중':
-          cells[6].style.backgroundColor = '#aaaaff'; // 노란색
-          break;
-        case '조달준비완료':
-          cells[6].style.backgroundColor = '#f1c40f'; // 주황색
-          break;
-        case '조달미예정':
-          cells[6].style.backgroundColor = '#ffaaaa'; // 빨간색
-          break;
-        default:
-          break;
-      }
-    }
-    </script>
+              switch (statusValue) {
+                case '조달완료':
+                  cells[6].style.backgroundColor = '#aaffaa'; // 녹색
+                  break;
+                case '발주진행중':
+                  cells[6].style.backgroundColor = '#aaaaff'; // 노란색
+                  break;
+                case '조달계획등록완료':
+                  cells[6].style.backgroundColor = '#f1c40f'; // 주황색
+                  break;
+                case '조달계획미등록':
+                  cells[6].style.backgroundColor = '#ffaaaa'; // 빨간색
+                  break;
+                default:
+                  break;
+              }
+            }
+        </script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                // 테이블2의 모든 행에 클릭 이벤트 추가
                 var table2Rows = document.querySelectorAll('#table2 tbody tr');
 
                 table2Rows.forEach(function (row) {
@@ -191,56 +188,66 @@
                     });
                 });
 
-                // 테이블1에 데이터를 표시하는 함수
                 function copyRowToTable1(row) {
-                    // 테이블1의 tbody 요소를 가져옴
                     var table1Body = document.querySelector('#table1 tbody');
 
-                    // tbody가 존재하는지 확인
                     if (table1Body) {
-                        // 클릭한 행의 데이터를 가져와서 새로운 행으로 만듦
                         var newRow = document.createElement('tr');
 
-                        // 첫 번째 셀에 체크박스 추가
                         var checkboxCell = document.createElement('td');
                         var checkbox = document.createElement('input');
                         checkbox.type = 'checkbox';
+                        checkbox.class = 'text-center';
                         checkbox.checked = false;
+                        checkbox.name = 'check';
                         checkboxCell.appendChild(checkbox);
                         newRow.appendChild(checkboxCell);
 
-                        // 테이블2의 2번째, 3번째, 4번째 행의 데이터를 가져와서 2번째, 3번째, 4번째 셀에 추가
                         for (var i = 1; i <= 3; i++) {
                             var newCell = document.createElement('td');
-                            // 클릭한 행의 해당 셀의 데이터를 가져와서 새로운 행에 추가
                             newCell.innerHTML = row.cells[i].innerHTML;
                             newRow.appendChild(newCell);
                         }
 
-                        // 빈 셀을 추가 (5번째, 6번째, 7번째)
                         for (var i = 4; i <= 6; i++) {
                             var newCell = document.createElement('td');
                             newRow.appendChild(newCell);
                         }
 
-                        // 테이블2의 5번째, 6번째 행의 데이터를 가져와서 8번째, 9번째 셀에 추가
                         for (var i = 4; i <= 5; i++) {
                             var newCell = document.createElement('td');
-                            // 클릭한 행의 해당 셀의 데이터를 가져와서 새로운 행에 추가
                             if (row.cells[i]) {
                                 newCell.innerHTML = row.cells[i].innerHTML;
                             }
                             newRow.appendChild(newCell);
                         }
 
-                        // 새로운 행을 테이블1에 추가
                         table1Body.appendChild(newRow);
                     } else {
                         console.error('Table1 tbody not found.');
                     }
                 }
             });
+        </script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                    $("#check_all").click(function() {
+                        if($("#check_all").is(":checked"))
+                            $("input[name=check]").prop("checked", true);
+                        else
+                            $("input[name=check]").prop("checked", false);
+                    });
 
+                    $("input[name=check]").click(function() {
+                        var total = $("input[name=check]").length;
+                        var checked = $("input[name=check]:checked").length;
+
+                        if(total != checked)
+                            $("#check_all").prop("checked", false);
+                        else
+                            $("#check_all").prop("checked", true);
+                    });
+                });
         </script>
     </th:block>
 </th:block>

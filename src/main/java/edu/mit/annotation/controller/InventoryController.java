@@ -167,4 +167,6 @@ public class InventoryController {
         model.addAttribute("partCategories",partCate);
         model.addAttribute("partAmounts",partAmount);
     }
+
+    
 }
