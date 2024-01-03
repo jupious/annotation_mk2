@@ -17,7 +17,7 @@
                 </div>
 
                 <!-- [ basic-table ] start -->
-                <div class="col-xl-10 col-md-12">
+                <div class="col-xl-12">
                     <div class="card">
 
                         <div class="card-header">
@@ -34,22 +34,22 @@
                         <div class="card-body table-border-style">
                             <div class="row">
                                 <div class="col">
-                                    <input class="form-control-sm" type="date"> ~ <input class="form-control-sm" type="date"><button class="btn  btn-primary btn-sm" type="submit">조회</button>
+                                    <input class="form-control-sm" type="date" id="day1" value="2024-01-10"> ~ <input class="form-control-sm" type="date" id="day2" value="2024-02-10">
+                                    &nbsp;<button class="btn  btn-primary btn-sm" type="submit" id="day12btn">조회</button>
                                 </div>
                                 <div class="col-md-auto">
                                     <select id="inputState" class="form-control-sm">
                                         <option selected>조달계획번호</option>
                                         <option>업체명</option>
                                         <option>품목명</option>
-                                        <option>진행단계</option>
                                     </select>
 
-                                    <input type="text" class="form-control-sm" id="inputZip">
+                                    <input type="text" class="form-control-sm">
                                     <button class="btn  btn-primary btn-sm" type="submit">검색</button>
                                 </div>
                             </div>
 
-                            <div class="table-responsive">
+                            <div class="table-responsive" id="jodal">
                                 <table class="table table-bordered table-hover table-sm">
                                     <thead>
                                     <tr>
@@ -72,8 +72,8 @@
                                         <td>J-00001</td>
                                         <td>(주)그린피앤엘</td>
                                         <td>모니터</td>
-                                        <td>2019-01-16</td>
-                                        <td>발주진행중</td>
+                                        <td>2024-01-16</td>
+                                        <td>발주전</td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -85,8 +85,8 @@
                                         <td>J-00002</td>
                                         <td>(주)그린피앤엘</td>
                                         <td>마우스</td>
-                                        <td>2019-01-17</td>
-                                        <td>발주진행중</td>
+                                        <td>2024-01-17</td>
+                                        <td>발주전</td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -96,10 +96,10 @@
                                             </div>
                                         </td>
                                         <td>J-00003</td>
-                                        <td>(주)그린피앤엘</td>
+                                        <td>세방테크</td>
                                         <td>키보드</td>
-                                        <td>2019-01-18</td>
-                                        <td>발주진행중</td>
+                                        <td>2024-01-18</td>
+                                        <td>발주전</td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -109,10 +109,10 @@
                                             </div>
                                         </td>
                                         <td>J-00004</td>
-                                        <td>(주)그린피앤엘</td>
+                                        <td>파인텍</td>
                                         <td>노트북</td>
-                                        <td>2019-01-19</td>
-                                        <td>발주진행중</td>
+                                        <td>2024-01-19</td>
+                                        <td>발주전</td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -122,11 +122,10 @@
                                             </div>
                                         </td>
                                         <td>J-00005</td>
-                                        <td>(주)그린피앤엘
-                                        </td>
+                                        <td>파인텍</td>
                                         <td>스피커</td>
-                                        <td>2019-01-22</td>
-                                        <td>발주진행중</td>
+                                        <td>2024-01-22</td>
+                                        <td>발주전</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -145,7 +144,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-10 col-md-11">
+                <div class="col-xl-12">
                     <div class="card">
                         <div class="card-header">
                             <div class="row">
@@ -154,8 +153,7 @@
                                 </div>
                                 <div class="col-md-auto">
                                     <button type="button" class="btn  btn-primary btn-sm">전송</button>
-                                    <button type="button" class="btn  btn-danger btn-sm">삭제</button>
-                                    <button type="button" class="btn  btn-secondary btn-sm" id="printbtn">출력</button>
+                                    <button type="button" class="btn  btn-danger btn-sm" id="deleteButton">삭제</button>
                                 </div>
                             </div>
 
@@ -163,7 +161,8 @@
                         <div class="card-body table-border-style">
                             <div class="row">
                                 <div class="col">
-                                    <input class="form-control-sm" type="date"> ~ <input class="form-control-sm" type="date"><button class="btn  btn-primary btn-sm" type="submit">조회</button>
+                                    <input class="form-control-sm" type="date" id="day3"  value="2024-01-10"> ~ <input class="form-control-sm" type="date" id="day4"  value="2024-02-10">
+                                    &nbsp;<button class="btn  btn-primary btn-sm" type="submit" id="day34btn">조회</button>
                                 </div>
                                 <div class="col-md-auto">
                                     <select id="inputState1" class="form-control-sm">
@@ -171,7 +170,6 @@
                                         <option>업체명</option>
                                         <option>품목명</option>
                                         <option>발주일</option>
-                                        <option>발주납기일</option>
                                     </select>
 
                                     <input type="text" class="form-control-sm" id="inputZip1">
@@ -179,7 +177,7 @@
                                 </div>
                             </div>
 
-                            <div class="table-responsive">
+                            <div class="table-responsive" id="orderlist">
                                 <table class="table table-bordered table-hover table-sm">
                                     <thead>
                                     <tr>
@@ -189,6 +187,7 @@
                                         <th>품목명</th>
                                         <th>발주일</th>
                                         <th>발주납기일</th>
+                                        <th>프린트</th>
                                     </tr>
                                     </thead>
                                     <tbody id="modify">
@@ -202,9 +201,10 @@
                                         </td>
                                         <td>P-00001</td>
                                         <td>(주)그린피앤엘</td>
-                                        <td>모니터.마우스...</td>
-                                        <td>2019-01-11</td>
-                                        <td>2019-01-16</td>
+                                        <td>모니터.마우스</td>
+                                        <td>2024-01-11</td>
+                                        <td>2024-01-16</td>
+                                        <td><button type="button" class="btn  btn-secondary btn-sm" id="printbtn">출력</button></td>
                                     </tr>
 
                                     <tr>
@@ -215,10 +215,11 @@
                                             </div>
                                         </td>
                                         <td>P-00002</td>
-                                        <td>(주)그린피앤엘</td>
-                                        <td>마우스</td>
-                                        <td>2019-01-12</td>
-                                        <td>2019-01-17</td>
+                                        <td>세방테크</td>
+                                        <td>물품1,물품2,물품3</td>
+                                        <td>2024-01-12</td>
+                                        <td>2024-01-18</td>
+                                        <td><button type="button" class="btn  btn-secondary btn-sm" id="printbtn1">출력</button></td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -228,10 +229,11 @@
                                             </div>
                                         </td>
                                         <td>P-00003</td>
-                                        <td>(주)그린피앤엘</td>
-                                        <td>키보드</td>
-                                        <td>2019-01-12</td>
-                                        <td>2019-01-18</td>
+                                        <td>파인텍</td>
+                                        <td>물품3,물품4,물품5</td>
+                                        <td>2024-01-12</td>
+                                        <td>2024-01-19</td>
+                                        <td><button type="button" class="btn  btn-secondary btn-sm" id="printbtn2">출력</button></td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -241,10 +243,11 @@
                                             </div>
                                         </td>
                                         <td>P-00004</td>
-                                        <td>(주)그린피앤엘</td>
-                                        <td>노트북</td>
-                                        <td>2019-01-13</td>
-                                        <td>2019-01-19</td>
+                                        <td>신성이엔지</td>
+                                        <td>콘센트</td>
+                                        <td>2024-01-13</td>
+                                        <td>2024-01-22</td>
+                                        <td><button type="button" class="btn  btn-secondary btn-sm" id="printbtn3">출력</button></td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -254,10 +257,11 @@
                                             </div>
                                         </td>
                                         <td>P-00005</td>
-                                        <td>(주)그린피앤엘</td>
-                                        <td>스피커</td>
-                                        <td>2019-01-16</td>
-                                        <td>2019-01-22</td>
+                                        <td>한양이엔지</td>
+                                        <td>책상</td>
+                                        <td>2024-01-16</td>
+                                        <td>2024-01-22</td>
+                                        <td><button type="button" class="btn  btn-secondary btn-sm" id="printbtn4">출력</button></td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -279,32 +283,129 @@
             </div>
         </div>
         <script>
-            $("#popbtn").on('click',function(){
-              let popOption = "width = 1200px, height = 800px, top = 400px, left = 400px, scrollbars=yes";
-              let popUrl = '/order/pur-order-pop';
-              window.open(popUrl,'pop',popOption);
-            })
-        </script>
-        <script>
-            $("#modify").on('click',"tr",function(){
-              let popOption = "width = 1200px, height = 800px, top = 400px, left = 400px, scrollbars=yes";
-              let popUrl = '/order/pur-order-pop';
-              window.open(popUrl,'pop',popOption);
-            })
-        </script>
-        <script>
-            $("#printbtn").on('click', function () {
-                let popOption = "width=1000,height=700,top=300,left=300,scrollbars=yes";
-                let popUrl = '/order/pur-order-print';
-                let newWindow = window.open(popUrl, 'pop', popOption);
+            $(document).ready(function() {
+    // id가 'day12btn'인 버튼 클릭 시 이벤트 핸들러
+    $("#day12btn").on('click', function() {
+        var day1 = new Date($("#day1").val());
+        var day2 = new Date($("#day2").val());
 
-                if (newWindow) {
-                    newWindow.onload = function () {
-                        newWindow.print();
-                    };
-                } else {
-                    alert("팝업이 차단되었습니다. 팝업 차단을 해제하고 다시 시도해주세요.");
-                }
+        // day1과 day2가 모두 선택되었는지 확인
+        if ($("#day1").val() === "" || $("#day2").val() === "") {
+            alert("날짜를 모두 선택해주세요.");
+            return; // 날짜를 모두 선택하지 않았을 경우 함수 종료
+        }
+
+        // day1의 날짜가 day2의 날짜보다 큰지 확인
+        if (day1 > day2) {
+            alert("첫 번째 날짜는 두 번째 날짜보다 이후일 수 없습니다.");
+            return; // 날짜가 올바르지 않을 경우 함수 종료
+        }
+
+        // 각 행의 조달납기일을 확인하고, 선택한 기간에 해당하지 않는 행을 숨깁니다.
+        $("#jodal tbody tr").each(function() {
+            var date = new Date($(this).find("td:nth-child(5)").text()); // 각 행의 조달납기일 값을 가져옵니다.
+            if (date >= day1 && date <= day2) {
+                $(this).show(); // 선택한 기간에 해당하는 행은 표시합니다.
+            } else {
+                $(this).hide(); // 선택한 기간에 해당하지 않는 행은 숨깁니다.
+            }
+        });
+    });
+});
+        </script>
+        <script>
+            $(document).ready(function() {
+     // id가 'day34btn'인 버튼 클릭 시 이벤트 핸들러
+     $("#day34btn").on('click', function() {
+         var day3 = new Date($("#day3").val());
+         var day4 = new Date($("#day4").val());
+
+         // day3과 day4가 모두 선택되었는지 확인
+         if ($("#day3").val() === "" || $("#day4").val() === "") {
+             alert("날짜를 모두 선택해주세요.");
+             return; // 날짜를 모두 선택하지 않았을 경우 함수 종료
+         }
+
+         // day3의 날짜가 day4의 날짜보다 큰지 확인
+         if (day3 > day4) {
+             alert("첫 번째 날짜는 두 번째 날짜보다 이후일 수 없습니다.");
+             return; // 날짜가 올바르지 않을 경우 함수 종료
+         }
+
+         // 각 행의 조달납기일을 확인하고, 선택한 기간에 해당하지 않는 행을 숨깁니다.
+         $("#orderlist tbody tr").each(function() {
+             var date = new Date($(this).find("td:nth-child(6)").text()); // 각 행의 조달납기일 값을 가져옵니다.
+             if (date >= day3 && date <= day4) {
+                 $(this).show(); // 선택한 기간에 해당하는 행은 표시합니다.
+             } else {
+                 $(this).hide(); // 선택한 기간에 해당하지 않는 행은 숨깁니다.
+             }
+         });
+     });
+ });
+        </script>
+        <script>
+            $(document).ready(function() {
+                $("#deleteButton").on('click', function() {
+                    let checkedItems = $("input[type='checkbox']:checked");
+                    if (checkedItems.length === 0) {
+                        alert('체크된 항목이 없습니다.');
+                        return;
+                    }
+                    checkedItems.closest('tr').remove();
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function() {
+                $("button[id^='printbtn']").on('click', function() {
+                    let popOption = "width=1000,height=700,top=300,left=300,scrollbars=yes";
+                    let popUrl = '/order/pur-order-print';
+                    let newWindow = window.open(popUrl, 'pop', popOption);
+
+                    if (newWindow) {
+                        newWindow.onload = function() {
+                            newWindow.print();
+                        };
+                    } else {
+                        alert("팝업이 차단되었습니다. 팝업 차단을 해제하고 다시 시도해주세요.");
+                    }
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function() {
+                $("#modify").on('click', 'tr', function(event) {
+                    if ($(event.target).is('td:nth-child(2), td:nth-child(3), td:nth-child(4), td:nth-child(5), td:nth-child(6)')) {
+                        let popOption = "width=1200,height=800,top=400,left=400,scrollbars=yes";
+                        let popUrl = '/order/pur-order-pop';
+                        window.open(popUrl, 'pop', popOption);
+                    }
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function() {
+                $('#popbtn').click(function() {
+                    var checkedRows = $('input[type=checkbox]:checked').closest('tr'); // 체크된 행들 가져오기
+                    var selectedCompanies = checkedRows.find('td:nth-child(3)').map(function() {
+                        return $(this).text(); // 선택된 행들의 회사명 가져오기
+                    }).get();
+
+                    if (selectedCompanies.length > 0) {
+                        var uniqueCompanies = [...new Set(selectedCompanies)]; // 중복 제거된 회사명 배열
+
+                        if (uniqueCompanies.length === 1) { // 하나의 회사만 선택되었을 때
+                            let popOption = "width=1400,height=800,top=400,left=400,scrollbars=yes";
+                            let popUrl = '/order/pur-order-pop';
+                            window.open(popUrl, 'pop', popOption); // 팝업창 열기
+                        } else {
+                            alert("같은 업체를 선택해주세요.");
+                        }
+                    } else {
+                        alert("체크된 항목이 없습니다.");
+                    }
+                });
             });
         </script>
 

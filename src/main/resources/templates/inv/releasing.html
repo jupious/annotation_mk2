@@ -23,8 +23,25 @@
                         <div>
                             <span class="badge badge-primary">생산일자 선택</span>
                         </div>
-                        <input type="date" class="form-control-sm" value="2023-12-01">
-                        <button class="btn  btn-primary btn-sm">조회</button>
+                        <div class="row">
+                            <div class="col">
+                                <input type="date" class="form-control-sm" value="2023-12-01"> ~
+                                <input type="date" class="form-control-sm" value="2024-01-01">
+                                <button class="btn  btn-primary btn-sm">조회</button>
+                            </div>
+                            <div class="col-md-auto">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <select name="category" class="btn btn-primary dropdown-toggle dropdown-toggle-split btn-sm">
+                                            <option value="itemName" >품목명</option>
+                                            <option value="productName">제품명</option>
+                                        </select>
+                                    </div>
+                                    <input type="text" class="form-control-sm" aria-label="Text input with dropdown button">
+                                    <button id="searchBtn" class="btn btn-primary btn-sm"><i class="feather icon-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col">
                                 <div class="table-responsive">
@@ -33,16 +50,22 @@
                                         <tr>
                                             <th>품목코드</th>
                                             <th>품목명</th>
+                                            <th>제품명</th>
+                                            <th>생산일자</th>
                                             <th>재고수량</th>
                                             <th>출고수량</th>
+                                            <th width="5%">출고여부</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <tr th:each="item : ${releaseList}">
-                                            <td width="10%" th:text="${item.itemCode}">품목코드</td>
+                                            <td width="13%" th:text="${item.itemCode}">품목코드</td>
                                             <td th:text="${item.itemName}">밀가루</td>
-                                            <td width="15%" th:text="${item.invQuantity}">1231241</td>
-                                            <td width="15%"><input type="number" class="input-border-none" th:value="${item.releaseQuantity}"/></td>
+                                            <td th:text="${item.product}">제품</td>
+                                            <td width="18%" th:text="${#dates.format(item.prodDate,'yyyy-MM-dd')}"></td>
+                                            <td width="15%" class="itemQuantity" th:text="${item.invQuantity}">1231241</td>
+                                            <td width="15%"><input type="number" class="input-border-none releaseQuantity" th:value="${item.releaseQuantity}"/></td>
+                                            <td class="isReleased">출고 전</td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -68,7 +91,7 @@
                                 </div>
                             </div>
                             <div class="col-md-auto">
-                                <button class="btn btn-primary">저장</button>
+                                <button class="btn btn-primary" id="saveBtn">저장</button>
                             </div>
                         </div>
                     </div>
@@ -80,6 +103,27 @@
             $('th').addClass('text-center');
             $('td').addClass('text-center');
             $('input').addClass('text-center');
+        </script>
+        <script>
+            $('#saveBtn').on("click",function(){
+                $('.itemQuantity').each(function(){
+                    let iQ = $(this).text();
+                    iQ = parseInt(iQ);
+                    let rQ = $(this).next().children().val();
+                    // if((iQ-rQ)>=0){
+                    //     $(this).text(iQ-rQ);
+                    // }else{
+                    //     alert('현재 재고량보다 출고량이 많습니다.');
+                    //     return;
+                    // }
+                })
+                $('.releaseQuantity').each(function(){
+                    $(this).val(0);
+                })
+                $('.isReleased').each(function(){
+                    $(this).text('출고완료');
+                })
+            })
         </script>
     </th:block>
 </th:block>

@@ -23,21 +23,21 @@
                                         <input type="text" style="width:7%; height:100%; border:none;" maxlength="2" id="businessNumber2">  -
                                         <input type="text" style="width:7%; height:100%; border:none;" maxlength="5" id="businessNumber3">
                                         <datalist id="example2">
-                                            <option value="403-81-80895">403-81-80895</option>
-                                            <option value="130-86-14788">130-86-14788</option>
-                                            <option value="442-88-00181">442-88-00181</option>
-                                            <option value="312-81-40374" >312-81-40374</option>
-                                            <option value="615-81-61720">615-81-61720</option>
-                                            <option value="198-81-00081">198-81-00081</option>
-                                            <option value="609-81-33710">609-81-33710</option>
-                                            <option value="114-86-35933">114-86-35933</option>
-                                            <option value="606-85-46077">606-85-46077</option>
-                                            <option value="140-81-69515">140-81-69515</option>
+                                            <option value="403-81-80895">(유)길승산업</option>
+                                            <option value="130-86-14788">(주)제이아이테크</option>
+                                            <option value="442-88-00181">(주)KDC</option>
+                                            <option value="312-81-40374" >(주)경도전자</option>
+                                            <option value="615-81-61720">(주)경신이티엠</option>
+                                            <option value="198-81-00081">(주)그린피엔엘</option>
+                                            <option value="609-81-33710">(주)남성기계</option>
+                                            <option value="114-86-35933">(주)넥스큐브</option>
+                                            <option value="606-85-46077">(주)뉴텍웰니스김해지점</option>
+                                            <option value="140-81-69515">(주)니즈원</option>
                                         </datalist>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td bgcolor="#f6f6f6" height="50px;" align="center" valign="middle">업체명</td>
+                                    <td bgcolor="#f6f6f6" height="50px;" align="center" valign="middle" >업체명</td>
                                     <td align="center" valign="middle">
                                         <input type="text" style="width:100%; height:100%; border:none;" id="companyName" readonly>
                                     </td>
@@ -55,14 +55,21 @@
                                     <td align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;" id="etc"></td>
                                 </tr>
                             </table>
-                            <button type="submit" class="btn btn-primary btn-sm" style="float:right;" onclick="send()">저장</button>
+                            <div class="row">
+                                <div class="col"></div>
+                                <div class="col-md-auto">
+                                    <button type="submit" class="btn btn-primary btn-sm"  onclick="send()" id="save">저장</button>
+                                    <button type="submit" class="btn btn-danger btn-sm"  onclick="send()" id="cancle">취소</button>
+                                </div>
+                            </div>
+                           
                             <table id="table1" class="table table-bordered table-sm" width="100%">
                                 <thead>
                                 <tr>
                                     <td bgcolor="#f6f6f6" align='center' valign='middle'>품목코드</td>
                                     <td bgcolor="#f6f6f6" align='center' valign='middle'>품목명</td>
                                     <td bgcolor="#f6f6f6" align='center' valign='middle'>단가</td>
-                                    <td bgcolor="#f6f6f6" align='center' valign='middle'>L/T</td>
+                                    <td bgcolor="#f6f6f6" align='center' valign='middle'>L/T(일)</td>
                                     <td bgcolor="#f6f6f6" align='center' valign='middle'>세부사항</td>
                                 </tr>
                                 </thead>
@@ -81,7 +88,7 @@
                             <ul class="pagination">
                                 <li class="page-item disabled"><span class="page-link">이전</span></li>
                                 <li class="page-item"><a class="page-link" href="#!">1</a></li>
-                                <li class="page-item active"><span class="page-link">2<span class="sr-only">(current)</span></span>
+                                <li class="page-item"><span class="page-link">2<span class="sr-only">(current)</span></span>
                                 </li>
                                 <li class="page-item"><a class="page-link" href="#!">3</a></li>
                                 <li class="page-item"><a class="page-link" href="#!">다음</a></li>
@@ -98,10 +105,10 @@
                         <div class="table-responsive">
                             <select name="진행단계" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" style="float:left;">
                                 <option value="">선택</option>
-                                <option value="조달미예정">조달미예정</option>
-                                <option value="조달준비완료">조달준비완료</option>
-                                <option value="조달진행중">조달진행중</option>
-                                <option value="조달완료">조달완료</option>
+                                <option value="조달미예정">품목명</option>
+                                <option value="조달준비완료">업체명</option>
+                                <option value="조달진행중">사업자번호</option>
+                                <option value="조달완료">계약번호</option>
                             </select>
                             <input type="text" class="form-control-sm" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;">
                             <button class="btn btn-primary btn-sm" type="button" style="float:left;">검색</button>
@@ -120,7 +127,7 @@
                                     <td bgcolor="#f6f6f6" width="15%;" align='center' valign='middle'>업체명</td>
                                     <td bgcolor="#f6f6f6" width="15%;" align='center' valign='middle'>사업자번호</td>
                                     <td bgcolor="#f6f6f6" width="5%;" align='center' valign='middle'>단가</td>
-                                    <td bgcolor="#f6f6f6" width="5%;" align='center' valign='middle'>L/T</td>
+                                    <td bgcolor="#f6f6f6" width="5%;" align='center' valign='middle'>L/T(일)</td>
                                     <td bgcolor="#f6f6f6" width="5%;" align='center' valign='middle'>계약여부</td>
                                     <td bgcolor="#f6f6f6" width="3%;" align='center' valign='middle'>삭제</td>
                                 </tr>
@@ -129,13 +136,13 @@
                                 <tr th:each="item, itemStat : ${cList}" th:id="${itemStat.index}">
                                     <td align='center' valign='middle'><input type='checkbox' class='checkbox'></td>
                                     <td class="text-center" th:text="${item.cCode}"></td>
-                                    <td class="text-center" th:text="${item.itemCode}"></td>
+                                    <td class="text-center lowItemCode" th:text="${item.itemCode}"></td>
                                     <td class="text-center" th:text="${item.itemName}"></td>
-                                    <td class="text-center" th:text="${item.compName}"></td>
-                                    <td class="text-center" th:text="${item.compNum}"></td>
-                                    <td class="text-center" th:text="${item.price} == -1 ? '-' : ${item.price}"></td>
-                                    <td class="text-center" th:text="${item.leadTime} == -1 ? '-' : ${item.leadTime} + '일'"></td>
-                                    <td class="text-center" th:text="${item.contDone} ? '완료' : '미완료' "></td>
+                                    <td class="text-center compName" th:text="${item.compName}"></td>
+                                    <td class="text-center compNum" th:text="${item.compNum}"></td>
+                                    <td class="text-center regedPrice" th:text="${item.price} == -1 ? '-' : ${item.price}"></td>
+                                    <td class="text-center regedLT" th:text="${item.leadTime} == -1 ? '-' : ${item.leadTime} + '일'"></td>
+                                    <td class="text-center isDone" th:text="${item.contDone} ? '완료' : '미완료' "></td>
                                     <td align='center' valign='middle' class="text-center"><button class='btn btn-danger btn-sm' style='height:27px;' onclick='deleteRow(this)'>삭제</button></td>
                                 </tr>
                                 </tbody>
@@ -144,7 +151,7 @@
                             <ul class="pagination">
                                 <li class="page-item disabled"><span class="page-link">이전</span></li>
                                 <li class="page-item"><a class="page-link" href="#!">1</a></li>
-                                <li class="page-item active"><span class="page-link">2<span class="sr-only">(current)</span></span>
+                                <li class="page-item"><span class="page-link">2<span class="sr-only">(current)</span></span>
                                 </li>
                                 <li class="page-item"><a class="page-link" href="#!">3</a></li>
                                 <li class="page-item"><a class="page-link" href="#!">다음</a></li>
@@ -221,13 +228,19 @@
             }
         </script>
         <script>
+            //send잠시 이거로 바꿉니다 시연용
+            function send(){
+                console.log("전송 못하지롱");
+            }
+        </script>
+        <script>
             function deleteRow(btn) {
               var row = btn.parentNode.parentNode;
               var table = document.getElementById("table2");
               table.deleteRow(row.rowIndex);
             }
 
-            function send() {
+            function send1() {
                 var businessNumber1=$("#businessNumber1").val();
                 var businessNumber2=$("#businessNumber2").val();
                 var businessNumber3=$("#businessNumber3").val();
@@ -270,6 +283,53 @@
             }
         </script>
         <script>
+            $('#save').on("click",function(){
+
+                $('.selectedItem').each(function(idx,val){
+                    //if(($(this).children('.price').text()!="")&&($(this).children('.leadTime').text()!="")){
+                        let ic = $(this).children('.itemCode').text();
+                        let iprice = $(this).children('.price').children().val();
+                        let ilt = $(this).children('.leadTime').children().val();
+                        console.log('단가',iprice,'lt',ilt);
+                        let compName = $('#companyName').val();
+                        let compNum = $('#businessNumber1').val()+"-"+$('#businessNumber2').val()+"-"+$('#businessNumber3').val();
+                        $('#itemBody').children('tr').each(function(){
+                            if($(this).children('.lowItemCode').text() == ic){
+                                $(this).children('.isDone').text('완료');
+                                $(this).children('.isDone').css('background-color','#aaffaa');
+                                $(this).children('.compName').text(compName);
+                                $(this).children('.compNum').text(compNum);
+                                $(this).children('.regedPrice').text(iprice);
+                                $(this).children('.regedLT').text(ilt);
+                                console.log("완료처리함",ic);
+                               
+                            }
+                        })
+                    //}
+
+                })
+                clearInput();
+
+            })
+            $('#cancle').on("click",function(){
+                $('.selectedItem').each(function(){
+                    addedList = addedList.filter(e => e != $(this).children('.itemCode').text());
+                })
+                clearInput();
+            })
+
+            function clearInput(){
+               
+                $('#contBody').empty();
+                $('#businessNumber1').val('');
+                $('#businessNumber2').val('');
+                $('#businessNumber3').val('');
+                $('#companyName').val('');
+                $('#accountNumber').val('');
+               
+            }
+        </script>
+        <script>
             function updateBusinessNumber(inputElement) {
             var inputValue = inputElement.value;
             var datalist = document.getElementById("example2");
@@ -295,7 +355,7 @@
                if (registrationNumber) {
                  var companyNames = {
                    "4038180895": ["(유)길승산업","123456789"],
-                   "1308614788": ["(주) 제이아이테크","49492902"],
+                   "1308614788": ["(주)제이아이테크","49492902"],
                    "4428800181": ["(주)KDC","484928390"],
                    "3128140374": ["(주)경도전자","45324353"],
                    "6158161720": ["(주)경신이티엠","252342123"],
@@ -329,7 +389,7 @@
                 var appendStr = "";
             
                 if(!(thisItem.contDone)&&!(addedList.includes(thisItem.itemCode))){
-                    appendStr = "<tr><td>"+thisItem.itemCode+"</td><td>"+thisItem.itemName+"</td><td><input type='text' class='text-center' style='width:100%; height:100%; border:none;' id='price'></td><td><input type='text' class='text-center' style='width:100%; height:100%; border:none;' id='leadTime'></td><td><input type='text' class='text-center' style='width:100%; height:100%; border:none;' id='detail'></td></tr>";
+                    appendStr = "<tr class = 'selectedItem'><td class='itemCode'>"+thisItem.itemCode+"</td><td>"+thisItem.itemName+"</td><td class='price'><input type='number' class='text-center required' style='width:100%; height:100%; border:none;'></td><td class='leadTime'><input type='number' class='text-center required' style='width:100%; height:100%; border:none;'></td><td><input type='text' class='text-center' style='width:100%; height:100%; border:none;' id='detail'></td></tr>";
                     $('#contBody').append(appendStr);
                     addedList.push(thisItem.itemCode);
                 }

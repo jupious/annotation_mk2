@@ -17,7 +17,7 @@
                 </div>
 
                 <!-- [ basic-table ] start -->
-                <div class="col-xl-10 col-md-11">
+                <div class="col-xl-12" id="getdata">
                     <div class="card">
 
                         <div class="card-header">
@@ -38,12 +38,19 @@
                                     <button id="removebutton" type="button" class="btn  btn-danger btn-sm">취소</button>
                                     <script>
                                         document.getElementById('removebutton').addEventListener('click', function() {
-                                          var table = document.getElementById('table1');
-                                          var cellsToRemove = table.querySelectorAll('td');
+                                            var table1 = document.getElementById('table1');
+                                            var cellsToRemove1 = table1.querySelectorAll('td');
 
-                                          cellsToRemove.forEach(function(cell) {
-                                            cell.innerHTML = '';
-                                          });
+                                            var table2 = document.getElementById('table2');
+                                            var cellsToRemove2 = table2.querySelectorAll('td');
+
+                                            cellsToRemove1.forEach(function(cell) {
+                                                cell.innerHTML = '';
+                                            });
+
+                                            cellsToRemove2.forEach(function(cell) {
+                                                cell.innerHTML = '';
+                                            });
                                         });
                                     </script>
                                 </div>
@@ -60,26 +67,26 @@
                                     </tr>
                                     </thead>
                                     <tbody >
-                                    <tr>
+                                    <tr >
                                         <th>발주번호</th>
-                                        <td colspan="3"><span th:text="${OrderDTO.poCode}"></span></td>
+                                        <td colspan="3" th:text="${orderList[0].poCode}"></td>
 
                                     </tr>
                                     <tr>
                                         <th>발주일</th>
-                                        <td><span th:text="${OrderDTO.orderDate}"></span></td>
+                                        <td th:text="${orderList[0].orderDate}"></td>
                                         <th>발주납기일</th>
-                                        <td><span th:text="${OrderDTO.deldate}"></span></td>
+                                        <td th:text="${orderList[0].delDate}"></td>
                                     </tr>
                                     <tr>
                                         <th>업체명</th>
-                                        <td><span th:text="${OrderDTO.comName}"></span></td>
+                                        <td th:text="${orderList[0].comName}"></td>
                                         <th>사업자번호</th>
-                                        <td><span th:text="${OrderDTO.businessNum}"></span></td>
+                                        <td th:text="${orderList[0].businessNum}"></td>
                                     </tr>
                                     <tr>
                                         <th>담당자</th>
-                                        <td><span th:text="${OrderDTO.eName}"></span></td>
+                                        <td th:text="${orderList[0].eName}"></td>
 
                                     </tr>
 
@@ -91,6 +98,7 @@
                         <div class="card-body table-border-style">
 
                             <div class="table-responsive">
+
                                 <table class="table table-bordered table-hover table-sm" id="table2">
                                     <thead>
                                     <tr>
@@ -107,29 +115,23 @@
                                         <th>공급가격</th>
                                     </tr>
                                     <tr>
-                                        <td>1</td>
-                                        <td>A21</td>
-                                        <td>의자</td>
-                                        <td>3</td>
-                                        <td>10,500</td>
-                                        <td>31,500</td>
+                                        <td><span th:text="${itemList[0].num}"></span></td>
+                                        <td><span th:text="${itemList[0].iCode}"></span></td>
+                                        <td><span th:text="${itemList[0].iName}"></span></td>
+                                        <td><span th:text="${itemList[0].count}"></span></td>
+                                        <td><span th:text="${itemList[0].unitPrice}"></span></td>
+                                        <td><span th:text="${itemList[0].supPrice}"></span></td>
                                     </tr>
                                     <tr>
-                                        <td>1</td>
-                                        <td>A21</td>
-                                        <td>의자</td>
-                                        <td>3</td>
-                                        <td>10,500</td>
-                                        <td>31,500</td>
+                                        <td><span th:text="${itemList[1].num}"></span></td>
+                                        <td><span th:text="${itemList[1].iCode}"></span></td>
+                                        <td><span th:text="${itemList[1].iName}"></span></td>
+                                        <td><span th:text="${itemList[1].count}"></span></td>
+                                        <td><span th:text="${itemList[1].unitPrice}"></span></td>
+                                        <td><span th:text="${itemList[1].supPrice}"></span></td>
                                     </tr>
                                     </tbody>
-                                    <script>
-                                        $(document).ready(function() {
-                                            $("#removeButton").click(function() {
-                                                $("#table1 td").empty();
-                                            });
-                                        });
-                                    </script>
+
                                 </table>
                             </div>
 
@@ -171,10 +173,10 @@
                                                 <label class="custom-control-label" for="customCheckC1"></label>
                                             </div>
                                         </td>
-                                        <td>1</td>
-                                        <td><input type="date"></td>
-                                        <td><input class="input-border-none" type="text"></td>
-                                        <td><input class="input-border-none" type="text"></td>
+                                        <td><span th:text="${checkList[0].num}"></span></td>
+                                        <td><input type="date" th:value="${checkList[0].checkDate}" /></td>
+                                        <td><input class="input-border-none" th:value="${checkList[0].result}" type="text"></td>
+                                        <td><input class="input-border-none" th:value="${checkList[0].sum}" type="text"></td>
                                         <td><input class="input-border-none" type="text"></td>
                                     </tr>
                                     <tr>
@@ -197,7 +199,7 @@
                     </div>
                 </div>
 
-                <div class="col-xl-10 col-md-11">
+                <div class="col-xl-12">
                     <div class="card">
                         <div class="card-header">
                             <div class="row">
@@ -211,7 +213,7 @@
                             <div class="row">
                                 <div class="col">
                                     <!-- 날짜 입력과 조회 버튼 -->
-                                    <input class="form-control-sm" type="date"> ~ <input class="form-control-sm" type="date">
+                                    <input class="form-control-sm" type="date" value="2024-01-20"> ~ <input class="form-control-sm" type="date" value="2024-02-20">
                                     <button class="btn btn-primary btn-sm" type="submit">조회</button>
                                 </div>
 
@@ -250,7 +252,7 @@
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-bordered table-hover table-sm">
+                                <table class="table table-bordered table-hover table-sm" id="table3">
                                     <thead>
                                     <tr>
                                         <!--                                        <th></th>-->
@@ -263,56 +265,61 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr onclick="refreshPage()">
+                                    <tr th:each="order : ${orderList}" onclick="refreshPage()">
+                                        <td th:text="${order.poCode}"></td>
+                                        <td th:text="${order.comName}"></td>
+                                        <td th:text="${order.pName}"></td>
+                                        <td th:text="${order.resultnum}"></td>
+                                        <td>
+                                            <div class="progress-bar progress-bar-striped bg-success"
+                                                 role="progressbar"
+                                                 th:style="'width: ' + ${order.progress} + '%;'"
+                                                 aria-valuenow="${order.progress}"
+                                                 aria-valuemin="0"
+                                                 aria-valuemax="100">
+                                                <span th:text="${order.progress+'%'}"></span></div>
+                                        </td>
+                                        <td th:text="${order.delDate}"></td>
 
-                                        <td><span th:text="${OrderDTO.poCode}"></span></td>
-                                        <td><span th:text="${OrderDTO.comName}"></span></td>
-                                        <td><span th:text="${OrderDTO.pName}"></span></td>
-                                        <td><span th:text="${OrderDTO.resultnum}"></span></td>
-                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 80%;" aria-valuenow=<span th:text="${OrderDTO.progress}"></span> aria-valuemin="0" aria-valuemax="100"><span th:text="${OrderDTO.progress}">%</span></div></td>
-                                        <td><span th:text="${OrderDTO.deldate}"></span></td>
-                                    </tr>
-                                    <script>
-                                        function refreshPage() {
-                                          location.reload();
-                                        }
-                                    </script>
-                                    <tr>
 
-                                        <td>P-00002</td>
-                                        <td>(주)그린피앤엘</td>
-                                        <td>마우스.헤드셋...</td>
-                                        <td>2차완료</td>
-                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 66%;" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100">66%</div></td>
-                                        <td>2019-01-01</td>
                                     </tr>
-                                    <tr>
 
-                                        <td>P-00003</td>
-                                        <td>(주)그린피앤엘</td>
-                                        <td>마우스.헤드셋...</td>
-                                        <td>2차완료</td>
-                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div></td>
-                                        <td>2019-01-01</td>
-                                    </tr>
-                                    <tr>
+                                    <!--                                    <tr>-->
 
-                                        <td>P-00004</td>
-                                        <td>(주)그린피앤엘</td>
-                                        <td>마우스.헤드셋...</td>
-                                        <td>2차완료</td>
-                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0%;" aria-valuenow="00" aria-valuemin="0" aria-valuemax="100">0%</div></td>
-                                        <td>2019-01-01</td>
-                                    </tr>
-                                    <tr>
+                                    <!--                                        <td><span th:text="${order.poCode}"></span></td>-->
+                                    <!--                                        <td><span th:text="${order.comName}"></span></td>-->
+                                    <!--                                        <td><span th:text="${order.pName}"></span></td>-->
+                                    <!--                                        <td><span th:text="${order.resultnum}"></span></td>-->
+                                    <!--                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 66%;" aria-valuenow=<span th:text="${order.progress}"></span> aria-valuemin="0" aria-valuemax="100">66%</div></td>-->
+                                    <!--                                        <td><span th:text="${order.deldate}"></span></td>-->
+                                    <!--                                    </tr>-->
+                                    <!--                                    <tr>-->
 
-                                        <td>P-00005</td>
-                                        <td>(주)그린피앤엘</td>
-                                        <td>마우스.헤드셋...</td>
-                                        <td>2차완료</td>
-                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">80%</div></td>
-                                        <td>2019-01-01</td>
-                                    </tr>
+                                    <!--                                        <td>P-00003</td>-->
+                                    <!--                                        <td>(주)그린피앤엘</td>-->
+                                    <!--                                        <td>마우스.헤드셋...</td>-->
+                                    <!--                                        <td>2차완료</td>-->
+                                    <!--                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div></td>-->
+                                    <!--                                        <td>2019-01-01</td>-->
+                                    <!--                                    </tr>-->
+                                    <!--                                    <tr>-->
+
+                                    <!--                                        <td>P-00004</td>-->
+                                    <!--                                        <td>(주)그린피앤엘</td>-->
+                                    <!--                                        <td>마우스.헤드셋...</td>-->
+                                    <!--                                        <td>2차완료</td>-->
+                                    <!--                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0%;" aria-valuenow="00" aria-valuemin="0" aria-valuemax="100">0%</div></td>-->
+                                    <!--                                        <td>2019-01-01</td>-->
+                                    <!--                                    </tr>-->
+                                    <!--                                    <tr>-->
+
+                                    <!--                                        <td>P-00005</td>-->
+                                    <!--                                        <td>(주)그린피앤엘</td>-->
+                                    <!--                                        <td>마우스.헤드셋...</td>-->
+                                    <!--                                        <td>2차완료</td>-->
+                                    <!--                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">80%</div></td>-->
+                                    <!--                                        <td>2019-01-01</td>-->
+                                    <!--                                    </tr>-->
                                     </tbody>
                                 </table>
                                 <nav aria-label="Page navigation example">
@@ -327,6 +334,14 @@
                                     </ul>
                                 </nav>
                             </div>
+                            <script>
+                                function refreshPage() {
+                                  location.reload();
+                                }
+                            </script>
+
+
+
                         </div>
                     </div>
                 </div>

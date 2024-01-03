@@ -24,7 +24,7 @@
                                             <option value="투입부">투입부</option>
                                         </select>
                                     </td>
-                                    <td align="center" valign="middle" colspan="4"><input type="text" style="width:100%; height:100%; border:none;"></td>
+                                    <td align="center" valign="middle" colspan="4"><input type="text" id="unitWrite" class="itemInputGroup" style="width:100%; height:100%; border:none;"></td>
                                 </tr>
                                 <tr>
                                     <td width="1%" align="center" valign="middle">중분류</td>
@@ -37,7 +37,7 @@
                                             <option value="커넥터">커넥터</option>
                                         </select>
                                     </td>
-                                    <td align="center" valign="middle" colspan="4"><input type="text" style="width:100%; height:100%; border:none;"></td>
+                                    <td align="center" valign="middle" colspan="4"><input type="text" id="assyWrite" class="itemInputGroup" style="width:100%; height:100%; border:none;"></td>
                                 </tr>
                                 <tr>
                                     <td width="1%" align="center" valign="middle">소분류</td>
@@ -50,31 +50,31 @@
                                             <option value="CABLE">CABLE</option>
                                         </select>
                                     </td>
-                                    <td align="center" valign="middle" colspan="4"><input type="text" style="width:100%; height:100%; border:none;"></td>
+                                    <td align="center" valign="middle" colspan="4"><input type="text" id="partWrite" class="itemInputGroup" style="width:100%; height:100%; border:none;"></td>
                                 </tr>
                                 <tr>
                                     <td bgcolor="#f6f6f6" align="center" valign="middle">품목명</td>
-                                    <td colspan="6" align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;" id="itemName"></td>
+                                    <td colspan="6" align="center" valign="middle"><input type="text" class="itemInputGroup" style="width:100%; height:100%; border:none;" id="itemName"></td>
                                 </tr>
                                 <tr>
                                     <td bgcolor="#f6f6f6" align="center" valign="middle">규격<br>(mm)</td>
                                     <td align="center" valign="middle" style="width:8%;">가로</td>
-                                    <td><input type="number" style="width: 100%; height:100%; border:none;" id="width"></td>
+                                    <td><input type="number" class="itemInputGroup" style="width: 100%; height:100%; border:none;" id="width"></td>
                                     <td align="center" valign="middle" style="width:8%;">세로</td>
-                                    <td><input type="number" style="width: 100%; height:100%; border:none;" id="length"></td>
+                                    <td><input type="number" class="itemInputGroup" style="width: 100%; height:100%; border:none;" id="length"></td>
                                     <td align="center" valign="middle" style="width:8%;">높이</td>
-                                    <td><input type="number" style="width: 100%; height:100%; border:none;" id="height"></td>
+                                    <td><input type="number" class="itemInputGroup" style="width: 100%; height:100%; border:none;" id="height"></td>
                                 </tr>
                                 <tr>
                                     <td bgcolor="#f6f6f6" align="center" valign="middle">재질</td>
-                                    <td colspan="6" align="center" valign="middle"><input type="text" style="width:100%; height:100%; border:none;" id="material"></td>
+                                    <td colspan="6" align="center" valign="middle"><input type="text" class="itemInputGroup" style="width:100%; height:100%; border:none;" id="material"></td>
                                 </tr>
                                 <tr>
                                     <td bgcolor="#f6f6f6" align="center" valign="middle">도면</td>
                                     <td colspan="6" align="center" valign="middle"><div class="custom-file" ><input type="file" class="custom-file-input" id="inputGroupFile01"><label class="custom-file-label" for="inputGroupFile01"></label></div></td>
                                 </tr>
                             </table>
-                            <button type="submit" class="btn btn-danger btn-sm" style="float:right;" data-toggle="modal" data-target="#deleteModal">삭제</button>
+                            <button type="submit" class="btn btn-danger btn-sm" style="float:right;" id="clearInput">내용 비우기</button>
                             <button type="submit" class="btn btn-warning btn-sm" style="float:right;" data-toggle="modal" data-target="#modifyModal">수정</button>
                             <button type="submit" class="btn btn-primary btn-sm" style="float:right;" data-toggle="modal" data-target="#registerModal" onclick="send()">등록</button>
                         </div>
@@ -109,7 +109,7 @@
                                 <ul class="pagination">
                                     <li class="page-item disabled"><span class="page-link">이전</span></li>
                                     <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item active"><span class="page-link">2<span class="sr-only">현재</span></span></li>
+                                    <li class="page-item"><span class="page-link">2<span class="sr-only">현재</span></span></li>
                                     <li class="page-item"><a class="page-link" href="#">3</a></li>
                                     <li class="page-item"><span class="page-link">다음</span></li>
                                 </ul>
@@ -208,6 +208,14 @@
         </script>
         <!-- 품목정보등록 ajax로 데이터 전송 -->
         <script>
+            function clearInput(){
+                $('#unitCode option[value=""]').prop('selected','selected').change();
+                $('#assyCode option[value=""]').prop('selected','selected').change();
+                $('#partCode option[value=""]').prop('selected','selected').change();
+                $('.itemInputGroup').each(function(){
+                    $(this).val('');
+                })
+            }
             function send() {
                     var unitCode=$("#unitCode").val();
                     var assyCode=$("#assyCode").val();
@@ -217,6 +225,16 @@
                     var length=$("#length").val();
                     var height=$("#height").val();
                     var material=$("#material").val();
+                    
+                    if(unitCode == "직접입력"){
+                        unitCode = $('#unitWrite').val();
+                    }
+                    if(assyCode == "직접입력"){
+                        assyCode = $('#assyWrite').val();
+                    }
+                    if(partCode == "직접입력"){
+                        partCode = $('#partWrite').val();
+                    }
 
                     var data = {
                         "unitCode": unitCode,
@@ -228,6 +246,8 @@
                         "height": height,
                         "material": material
                     };
+
+                
 
                 $.ajax({
                     type:"POST",
@@ -242,7 +262,7 @@
                         var modalContent = "<p class='mb-0'>등록된 품목: " + unitCode + assyCode + partCode + " - " + itemName + "</p>";
                         $("#registerModal .modal-body").html(modalContent);
                         $('#registerModal').modal('show');
-
+                        clearInput();
                     },
                     error:function(error) {
                         console.error("전송 실패");

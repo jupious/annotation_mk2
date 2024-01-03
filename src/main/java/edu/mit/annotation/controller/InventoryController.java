@@ -106,14 +106,18 @@ public class InventoryController {
         return "/inv/statement-preview";
     }
     @GetMapping("/releasing")
-    public void releasing(Model model){
+    public void releasing(Model model) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         List<ReleaseItemDTO> riDtoList = new ArrayList<>();
         for(int i = 1; i <=7; i++){
             ReleaseItemDTO riDto = ReleaseItemDTO.builder()
                     .itemCode((char)(i+65)+""+i)
                     .itemName("품목명"+i)
+                    .product("제품명"+(i/4+1))
+                    .prodDate(sdf.parse("2023-12-1"))
                     .invQuantity(i*384)
                     .releaseQuantity(i*23)
+                    .needQuantity(i*231)
                     .build();
             riDtoList.add(riDto);
         }

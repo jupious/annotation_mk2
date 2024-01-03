@@ -13,8 +13,8 @@
                                 <h5>▶발주서 작성/수정 </h5>
                             </div>
                             <div class="col-md-auto">
-                                <button type="button" class="btn  btn-primary btn-sm">저장</button>
-                                <button type="button" class="btn  btn-danger btn-sm">취소</button>
+                                <button type="button" class="btn  btn-primary btn-sm" id="saveBtn">저장</button>
+                                <button type="button" class="btn  btn-danger btn-sm" id="backBtn">취소</button>
                             </div>
 
                         </div>
@@ -22,7 +22,7 @@
                     <div class="card-body table-border-style">
 
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover table-sm">
+                            <table class="table table-bordered table-hover table-sm" id="order">
                                 <thead>
                                 <tr>
                                     <th colspan="4">공급자정보</th>
@@ -38,7 +38,7 @@
                                     <th>발주일</th>
                                     <td>2019-02-01</td>
                                     <th>발주납기일</th>
-                                    <td><input type="date"></td>
+                                    <td><input type="date"  value="2024-01-13"></td>
                                 </tr>
                                 <tr>
                                     <th>업체명</th>
@@ -60,10 +60,13 @@
                     <div class="card-body table-border-style">
 
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover table-sm">
+                            <table class="table table-bordered table-hover table-sm" id="item">
                                 <thead>
                                 <tr>
-                                    <th colspan="8">품목정보</th>
+                                    <th colspan="9">품목정보</th>
+                                    <th>
+                                        <button type="button" class="btn btn-danger btn-sm" id="removeBtn">삭제</button>
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -72,9 +75,12 @@
                                     <th>순번</th>
                                     <th>품목코드</th>
                                     <th>품목명</th>
+                                    <th>규격</th>
+                                    <th>재질</th>
                                     <th>수량</th>
                                     <th>단가</th>
                                     <th>공급가격</th>
+                                    <th>비고</th>
                                 </tr>
                                 <tr>
                                     <td>
@@ -83,12 +89,15 @@
                                             <span class="custom-control-label"></span>
                                         </label>
                                     </td>
-                                    <td>1</td>
+                                    <td class="count">1</td>
                                     <td>A21</td>
                                     <td>의자</td>
+                                    <td>50x100x30</td>
+                                    <td>나무</td>
                                     <td><input class="input-border-none" type="number"></td>
                                     <td>10,500</td>
-                                    <td>수량x단가</td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                                 <tr>
                                     <td>
@@ -97,12 +106,15 @@
                                             <span class="custom-control-label"></span>
                                         </label>
                                     </td>
-                                    <td>2</td>
+                                    <td class="count">2</td>
                                     <td>A22</td>
                                     <td>키보드</td>
+                                    <td>70x20x5</td>
+                                    <td>플라스틱</td>
                                     <td><input class="input-border-none" type="number"></td>
                                     <td>100,000</td>
-                                    <td>수량x단가</td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                                 <tr>
                                     <td>
@@ -111,12 +123,15 @@
                                             <span class="custom-control-label"></span>
                                         </label>
                                     </td>
-                                    <td>3</td>
+                                    <td class="count">3</td>
                                     <td>A23</td>
                                     <td>스피커</td>
+                                    <td>40x70x20</td>
+                                    <td>나무</td>
                                     <td><input class="input-border-none" type="number"></td>
                                     <td>80,000</td>
-                                    <td>수량x단가</td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                                 <tr>
                                     <td>
@@ -125,21 +140,25 @@
                                             <span class="custom-control-label"></span>
                                         </label>
                                     </td>
-                                    <td>4</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
                                 </tr>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                <tr id="totalPrice">
+                                    <td colspan="7"></td>
                                     <td>합계</td>
-                                    <td>allsum</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="align-middle text-center">특이사항</td>
+                                    <td colspan="9"><textarea rows="5" style="resize:none; width:100%; border:none;" ></textarea></td>
                                 </tr>
 
                                 </tbody>
@@ -149,6 +168,91 @@
                 </div>
             </div>
         </div>
+        <script>
+            $(document).ready(function() {
+                // 공급가격 합계 계산 및 표시
+                function calculateTotal() {
+                    let total = 0;
+                    $('#item tbody tr').each(function(index) {
+                        if (index > 0 && index !== $('#item tbody tr').length - 2) {
+                            let quantity = $(this).find('input[type="number"]').val();
+                            let unitPrice = $(this).find('td:nth-child(8)').text().replace(',', ''); // 단가 값에서 쉼표 제거
+                            let supplyPrice = 0;
+
+                            if (quantity && unitPrice) {
+                                supplyPrice = parseInt(quantity) * parseInt(unitPrice);
+                                $(this).find('td:nth-child(9)').text(supplyPrice.toLocaleString());
+                                total += supplyPrice;
+                            }
+
+                            // 순번 재설정
+                            $(this).find('.count').text(index);
+                        }
+                    });
+
+                    $('#totalPrice td:nth-child(3)').text(total.toLocaleString());
+                }
+
+                // 페이지 로딩 시 공급가격 합계 계산
+                calculateTotal();
+
+                // 수량이나 단가 입력 시 공급가격 재계산
+                $('#item tbody input[type="number"]').on('input', function() {
+                    calculateTotal();
+                });
+
+                // 삭제 버튼 클릭 시 공급가격 재계산
+                $("#item #removeBtn").on('click', function() {
+                    let checkedItems = $("#item input[type='checkbox']:checked");
+                    if (checkedItems.length === 0) {
+                        alert('체크된 항목이 없습니다.');
+                        return;
+                    }
+                    checkedItems.closest('tr').remove();
+                    calculateTotal(); // 행이 삭제된 후에도 공급가격을 다시 계산
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function() {
+                // 취소 버튼 클릭 시 팝업 닫기
+                $("#backBtn").on('click', function() {
+                    window.close();
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function() {
+    $("#saveBtn").on('click', function() {
+        // 실제 데이터를 저장하는 코드 작성
+
+        // 발주번호와 업체명 가져오기 (예시)
+        const orderNumber = $("th:contains('발주번호')").next().text().trim();
+        const companyName = $("th:contains('업체명')").next().text().trim();
+
+        // 데이터 저장하는 부분 (여기에 실제 저장 로직을 추가해야 합니다.)
+
+        // 알림창에 발주번호와 업체명 표시
+        alert(`[${orderNumber}] ${companyName} 발주서를 저장했습니다.`);
+
+        // 팝업창 닫기
+        window.close();
+    });
+
+    $("#backBtn").on('click', function() {
+        // 팝업창 닫기
+        window.close();
+    });
+});
+        </script>
+        <script>
+            $(function(){
+                $('#item th').addClass('text-center');
+                $('#item td').addClass('text-center');
+                $('th').addClass('align-middle');
+                $('td').addClass('align-middle');
+            })
+        </script>
     </th:block>
 </th:block>
 </html>
