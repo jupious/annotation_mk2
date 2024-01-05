@@ -20,11 +20,22 @@
                         <h5>재고현황 차트</h5>
                     </div>
                     <div class="card-body">
-                        <span class="badge badge-primary">조회 월 선택</span>
+                        <span class="badge badge-primary">조회 일자 선택</span>
                         <div class="row">
                             <div class="col">
                                 <input type="date" class="form-control-sm" value="2023-12-01">
                                 <button class="btn btn-primary btn-sm">조회</button>
+
+                            </div>
+                            <div class="col-7">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="monthlyCheck" checked>
+                                    <label class="custom-control-label" for="monthlyCheck">월별</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="dailyCheck">
+                                    <label class="custom-control-label" for="dailyCheck">일별</label>
+                                </div>
                             </div>
                             <div class="col-md-auto">
                                 <ul class="nav nav-tabs mb-3" role="tablist">

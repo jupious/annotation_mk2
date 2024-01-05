@@ -17,11 +17,91 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5>재고품목</h5>
+                        <h5>기간별 재고</h5>
                     </div>
                     <div class="card-body">
                         <div>
-                          <span class="badge badge-primary">조회 월 선택</span>
+                          <span class="badge badge-primary">조회 기간 선택</span>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <input type="date" class="form-control-sm" value="2023-12"> ~
+                                <input type="date" class="form-control-sm" value="2023-12">
+                                <button class="btn btn-primary btn-sm">조회</button>
+                            </div>
+                            <div class="col-md-auto">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <select name="category" class="btn btn-primary dropdown-toggle dropdown-toggle-split btn-sm">
+                                            <option value="itemName">품목명</option>
+                                            <option value="companyName">재질</option>
+                                        </select>
+                                    </div>
+                                    <input type="text" class="form-control-sm" aria-label="Text input with dropdown button">
+                                    <button class="btn btn-primary btn-sm"><i class="feather icon-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm">
+                                <thead>
+                                <tr>
+                                    <th>품목코드</th>
+                                    <th>품목명</th>
+                                    <th>규격</th>
+                                    <th>재질</th>
+                                    <th>기초 재고</th>
+                                    <th>입고수량</th>
+                                    <th>출고수량</th>
+                                    <th>기말 재고</th>
+                                    <th>재고 금액</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="data : ${invCalc}">
+                                        <td th:text="${data.itemCode}">코오드</td>
+                                        <td th:text="${data.itemName}">이이름</td>
+                                        <td th:text="${data.size}">규우격</td>
+                                        <td th:text="${data.material}">재애질</td>
+                                        <td th:text="${data.originQuantity}">기본재애고</td>
+                                        <td th:text="${data.receiveQuantity}">입고수우량</td>
+                                        <td th:text="${data.releaseQuantity}">출고수우량</td>
+                                        <td th:text="${data.calculatedQuantity}">산출재애고</td>
+                                        <td >1231231</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-end">
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item"><a class="page-link" href="#!">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#!">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#!">3</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#!" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>일별 재고</h5>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <span class="badge badge-primary">조회 날짜 선택</span>
                         </div>
                         <div class="row">
                             <div class="col">
@@ -42,30 +122,32 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover table-sm">
+                            <table class="table table-bordered table-sm">
                                 <thead>
                                 <tr>
                                     <th>품목코드</th>
                                     <th>품목명</th>
                                     <th>규격</th>
                                     <th>재질</th>
-                                    <th>기본 재고(월 초 재고)</th>
+                                    <th>기초 재고</th>
                                     <th>입고수량</th>
                                     <th>출고수량</th>
-                                    <th>산출 재고</th>
+                                    <th>기말 재고</th>
+                                    <th>재고 금액</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="data : ${invCalc}">
-                                        <td th:text="${data.itemCode}">코오드</td>
-                                        <td th:text="${data.itemName}">이이름</td>
-                                        <td th:text="${data.size}">규우격</td>
-                                        <td th:text="${data.material}">재애질</td>
-                                        <td th:text="${data.originQuantity}">기본재애고</td>
-                                        <td th:text="${data.receiveQuantity}">입고수우량</td>
-                                        <td th:text="${data.releaseQuantity}">출고수우량</td>
-                                        <td th:text="${data.calculatedQuantity}">산출재애고</td>
-                                    </tr>
+                                <tr th:each="data : ${invCalc}">
+                                    <td th:text="${data.itemCode}">코오드</td>
+                                    <td th:text="${data.itemName}">이이름</td>
+                                    <td th:text="${data.size}">규우격</td>
+                                    <td th:text="${data.material}">재애질</td>
+                                    <td th:text="${data.originQuantity}">기본재애고</td>
+                                    <td th:text="${data.receiveQuantity}">입고수우량</td>
+                                    <td th:text="${data.releaseQuantity}">출고수우량</td>
+                                    <td th:text="${data.calculatedQuantity}">산출재애고</td>
+                                    <td >1231231</td>
+                                </tr>
                                 </tbody>
                             </table>
                             <nav aria-label="Page navigation">

@@ -18,7 +18,7 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-header">
-                            <h5>입고예정 항목</h5>
+                            <h5>입고 항목</h5>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -27,14 +27,10 @@
                                         <table class="table table-bordered table-sm">
                                             <thead>
                                                 <tr>
-                                                    <th  class="align-middle" rowspan="2" width="12%">품목코드</th>
-                                                    <th  class="align-middle" rowspan="2">품목명</th>
-                                                    <th  class="align-middle" rowspan="2" width="15%">발주 수량</th>
-                                                    <th colspan="2" width="30%">입고 수량</th>
-                                                </tr>
-                                                <tr>
-                                                    <th>정품</th>
-                                                    <th>반품</th>
+                                                    <th  class="align-middle" width="12%">품목코드</th>
+                                                    <th  class="align-middle" >품목명</th>
+                                                    <th  class="align-middle" width="20%">발주 수량</th>
+                                                    <th width="20%">입고 수량</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="itemsTbody">
@@ -43,6 +39,11 @@
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
+                                                </tr>
+                                                <tr >
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
                                                     <td></td>
                                                 </tr>
                                                 <tr >
@@ -50,17 +51,8 @@
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
-                                                    <td></td>
                                                 </tr>
                                                 <tr >
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr >
-                                                    <td></td>
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
@@ -82,11 +74,11 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-header">
-                            <h5>입고 예정 발주</h5>
+                            <h5>입고 예정 품목</h5>
                         </div>
                         <div class="card-body">
                             <div>
-                                <span class="badge badge-primary">납기일 선택</span>
+                                <span class="badge badge-primary">조달납기일 선택</span>
                             </div>
                             <div class="row">
                                 <div class="col">
@@ -99,7 +91,7 @@
                                         <div class="input-group-prepend">
                                             <select name="category" class="btn btn-primary dropdown-toggle dropdown-toggle-split btn-sm">
                                                 <option value="itemName" >품목명</option>
-                                                <option value="companyName">업체명</option>
+                                                <option value="companyName">재질</option>
                                             </select>
                                         </div>
                                         <input type="text" class="form-control-sm" aria-label="Text input with dropdown button">
@@ -111,11 +103,11 @@
                                 <table class="table table-bordered table-hover table-sm">
                                     <thead>
                                         <tr>
-                                            <th class="align-middle" >발주번호</th>
-                                            <th class="align-middle" >업체명</th>
+                                            <th class="align-middle" >품목코드</th>
                                             <th class="align-middle" >품목명</th>
+                                            <th class="align-middle" >재질</th>
                                             <th class="align-middle" >발주일</th>
-                                            <th class="align-middle" >발주 납기</th>
+                                            <th class="align-middle" >조달납기</th>
                                         </tr>
                                     </thead>
                                     <tbody id="poTbody">
@@ -171,7 +163,7 @@
                     console.log("리스트 이거맞냐",dataList);
                     var itemTableStr = "";
                     for(let i = 0; i < dataList.length; i++){
-                        itemTableStr += "<tr><td class='text-center'>"+dataList[i].itemCode+"</td><td class='text-center'>"+dataList[i].itemName+"</td><td class='text-center' >"+dataList[i].poItemQuantity+"</td><td><input type='number' id='fair'"+i+" class='input-border-none text-center' /></td><td><input type='number' id='return'"+i+" class='input-border-none text-center' /></td></tr>";
+                        itemTableStr += "<tr><td class='text-center'>"+dataList[i].itemCode+"</td><td class='text-center'>"+dataList[i].itemName+"</td><td class='text-center' >"+dataList[i].poItemQuantity+"</td><td><input type='number' id='fair'"+i+" class='text-center' /></td></tr>";
                     }
                     $('#itemsTbody').html(itemTableStr);
                     

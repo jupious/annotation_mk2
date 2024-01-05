@@ -52,9 +52,9 @@
                                             <th>품목명</th>
                                             <th>제품명</th>
                                             <th>생산일자</th>
+                                            <th width="15%">소요량</th>
                                             <th>재고수량</th>
                                             <th>출고수량</th>
-                                            <th width="5%">출고여부</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -63,9 +63,9 @@
                                             <td th:text="${item.itemName}">밀가루</td>
                                             <td th:text="${item.product}">제품</td>
                                             <td width="18%" th:text="${#dates.format(item.prodDate,'yyyy-MM-dd')}"></td>
+                                            <td class="isReleased">123</td>
                                             <td width="15%" class="itemQuantity" th:text="${item.invQuantity}">1231241</td>
-                                            <td width="15%"><input type="number" class="input-border-none releaseQuantity" th:value="${item.releaseQuantity}"/></td>
-                                            <td class="isReleased">출고 전</td>
+                                            <td width="15%"><input type="number" class="releaseQuantity" th:value="${item.releaseQuantity}"/></td>
                                         </tr>
                                         </tbody>
                                     </table>

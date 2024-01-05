@@ -66,17 +66,13 @@
                 </table>
                 <table class="table table-bordered table-sm border-dark">
                     <tr class="table-success">
-                        <th rowspan="2" class="align-middle">NO.</th>
-                        <th rowspan="2" class="align-middle">품목코드</th>
-                        <th rowspan="2" class="align-middle">품목명</th>
-                        <th rowspan="2" class="align-middle">단가</th>
-                        <th colspan="2" >수량</th>
-                        <th rowspan="2" class="align-middle">공급가액</th>
-                        <th rowspan="2" class="align-middle">비고</th>
-                    </tr>
-                    <tr class="table-success">
-                        <th>정품</th>
-                        <th>반품</th>
+                        <th class="align-middle">NO.</th>
+                        <th class="align-middle">품목코드</th>
+                        <th class="align-middle">품목명</th>
+                        <th class="align-middle">단가</th>
+                        <th >수량</th>
+                        <th class="align-middle">공급가액</th>
+                        <th class="align-middle">비고</th>
                     </tr>
                     <tr th:each="itemInfo, itemNum : ${itemList}">
                         <td th:text="${itemNum.count}">1</td>
@@ -84,7 +80,6 @@
                         <td th:text="${itemInfo.itemName}">품목이름은 이거임</td>
                         <td th:text="${itemInfo.price}">3000</td>
                         <td th:text="${itemInfo.fairQuantity}">200</td>
-                        <td th:text="${itemInfo.returnQuantity}">12</td>
                         <td th:text="${itemInfo.itemTotalPrice}">600000</td>
                         <td></td>
                     </tr>
