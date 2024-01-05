@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/layout-pop::setContent(~{::content})}">
+    <th:block th:fragment="content">
+        <!-- [ auth-signin ] start -->
+        <div class="auth-wrapper">
+            <div class="auth-content text-center">
+                <div class="card borderless">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="card-body">
+                                <h5 class="mb-3"><strong>구매조달시스템</strong></h5>
+                                <hr>
+                                <div class="form-group mb-3">
+                                    <input type="text" class="form-control" id="userId" placeholder="ID">
+                                </div>
+                                <div class="form-group mb-4">
+                                    <input type="password" class="form-control" id="userPassword" placeholder="Password">
+                                </div>
+                                <button class="btn btn-block btn-primary mb-4" onclick="attemptLogin()">로그인</button>
+                                <hr>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- [ auth-signin ] end -->
+
+        <!-- Required Js -->
+        <script src="assets/js/vendor-all.min.js"></script>
+        <script src="assets/js/plugins/bootstrap.min.js"></script>
+        <script src="assets/js/pcoded.min.js"></script>
+
+        <script>
+            function attemptLogin() {
+                var storedId = "admin";
+                var storedPassword = "123456";
+
+                var enteredId = document.getElementById("userId").value;
+                var enteredPassword = document.getElementById("userPassword").value;
+
+                if (enteredId === storedId && enteredPassword === storedPassword) {
+                    alert("'admin'님 로그인 하였습니다.");
+                    window.location.href = "main";
+                } else {
+                    alert("아이디와 비밀번호를 확인해주세요.");
+                }
+            }
+        </script>
+
+
+    </th:block>
+</th:block>
+
+</html>
