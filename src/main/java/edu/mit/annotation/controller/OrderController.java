@@ -98,6 +98,10 @@ public class OrderController {
 
 
     }
+    @GetMapping("/order/pur-order-content") //발주서 내용
+    public void test3(){
+
+    }
 
     @GetMapping("/order/pur-order-report") //리포트 페이지
     public void test4(){

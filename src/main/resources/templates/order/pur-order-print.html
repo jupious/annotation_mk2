@@ -3,6 +3,7 @@
 <head>
     <title>발주서출력</title>
     <style>
+
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -46,7 +47,8 @@
         }
         textarea {
             width: 100%;
-            resize: vertical;
+            resize: none;
+
         }
         p {
             text-align: right;
@@ -64,6 +66,15 @@
         .two-columns fieldset {
             width: 48%;
             margin: 5px 0;
+        }
+         .buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        .buttons button {
+            margin-left: 10px;
+            padding: 5px 10px;
         }
     </style>
 </head>
@@ -123,14 +134,19 @@
 
     <p>
         특이사항:<br>
-        <textarea id="specialNotes" rows="4" cols="50"></textarea>
+        <textarea id="specialNotes" rows="4" cols="50" readonly ></textarea>
     </p>
 </fieldset>
-
+<script>
+    // 페이지가 로드된 후에 인쇄 명령을 호출하는 함수
+    window.onload = function() {
+        window.print();
+    };
+</script>
 <script>
     <!-- 물품 정보 배열 (테스트 데이터) -->
-  const items = [];
-  for (let i = 1; i <= 3; i++) {
+    const items = [];
+    for (let i = 1; i <= 3; i++) {
       items.push({
           순번: i,
           물품코드: `CODE${i}`,
@@ -142,13 +158,13 @@
           공급가: 0, // 임시 값
           비고: `비고 ${i}`
       });
-  }
+    }
 
-  // 물품 정보 채우기
-  const itemTable = document.getElementById('itemTable');
-  let totalAmount = 0;
+    // 물품 정보 채우기
+    const itemTable = document.getElementById('itemTable');
+    let totalAmount = 0;
 
-  items.forEach(item => {
+    items.forEach(item => {
       item.공급가 = item.수량 * item.단가; // 공급가 계산
       const row = document.createElement('tr');
       // 새로운 열(품목명, 규격, 재질) 추가
@@ -160,7 +176,7 @@
       });
       itemTable.appendChild(row);
       totalAmount += item['공급가'];
-  });
+    });
 
       document.getElementById('totalAmount').innerText = totalAmount.toLocaleString() + '원';
 </script>

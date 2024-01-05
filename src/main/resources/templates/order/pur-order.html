@@ -152,7 +152,6 @@
                                     <h5>구매발주서리스트</h5>
                                 </div>
                                 <div class="col-md-auto">
-                                    <button type="button" class="btn  btn-primary btn-sm">전송</button>
                                     <button type="button" class="btn  btn-danger btn-sm" id="deleteButton">삭제</button>
                                 </div>
                             </div>
@@ -187,10 +186,9 @@
                                         <th>품목명</th>
                                         <th>발주일</th>
                                         <th>발주납기일</th>
-                                        <th>프린트</th>
                                     </tr>
                                     </thead>
-                                    <tbody id="modify">
+                                    <tbody id="content">
 
                                     <tr>
                                         <td>
@@ -204,7 +202,6 @@
                                         <td>모니터.마우스</td>
                                         <td>2024-01-11</td>
                                         <td>2024-01-16</td>
-                                        <td><button type="button" class="btn  btn-secondary btn-sm" id="printbtn">출력</button></td>
                                     </tr>
 
                                     <tr>
@@ -219,7 +216,6 @@
                                         <td>물품1,물품2,물품3</td>
                                         <td>2024-01-12</td>
                                         <td>2024-01-18</td>
-                                        <td><button type="button" class="btn  btn-secondary btn-sm" id="printbtn1">출력</button></td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -233,7 +229,6 @@
                                         <td>물품3,물품4,물품5</td>
                                         <td>2024-01-12</td>
                                         <td>2024-01-19</td>
-                                        <td><button type="button" class="btn  btn-secondary btn-sm" id="printbtn2">출력</button></td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -247,7 +242,6 @@
                                         <td>콘센트</td>
                                         <td>2024-01-13</td>
                                         <td>2024-01-22</td>
-                                        <td><button type="button" class="btn  btn-secondary btn-sm" id="printbtn3">출력</button></td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -261,7 +255,6 @@
                                         <td>책상</td>
                                         <td>2024-01-16</td>
                                         <td>2024-01-22</td>
-                                        <td><button type="button" class="btn  btn-secondary btn-sm" id="printbtn4">출력</button></td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -364,9 +357,10 @@
                     let newWindow = window.open(popUrl, 'pop', popOption);
 
                     if (newWindow) {
-                        newWindow.onload = function() {
-                            newWindow.print();
-                        };
+                        // Commented out the print command to prevent automatic printing
+                        // newWindow.onload = function() {
+                        //     newWindow.print();
+                        // };
                     } else {
                         alert("팝업이 차단되었습니다. 팝업 차단을 해제하고 다시 시도해주세요.");
                     }
@@ -375,10 +369,10 @@
         </script>
         <script>
             $(document).ready(function() {
-                $("#modify").on('click', 'tr', function(event) {
+                $("#content").on('click', 'tr', function(event) {
                     if ($(event.target).is('td:nth-child(2), td:nth-child(3), td:nth-child(4), td:nth-child(5), td:nth-child(6)')) {
                         let popOption = "width=1200,height=800,top=400,left=400,scrollbars=yes";
-                        let popUrl = '/order/pur-order-pop';
+                        let popUrl = '/order/pur-order-content';
                         window.open(popUrl, 'pop', popOption);
                     }
                 });
