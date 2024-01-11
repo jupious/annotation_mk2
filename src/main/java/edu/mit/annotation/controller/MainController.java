@@ -2,6 +2,7 @@ package edu.mit.annotation.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class MainController {
@@ -9,6 +10,10 @@ public class MainController {
     public void mainPortal(){}
 
 
-    @GetMapping("/main/login")
-    public void mainlogin(){}
+    @GetMapping("/login")
+    public String login(){
+        return "/main/login";
+    }
+
+
 }

@@ -1,6 +1,5 @@
 package edu.mit.annotation.dto;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.*;
 
 import java.util.Date;

@@ -11,13 +11,16 @@
                             <div class="card-body">
                                 <h5 class="mb-3"><strong>구매조달시스템</strong></h5>
                                 <hr>
-                                <div class="form-group mb-3">
-                                    <input type="text" class="form-control" id="userId" placeholder="ID">
-                                </div>
-                                <div class="form-group mb-4">
-                                    <input type="password" class="form-control" id="userPassword" placeholder="Password">
-                                </div>
-                                <button class="btn btn-block btn-primary mb-4" onclick="attemptLogin()">로그인</button>
+                                <form action="/login" method="post">
+                                    <p class="form-group mb-3">
+                                        <input type="text" class="form-control" id="username" name="username" placeholder="ID" autofocus>
+                                    </p>
+                                    <p class="form-group mb-4">
+                                        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                                    </p>
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <button class="btn btn-block btn-primary mb-4">로그인</button>
+                                </form>
                                 <hr>
                             </div>
                         </div>
@@ -33,20 +36,7 @@
         <script src="assets/js/pcoded.min.js"></script>
 
         <script>
-            function attemptLogin() {
-                var storedId = "admin";
-                var storedPassword = "123456";
 
-                var enteredId = document.getElementById("userId").value;
-                var enteredPassword = document.getElementById("userPassword").value;
-
-                if (enteredId === storedId && enteredPassword === storedPassword) {
-                    alert("'admin'님 로그인 하였습니다.");
-                    window.location.href = "main";
-                } else {
-                    alert("아이디와 비밀번호를 확인해주세요.");
-                }
-            }
         </script>
 
 

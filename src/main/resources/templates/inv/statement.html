@@ -62,7 +62,7 @@
                                     <td><th:block th:each="itemname : ${purchaseorder.itemNameList}"><span th:text="${itemname} + ','"></span> </th:block> </td>
                                     <td th:text="${#dates.format(purchaseorder.poDate,'yyyy-MM-dd')}"></td>
                                     <td th:text="${#dates.format(purchaseorder.poDueDate,'yyyy-MM-dd')}"></td>
-                                    <td class="print"><button class="btn  btn-secondary btn-sm" th:id="${poStat.index}">발행</button></td>
+                                    <td class="print"><button class="btn  btn-secondary btn-sm print" th:id="${poStat.index}">발행</button></td>
                                     <td >0</td>
                                 </tr>
                                 
@@ -96,7 +96,7 @@
         </div>
         <script>
            
-            $('.btn').on("click",function(){
+            $('.print').on("click",function(){
                 console.log("여기다 애송이",$(this));
                 if(!($(this).hasClass('disabled'))){
                     let popOption = "width = 1550px, height = 900px, top = 300px, left = 300px, scrollbars=yes";
