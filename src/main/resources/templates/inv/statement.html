@@ -25,20 +25,23 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                <input type="date" class="form-control-sm" value="2023-12-01"> ~
-                                <input type="date" class="form-control-sm" value="2023-12-10">
-                                <button class="btn  btn-primary btn-sm">조회</button>
+                                <input type="date" id="sDate" class="form-control-sm" th:value="${defaultStartDate}"> ~
+                                <input type="date" id="eDate" class="form-control-sm" th:value="${defaultEndDate}">
+                                <button class="btn  btn-primary btn-sm" id="dateSearchBtn">조회</button>
                             </div>
                             <div class="col-md-auto">
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
-                                        <select name="category" class="btn btn-primary dropdown-toggle dropdown-toggle-split btn-sm">
-                                            <option value="itemName">품목명</option>
-                                            <option value="companyName">업체명</option>
-                                        </select>
+                                        <form>
+                                            <select id="type" name="category" class="btn btn-primary dropdown-toggle dropdown-toggle-split btn-sm">
+                                                <option value="OC">발주번호</option>
+                                                <option value="IN">품목명</option>
+                                                <option value="CN">업체명</option>
+                                            </select>
+                                            <input type="text" class="form-control-sm" id="searchText" aria-label="Text input with dropdown button">
+                                            <button class="btn btn-primary btn-sm" id="searchBtn"><i class="feather icon-search"></i></button>
+                                        </form>
                                     </div>
-                                    <input type="text" class="form-control-sm" aria-label="Text input with dropdown button">
-                                    <button class="btn btn-primary btn-sm"><i class="feather icon-search"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -56,37 +59,10 @@
                                 </tr>
                                 </thead>
                                 <tbody id = "poTbody">
-                                <tr th:each="purchaseorder,poStat : ${data}">
-                                    <td th:text="${purchaseorder.poCode}"></td>
-                                    <td th:text="${purchaseorder.companyName}"></td>
-                                    <td><th:block th:each="itemname : ${purchaseorder.itemNameList}"><span th:text="${itemname} + ','"></span> </th:block> </td>
-                                    <td th:text="${#dates.format(purchaseorder.poDate,'yyyy-MM-dd')}"></td>
-                                    <td th:text="${#dates.format(purchaseorder.poDueDate,'yyyy-MM-dd')}"></td>
-                                    <td class="print"><button class="btn  btn-secondary btn-sm print" th:id="${poStat.index}">발행</button></td>
-                                    <td >0</td>
-                                </tr>
-                                
-                            
-
                                 </tbody>
                             </table>
                             <nav aria-label="Page navigation">
-                                <ul class="pagination justify-content-end">
-                                    <li class="page-item">
-                                        <a class="page-link" href="#" aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                            <span class="sr-only">Previous</span>
-                                        </a>
-                                    </li>
-                                    <li class="page-item"><a class="page-link" href="#!">1</a></li>
-                                    <li class="page-item"><a class="page-link" href="#!">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#!">3</a></li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="#!" aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                            <span class="sr-only">Next</span>
-                                        </a>
-                                    </li>
+                                <ul class="pagination justify-content-end" id="searchPageList">
                                 </ul>
                             </nav>
                         </div>
@@ -94,22 +70,110 @@
                 </div>
             </div>
         </div>
-        <script>
-           
-            $('.print').on("click",function(){
-                console.log("여기다 애송이",$(this));
-                if(!($(this).hasClass('disabled'))){
-                    let popOption = "width = 1550px, height = 900px, top = 300px, left = 300px, scrollbars=yes";
-                    let popUrl = '/inv/statement-preview/'+$(this).attr('id');
-                    window.open(popUrl,'pop',popOption);
-                }
-                
-            })
-        </script>
        
         <script>
-            $('th').addClass('text-center');
-            $('td').addClass('text-center');
+             var amount = 5;
+             var header = $('meta[name="_csrf_header"]').attr("content");
+            var _csrfToken = $('#_csrf_token').val();
+            var crntPage;
+            $(function(){
+                var criteria = {"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":"IN","keyword":"","pageNum":0,"amount":amount};
+                loadList(criteria);
+            })
+
+            $('#dateSearchBtn').on("click",function(){
+                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount})
+            })
+
+            $('#searchBtn').on("click", function(e){
+                e.preventDefault();
+                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount})
+            })
+
+            $('#prev').on("click",function(){
+                let temp = parseInt(crntPage/10);
+                temp = temp*10;
+                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":temp -1,"amount":amount});
+            })
+
+
+            $('#next').on("click",function(){
+                let temp = parseInt(crntPage/10)+1;
+                temp = temp*10+1;
+                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":temp -1,"amount":amount});
+            })
+
+            $('#poTbody').on("click","button",function(){
+                console.log("여기다 애송이",$(this));
+                if(!($(this).hasClass('disabled'))){
+                    let popOption = "width = 1200px, height = 730px, top = 100px, left = 100px, scrollbars=yes";
+                    let popUrl = '/inv/statement-preview/'+$(this).parent().siblings('.poNum').text();
+                    console.log($(this).parent('.poNum').text());
+                    window.open(popUrl,'pop',popOption);
+                }
+            })
+
+            function loadList(criteria){
+                $.ajax({
+                    type:"get",
+                    url:"/invapi/statement-get-data",
+                    data:criteria,
+                    success:function(res){
+                        console.log("성공, 데이터확인",res);
+                        $('#poTbody').empty();
+                        result = res.dataList;
+                        var rsStr = "";
+                        for(let i = 0; i < result.length; i++){
+                            rsStr += "<tr id ='"+i+"result' class='result'><td class='poNum'>"+result[i].purch_order_number+"</td><td>"+result[i].company_name+"</td><td>"+result[i].item_name_string+"</td><td>"+dateFormatter(result[i].purch_order_date)+"</td><td>"+dateFormatter(result[i].receive_duedate)+"</td><td><button class='btn  btn-secondary btn-sm print' id='"+i+"print'>발행</button></td><td>"+result[i].statement_publish_count+"</td></tr>";
+                        }
+                        $('#poTbody').html(rsStr);
+                        $('th').addClass('text-center');
+                        $('td').addClass('text-center');
+                        console.log("전체페이지 수",res.page_count);
+                        var pageList = res.pageList;
+                        var pageStr ="";
+                        for(let j = 0; j < pageList.length; j++){
+                            pageStr +="<li class='page-item'>";
+                            if(pageList[j] == "prev"){
+                                pageStr += "<a class='page-link' id='prev' aria-label='Previous'><span aria-hidden='true'>&laquo;</span><span class='sr-only'>Previous</span></a>";
+                            }else if(pageList[j]=="next"){
+                                pageStr += "<a class='page-link' id='next' aria-label='Next'><span aria-hidden='true'>&raquo;</span><span class='sr-only'>Next</span></a>";
+                            }else{
+                                pageStr += "<a class='page-link' id='"+pageList[j]+"page'>"+pageList[j]+"</a>";
+                            }
+                            pageStr +="</li>"
+                        }
+                        $('#searchPageList').html(pageStr);
+                        $('#'+res.currentPage+'page').parent().addClass("active");
+                        crntPage = criteria.pageNum + 1;
+                    
+                        makeCenter();
+                    },
+                    error:function(a,b,c){
+                        console.log("에러");
+                        console.log("a",a);
+                        console.log("b",b);
+                        console.log("c",c);
+                    }
+                })
+            }
+
+            function dateFormatter(date){
+                if(date != null){
+                    var d = new Date(date);
+                    let month = d.getMonth()+1;
+                    let year = d.getFullYear();
+                    let day = d.getDate();
+                    return [year,month,day].join('-');
+                }else{
+                    return "-";
+                }
+            }
+
+            function makeCenter(){
+                $('th').addClass('text-center');
+                $('td').addClass('text-center');
+            }
         </script>
     </th:block>
 </th:block>

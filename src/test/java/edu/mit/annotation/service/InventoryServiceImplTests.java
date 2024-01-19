@@ -1,0 +1,64 @@
+package edu.mit.annotation.service;
+
+import edu.mit.annotation.realdto.Criteria;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+@SpringBootTest
+public class InventoryServiceImplTests {
+    @Autowired
+    private InventoryService inventoryService;
+
+
+    @Test
+    public void testSearch() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Criteria cri = Criteria.builder()
+                .pageNum(0)
+                .amount(5)
+                .type("IC")
+                .keyword("%C1%")
+                .startDate(sdf.parse("20240101"))
+                .endDate(sdf.parse("20240321"))
+                .build();
+        System.out.println(inventoryService.searchReceiveItemList(cri));
+        ;
+    }
+
+    @Test
+    public void testGetClosedPO() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Criteria cri = Criteria.builder()
+                .pageNum(0)
+                .amount(5)
+                .type("IN")
+                .keyword("%1%")
+                .startDate(sdf.parse("20240101"))
+                .endDate(sdf.parse("20240321"))
+                .build();
+        System.out.println(inventoryService.getClosedPO(cri));
+    }
+
+    @Test
+    public void testStatementPreview(){
+        System.out.println(inventoryService.getStatement("po-1"));
+    }
+
+    @Test
+    public void testGetReleaseData() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Criteria cri = Criteria.builder()
+                .pageNum(5)
+                .amount(5)
+                .type("IC")
+                .keyword("%C1%")
+                .startDate(sdf.parse("20240101"))
+                .endDate(sdf.parse("20240321"))
+                .build();
+        System.out.println(inventoryService.getReleaseData(cri));
+    }
+}

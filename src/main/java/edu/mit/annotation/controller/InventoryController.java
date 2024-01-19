@@ -1,6 +1,10 @@
 package edu.mit.annotation.controller;
 
+import edu.mit.annotation.realdto.StatementItemsDTO;
+import edu.mit.annotation.realdto.StatementPreviewDTO;
+import edu.mit.annotation.service.InventoryService;
 import edu.mit.annotation.testdto.*;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,119 +13,68 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+
 
 @Controller
 @RequestMapping("/inv")
+@AllArgsConstructor
 public class InventoryController {
 
+    private InventoryService inventoryService;
+
     @GetMapping("/receiving")
-    public void receiving(Model model) throws ParseException {
-        List<ReceivePurchaseOrderDTO> poDtoList = new ArrayList<>();
-        for(int i = 1; i <= 7; i++){
-            List<ReceiveItemDTO> riDtoList = new ArrayList<>();
-            List<String> iNList = new ArrayList<>();
-            for(int j = i*10; j <= i*10+3; j++){
-                int poIQ = j*i+j*2;
-                ReceiveItemDTO riDto = ReceiveItemDTO.builder()
-                        .itemCode((char)(i+65)+""+i+j)
-                        .itemName("품목명"+j)
-                        .poItemQuantity(poIQ)
-                        .build();
-                riDtoList.add(riDto);
-            }
-            riDtoList.forEach(x->{
-                iNList.add(x.getItemName());
-            });
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            ReceivePurchaseOrderDTO rpoDto = ReceivePurchaseOrderDTO.builder()
-                    .poCode("po-"+i)
-                    .companyName("(주)협력업체"+i)
-                    .poDate(sdf.parse("2023-12-"+i))
-                    .poDueDate(sdf.parse("2023-12-"+(i+10)))
-                    .itemNameList(iNList)
-                    .receiveItemList(riDtoList)
-                    .build();
-            poDtoList.add(rpoDto);
-        }
-        model.addAttribute("data",poDtoList);
+    public void receiving(Model model){
+        LocalDate nowDate = LocalDate.now();
+        DateTimeFormatter dtm = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        String nowStr = dtm.format(nowDate);
+        String monthAfter = dtm.format(nowDate.plusMonths(1L));
+
+
+        model.addAttribute("defaultStartDate",nowStr);
+        model.addAttribute("defaultEndDate",monthAfter);
     }
     @GetMapping("/statement")
     public void statement(Model model) throws ParseException {
-        List<ReceivePurchaseOrderDTO> poDtoList = new ArrayList<>();
-        for(int i = 1; i <= 7; i++){
-            List<String> iNList = new ArrayList<>();
-            for(int j = i*10; j <= i*10+3; j++){
-                iNList.add("품목명"+j);
-            }
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            ReceivePurchaseOrderDTO rpoDto = ReceivePurchaseOrderDTO.builder()
-                    .poCode("po-"+i)
-                    .companyName("(주)협력업체"+i)
-                    .poDate(sdf.parse("2023-12-"+i))
-                    .poDueDate(sdf.parse("2023-12-"+(i+10)))
-                    .itemNameList(iNList)
-                    .build();
-            poDtoList.add(rpoDto);
-        }
-        model.addAttribute("data",poDtoList);
+        LocalDate nowDate = LocalDate.now();
+        DateTimeFormatter dtm = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+        String nowStr = dtm.format(nowDate);
+        String monthAfter = dtm.format(nowDate.plusMonths(1L));
+
+
+        model.addAttribute("defaultStartDate",nowStr);
+        model.addAttribute("defaultEndDate",monthAfter);
     }
-    @GetMapping("/statement-preview/{id}")
-    public String statementPreview(@PathVariable Integer id, Model model){
-        CoopCompDTO ccDto = CoopCompDTO.builder()
-                        .compNum("00"+id+"-11"+id+"-222"+id+"-1"+id)
-                        .compName("(주)협력업체"+(id+1))
-                        .address("어디시 저기동 거기로 "+id*100)
-                        .tel("010-"+(id*1111)+"-4321")
-                        .managerName("담당자"+id)
-                        .today(new Date())
-                        .build();
-        List<ReceiveItemDTO> riDtoList = new ArrayList<>();
+
+    @GetMapping("/statement-preview/{purch_order_number}")
+    public String statementPreview(@PathVariable String purch_order_number, Model model){
+        StatementPreviewDTO dto = inventoryService.getStatement(purch_order_number);
         int totalPrice = 0;
-        for(int i = (id+1)*10; i <= (id+1)*10+3; i++){
-            int poIQ = id*i+i*2;
-            int fQ = poIQ - i;
-            int price = id*100+i;
-            int itemTotalPrice = fQ*price;
-            ReceiveItemDTO riDto = ReceiveItemDTO.builder()
-                    .itemCode((char)(id+65)+""+id+i)
-                    .itemName("품목명"+i)
-                    .poItemQuantity(poIQ)
-                    .price(price)
-                    .fairQuantity(fQ)
-                    .returnQuantity(i)
-                    .itemTotalPrice(itemTotalPrice)
-                    .build();
-            totalPrice+=itemTotalPrice;
-            riDtoList.add(riDto);
+        for (StatementItemsDTO d: dto.getItemList()) {
+            d.setProd_price((int) (d.getItem_price() * d.getReceived_quantity()));
+            totalPrice += d.getProd_price();
         }
-        model.addAttribute("itemList",riDtoList);
+
+        model.addAttribute("data",dto);
         model.addAttribute("totalPrice",totalPrice);
-        model.addAttribute("compInfo",ccDto);
-        model.addAttribute("id",id+1);
+        model.addAttribute("poNum",purch_order_number);
         return "/inv/statement-preview";
     }
     @GetMapping("/releasing")
     public void releasing(Model model) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        List<ReleaseItemDTO> riDtoList = new ArrayList<>();
-        for(int i = 1; i <=7; i++){
-            ReleaseItemDTO riDto = ReleaseItemDTO.builder()
-                    .itemCode((char)(i+65)+""+i)
-                    .itemName("품목명"+i)
-                    .product("제품명"+(i/4+1))
-                    .prodDate(sdf.parse("2023-12-1"))
-                    .invQuantity(i*384)
-                    .releaseQuantity(i*23)
-                    .needQuantity(i*231)
-                    .build();
-            riDtoList.add(riDto);
-        }
-        model.addAttribute("releaseList",riDtoList);
+        LocalDate nowDate = LocalDate.now();
+        DateTimeFormatter dtm = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        String nowStr = dtm.format(nowDate);
+        String monthAfter = dtm.format(nowDate.plusMonths(1L));
+
+
+        model.addAttribute("defaultStartDate",nowStr);
+        model.addAttribute("defaultEndDate",monthAfter);
     }
     @GetMapping("/inv-calc")
     public void invCalc(Model model){

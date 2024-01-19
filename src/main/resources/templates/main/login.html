@@ -11,15 +11,16 @@
                             <div class="card-body">
                                 <h5 class="mb-3"><strong>구매조달시스템</strong></h5>
                                 <hr>
-                                <form action="/login" method="post">
+                                <div id="errorMessageContainer"></div>
+                                <form id="loginForm" action="/main/login" method="post">
                                     <p class="form-group mb-3">
-                                        <input type="text" class="form-control" id="username" name="username" placeholder="ID" autofocus>
+                                        <input type="email" class="form-control" id="username" name="username" placeholder="E-mail" autofocus required>
                                     </p>
                                     <p class="form-group mb-4">
-                                        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
                                     </p>
-                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                    <button class="btn btn-block btn-primary mb-4">로그인</button>
+                                   <input type="hidden" id="_csrf" name="_csrf" th:data-token-name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <button class="btn btn-block btn-primary mb-4" id="login">로그인</button>
                                 </form>
                                 <hr>
                             </div>
@@ -31,14 +32,50 @@
         <!-- [ auth-signin ] end -->
 
         <!-- Required Js -->
-        <script src="assets/js/vendor-all.min.js"></script>
-        <script src="assets/js/plugins/bootstrap.min.js"></script>
-        <script src="assets/js/pcoded.min.js"></script>
+        <script src="/assets/js/vendor-all.min.js"></script>
+        <script src="/assets/js/plugins/bootstrap.min.js"></script>
+        <script src="/assets/js/pcoded.min.js"></script>
 
         <script>
+            $('#login').on("click",function(e){
+                e.preventDefault();
+                const regex = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}$/;
+                var email = $('#username').val();
+                var password = $('#password').val();
+                var _csrf = $('#_csrf').val();
 
+                if(regex.test(email)){
+                   $.ajax({
+                        url:"/main/login",
+                        method:"post",
+                        dataType: 'json',
+                        data:{
+                            username:email,
+                            password:password,
+                            _csrf:_csrf
+                        },
+                        success:function(response){
+                            if(response.code == '200'){
+                                window.location = "/main/main";
+                            }else{
+                                $('#errorMessageContainer').html('<div class="alert alert-danger" role="alert">'+response.message+'</div>')
+                            };
+                            
+                        },
+                        error:function(a,b,c){
+                            console.log("에러");
+                            console.log("a",a);
+                            console.log("b",b);
+                            console.log("c",c);
+
+                            
+                        }
+                   })
+                }else{
+                    alert("올바르지 않은 이메일 형식입니다.");
+                }
+            })
         </script>
-
 
     </th:block>
 </th:block>

@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.mit.annotation.mapper.InventoryMapper">
+
+    <sql id="searchType">
+        <choose>
+            <when test='type=="IC"'>
+                item_code like #{keyword} and
+            </when>
+            <when test='type=="MA"'>
+                material like #{keyword} and
+            </when>
+            <when test='type=="IN"'>
+                item_name like #{keyword} and
+            </when>
+            <when test='type=="PN"'>
+                product_name like #{keyword} and
+            </when>
+        </choose>
+    </sql>
+
+
+
+    <select id="searchReceiveItemList" resultType="edu.mit.annotation.realdto.ReceiveItemDTO">
+        <![CDATA[
+        select SQL_CALC_FOUND_ROWS item_code, item_name, material, proc_duedate, purch_order_quantity, purch_order_date, proc_plan_number
+        from(
+            select item_code, item_name, material, proc_duedate, purch_order_quantity, purch_order_number, aa.proc_plan_number
+            from(
+                select a.item_code item_code, item_name, material, proc_duedate, proc_plan_number
+                from(
+                    select item_code, item_name, material from item) a right join procurement_plan b on (a.item_code = b.item_code)
+                    where b.proc_progress = 0)aa left outer join purchase_order_item bb on (aa.proc_plan_number = bb.proc_plan_number)
+                    )aaa left outer join purchase_order bbb on (aaa.purch_order_number = bbb.purch_order_number)
+                    where
+                    ]]>
+                    <include refid="searchType" />
+                    <![CDATA[ (proc_duedate between date(#{startDate}) and date(#{endDate}))
+                    order by proc_duedate
+                    limit #{pageNum},#{amount}
+                    ]]>
+
+    </select>
+    <select id="getSearchDataCount" resultType="long">
+        select found_rows() data_count
+    </select>
+
+    <select id="getReceiveHistoryBefore" resultType="long">
+        select receive_quantity from receive
+        where item_code = #{item_code} and receive_date between date(#{startDate}) and date(#{endDate})
+    </select>
+
+    <insert id="saveReceiveItem">
+        insert into receive (receive_quantity, item_code) values (#{received_quantity}, #{item_code})
+    </insert>
+
+    <update id="closingProcPlan">
+        update procurement_plan set proc_progress = 1 where proc_plan_number = #{proc_plan_number}
+    </update>
+
+    <select id="findPurchaseOrder" resultType="string">
+        select purch_order_number
+        from purchase_order_item
+        where proc_plan_number = #{proc_plan_number}
+    </select>
+
+    <select id="getProcPlanCloingStatus" resultType="int">
+        select proc_progress
+        from procurement_plan
+        where proc_plan_number in (
+            select proc_plan_number
+            from purchase_order_item
+            where purch_order_number = #{purch_order_number})
+    </select>
+
+    <update id="closePurchaseOrder">
+        update purchase_order set closing_status = 1 where purch_order_number = #{purch_order_number}
+    </update>
+
+
+    <select id="searchWithPONumber" resultType="edu.mit.annotation.realdto.ClosedPurchaseOrderDTO">
+        select SQL_CALC_FOUND_ROWS purch_order_number, purch_order_date, receive_duedate, statement_publish_count
+        from purchase_order where closing_status = 1
+        and purch_order_number like #{keyword} and receive_duedate between date(#{startDate}) and date(#{endDate})
+        limit #{pageNum}, #{amount}
+    </select>
+
+    <select id="getItemCompanyName" resultType="edu.mit.annotation.realdto.PurchOrderItemWithCompanyName">
+        select item_name, company_name
+        from(
+            select item_name, business_number
+            from(
+                select item_name, contract_number
+                from(
+                    select item_code, item_name
+                    from item
+                    where item_code in(
+                        select item_code
+                        from procurement_plan
+                        where proc_plan_number in(
+                            select proc_plan_number
+                            from purchase_order_item where purch_order_number = #{purch_order_number}))) a left join contract_item b
+                on (a.item_code = b.item_code)) aa left join contract bb
+            on (aa.contract_number = bb.contract_number)) aaa left join `co-op_company` bbb
+        on (aaa.business_number = bbb.business_number)
+    </select>
+
+    <select id="searchWithCompanyName" resultType="edu.mit.annotation.realdto.ClosedPurchaseOrderDTO">
+        select SQL_CALC_FOUND_ROWS purch_order_number, purch_order_date, receive_duedate, statement_publish_count
+        from purchase_order
+        where purch_order_number in (
+            select purch_order_number
+            from purchase_order_item
+            where proc_plan_number in(
+                select proc_plan_number
+                from procurement_plan
+                where item_code in (
+                    select item_code
+                    from contract_item
+                    where contract_number in (
+                        select contract_number
+                        from contract
+                        where business_number in (
+                            select business_number
+                            from `co-op_company`
+                            where company_name like #{keyword}))))
+        group by purch_order_number) and closing_status = 1 and receive_duedate between date(#{startDate}) and date(#{endDate})
+        limit #{pageNum}, #{amount}
+    </select>
+
+    <select id="searchWithItemName" resultType="edu.mit.annotation.realdto.ClosedPurchaseOrderDTO">
+        select SQL_CALC_FOUND_ROWS purch_order_number, purch_order_date, receive_duedate, statement_publish_count
+        from purchase_order
+        where purch_order_number in(
+            select purch_order_number
+            from purchase_order_item
+            where proc_plan_number in (
+                select proc_plan_number
+                from procurement_plan
+                where item_code in (
+                    select item_code
+                    from item
+                    where item_name like #{keyword}))) and closing_status = 1 and receive_duedate between date(#{startDate}) and date(#{endDate})
+        limit #{pageNum}, #{amount}
+    </select>
+
+    <update id="statementPbCntUp">
+        update purchase_order set statement_publish_count = statement_publish_count + 1 where purch_order_number = #{purch_order_number};
+    </update>
+
+    <select id="getStatementInfo" resultType="edu.mit.annotation.realdto.StatementPrintDTO">
+        select purch_order_detail, note, item_code, item_name, item_price, business_number, company_name, company_address, manager, manager_tel, proc_plan_number, proc_duedate, purch_order_date
+        from(
+        select purch_order_detail, aaaaa.note, item_code, item_name, item_price, business_number, proc_plan_number, proc_duedate, purch_order_date
+        from(
+        select purch_order_detail,  note, proc_plan_number, item_code, item_name, item_price, contract_number, proc_duedate, purch_order_date
+        from(
+        select purch_order_detail,  note, proc_plan_number, item_code, item_name, proc_duedate, purch_order_date
+        from(
+        select purch_order_detail, note, aa.proc_plan_number, item_code, proc_duedate, purch_order_date
+        from (
+        select purch_order_detail, purch_order_quantity, note, proc_plan_number, purch_order_date
+        from(
+        select purch_order_number, purch_order_detail, purch_order_date
+        from purchase_order
+        where purch_order_number = #{purch_order_number}) a inner join purchase_order_item b on (a.purch_order_number = b.purch_order_number)) aa left join procurement_plan bb
+        on (aa.proc_plan_number = bb.proc_plan_number)) aaa join item bbb using (item_code)) aaaa join contract_item bbbb using (item_code)) aaaaa join contract bbbbb
+        using (contract_number)) c join `co-op_company` using (business_number)
+    </select>
+
+    <select id="getReleaseList" resultType="edu.mit.annotation.realdto.ReleasingDTO">
+        <![CDATA[
+        select SQL_CALC_FOUND_ROWS item_code,item_name,product_name, prod_start_date, item_required_quantity * prod_quantity total_required_quantity,item_quantity
+        from(
+        select *
+        from(
+        select item_code, item_name, item_quantity, item_required_quantity, product_code
+        from(
+        select item_code, item_name, all_receive_quantity-ifnull(all_release_quantity,0) item_quantity
+        from (
+        select item_code, item_name, all_receive_quantity
+        from item a join (select item_code, sum(receive_quantity) all_receive_quantity
+        from receive
+        group by item_code) b using(item_code)) aa left outer join (select item_code, sum(release_quantity) all_release_quantity
+        from `release`
+        group by item_code) bb using (item_code)) c join composition_item d using (item_code)) cc join product dd using(product_code)) ee
+        join production_plan ff using (product_code) where ]]>
+        <include refid="searchType" />
+        <![CDATA[
+        prod_start_date between date(#{startDate}) and date(#{endDate})
+        order by prod_start_date, item_code limit #{pageNum},#{amount} ]]>
+    </select>
+
+    <insert id="saveReleaseItem">
+        insert into `release` (release_quantity, item_code) values (#{release_quantity},#{item_code})
+    </insert>
+</mapper>

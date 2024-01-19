@@ -1,69 +1,176 @@
 package edu.mit.annotation.service;
 
-import edu.mit.annotation.dto.ItemDTO;
-import edu.mit.annotation.dto.PurchaseOrderDTO;
-import edu.mit.annotation.dto.PurchaseOrderDetailDTO;
-import edu.mit.annotation.dto.ReceiveDetailDTO;
+import edu.mit.annotation.mapper.InventoryMapper;
+import edu.mit.annotation.realdto.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class InventoryServiceImpl implements InventoryService{
 
-    @Override
-    public List<PurchaseOrderDTO> getPurchaseOrderList() {
-        List<PurchaseOrderDTO> list = new ArrayList<>();
+    private final InventoryMapper inventoryMapper;
 
-        for(int i = 1; i <= 10; i++){
-            List<PurchaseOrderDetailDTO> detailList = new ArrayList<>();
-            for(int j = i*10; j <= (i*10)+3; j++){
-                PurchaseOrderDetailDTO pod = PurchaseOrderDetailDTO.builder()
-                        .poCode("po-"+i)
-                        .prcCode("j-"+j)
-                        .orderQuantity(j*100+j*12+j)
-                        .etc("비고"+j).build();
-                detailList.add(pod);
+
+    @Override
+    public ListWithPaging<ReceiveItemDTO> searchReceiveItemList(Criteria cri) {
+        List<ReceiveItemDTO> list = inventoryMapper.searchReceiveItemList(cri);
+
+        return pagingSupport(list,cri);
+    }
+
+    @Override
+    public Long getReceiveHistory(SearchDTO dto) {
+        Long sum = 0L;
+        for (Long x : inventoryMapper.getReceiveHistoryBefore(dto)) {
+            sum += x;
+        }
+        return sum;
+    }
+
+    @Override
+    public Integer saveReceivedItem(ItemSaveDTO dto) {
+        return inventoryMapper.saveReceiveItem(dto);
+    }
+
+    @Override
+    public Integer closingProcPlan(String proc_plan_number) {
+
+        return inventoryMapper.closingProcPlan(proc_plan_number);
+    }
+
+    @Override
+    public void closingPO(String proc_plan_number) {
+        String poNum = inventoryMapper.findPurchaseOrder(proc_plan_number);
+        boolean isOne = true;
+        for (Integer x : inventoryMapper.getProcPlanCloingStatus(poNum)) {
+            if (x != 1)
+                isOne = false;
+        }
+        if(isOne){
+            inventoryMapper.closePurchaseOrder(poNum);
+            System.out.println(poNum+"발주서가 마감되었습니다.");
+        }
+    }
+
+    @Override
+    public ListWithPaging<ClosedPurchaseOrderDTO> getClosedPO(Criteria cri) {
+        String type = cri.getType();
+        List<ClosedPurchaseOrderDTO> list = new ArrayList<>();
+        if(type.equals("OC")){
+            list = inventoryMapper.searchWithPONumber(cri);
+        }else if(type.equals("IN")){
+            list = inventoryMapper.searchWithItemName(cri);
+        }else if(type.equals("CN")){
+            list = inventoryMapper.searchWithCompanyName(cri);
+        }
+
+        return pagingSupport(search(list),cri);
+    }
+
+    @Override
+    public StatementPreviewDTO getStatement(String purch_order_number) {
+        List<StatementItemsDTO> itemsList = new ArrayList<>();
+        List<StatementPrintDTO> list = inventoryMapper.getStatementInfo(purch_order_number);
+        list.forEach(x -> {
+            long received_quantity = getReceiveHistory(SearchDTO.builder()
+                    .item_code(x.getItem_code())
+                    .startDate(x.getPurch_order_date())
+                    .endDate(x.getProc_duedate()).build());
+
+            itemsList.add(StatementItemsDTO.builder()
+                            .item_code(x.getItem_code())
+                            .item_name(x.getItem_name())
+                            .item_price(x.getItem_price())
+                            .note(x.getNote())
+                            .received_quantity(received_quantity)
+                            .build());
+        });
+        StatementPrintDTO dto = list.get(0);
+
+        return StatementPreviewDTO.builder()
+                .stmtDate(new Date())
+                .purch_order_detail(dto.getPurch_order_detail())
+                .business_number(dto.getBusiness_number())
+                .company_name(dto.getCompany_name())
+                .company_address(dto.getCompany_address())
+                .manager(dto.getManager())
+                .manager_tel(dto.getManager_tel())
+                .itemList(itemsList).build();
+    }
+
+    @Override
+    public void stmtPbCntUp(String purch_order_number) {
+        inventoryMapper.statementPbCntUp(purch_order_number);
+    }
+
+    @Override
+    public ListWithPaging<ReleasingDTO> getReleaseData(Criteria cri) {
+        List<ReleasingDTO> list = inventoryMapper.getReleaseList(cri);
+
+        return pagingSupport(list,cri);
+    }
+
+    @Override
+    public Integer saveReleaseItem(ReleaseItemDTO dto) {
+        return inventoryMapper.saveReleaseItem(dto);
+    }
+
+    private List<ClosedPurchaseOrderDTO> search(List<ClosedPurchaseOrderDTO> list){
+
+        for (ClosedPurchaseOrderDTO x : list) {
+            List<PurchOrderItemWithCompanyName> incnList = inventoryMapper.getItemCompanyName(x.getPurch_order_number());
+            x.setCompany_name(incnList.get(0).getCompany_name());
+            int i = 0;
+            String itemNameString = "";
+            for (PurchOrderItemWithCompanyName y : incnList) {
+                if(i < 3){
+                    itemNameString += y.getItem_name() +", ";
+                }else {
+                    itemNameString = itemNameString.substring(0, itemNameString.length()-2);
+                    itemNameString += "...";
+                    break;
+                }
+                i++;
             }
-            PurchaseOrderDTO dto = PurchaseOrderDTO.builder()
-                    .poCode("po-"+i)
-                    .businessNumber(i+"-"+i*10+"-"+i*100)
-                    .poDate(new Date())
-                    .poDueDate(new Date())
-                    .isCompleted(false)
-                    .purchaseOrderDetailList(detailList).build();
-            list.add(dto);
+            if(itemNameString.charAt(itemNameString.length()-1) == ' '){
+                itemNameString = itemNameString.substring(0, itemNameString.length()-2);
+            }
+            x.setItem_name_string(itemNameString);
         }
         return list;
     }
 
-    @Override
-    public List<ItemDTO> getPurchaseOrderItemList(List<String> prcCodeList) {
-        List<ItemDTO> list = new ArrayList<>();
-        for(int i = 1; i <= 10; i++){
-            ItemDTO items = ItemDTO.builder()
-                    .itemCode("abc"+i)
-                    .itemName("품목명"+i)
-                    .build();
-            list.add(items);
+    private <T> ListWithPaging<T> pagingSupport(List<T> list, Criteria cri){
+        Long dataCount = inventoryMapper.getSearchDataCount();
+        if(list.isEmpty()){
+            return ListWithPaging.<T>builder().msg("NO DATA").build();
         }
-        return list;
+        Integer pageCount = (int) (dataCount % cri.getAmount() == 0 ? (dataCount/ cri.getAmount()) : (dataCount/ cri.getAmount())+1);
+        List<String> pageList = new ArrayList<>();
+        int nowPage = cri.getPageNum()/cri.getAmount() +1;
+        if(nowPage > 10){
+            pageList.add("prev");
+        }
+        for(int i = (nowPage/10)*10+1; i < i+10; i++){
+            if(i <= pageCount){
+                pageList.add(i+"");
+            }else {
+                break;
+            }
+        }
+        if(Integer.parseInt(pageList.get(pageList.size()-1)) < pageCount){
+            pageList.add("next");
+        }
+        return ListWithPaging.<T>builder()
+                .page_count(pageCount)
+                .currentPage(nowPage)
+                .pageList(pageList)
+                .dataList(list)
+                .build();
     }
 
-    @Override
-    public PurchaseOrderDTO getPurchaseOrder(String poCode) {
-        return null;
-    }
 
-    @Override
-    public boolean saveReceivedItem(List<ReceiveDetailDTO> receiveDetailList) {
-        return false;
-    }
-
-    @Override
-    public boolean completePurchaseOrder(String poCode) {
-        return false;
-    }
 }

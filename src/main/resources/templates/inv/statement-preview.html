@@ -2,68 +2,90 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>거래명세서 발행</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="description" content="" />
-    <meta name="keywords" content="">
+    <meta name="keywords" content=""/>
     <meta name="author" content="Phoenixcoded" />
-    <!-- Favicon icon -->
-    <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon"/>
 
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css" media="all" id="css"/>
+    <style>
+        *{
+            font-family:'D2Coding';
+        }
+        @media print{
+            #print{
+                display:none;
+            }
+            
+            html,body{
+                width: 320mm;
+                margin: 10mm 0mm 0mm 0mm; 
+            }
+            table { page-break-inside:auto; }
+            tr    { page-break-inside:avoid; page-break-after:auto; }
+            thead { display:table-header-group; }
+            tfoot { display:table-footer-group; } 
+        }
+        #card{
+            align-self: center;
+            overflow:hidden;
+            height: 700px;
+        }
+    </style>
 
     <script src="https://code.jquery.com/jquery-3.7.1.slim.js" integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc=" crossorigin="anonymous"></script>
 </head>
 <body>
-<div class="col-xl-12">
-    <div class="card">
-        <div class="card-header">
-            <h5>거래명세서 발행</h5>
-        </div>
+    <div class="card" id="card">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered border-primary table-sm ">
+                <table class="table table-bordered table-sm border-dark">
                     <tr>
                         <th colspan="8" class="align-middle h2"> 거래명세서 </th>
                     </tr>
                     <tr>
                         <th rowspan="2" class="align-middle table-success">거래일자</th>
-                        <td rowspan="2" class="align-middle" th:text="${#dates.format(compInfo.today,'yyyy-MM-dd')}"></td>
+                        <td rowspan="2" class="align-middle" th:text="${#dates.format(data.stmtDate,'yyyy-MM-dd')}"></td>
                         <th rowspan="5" class="align-middle table-success">공<br/>급<br/>받<br/>는<br/>자<br/></th>
                         <td>사업자번호</td>
-                        <td th:text="${compInfo.compNum}">사업자번호 형식이 정해져있었다니</td>
+                        <td th:text="${data.business_number}">사업자번호 형식이 정해져있었다니</td>
                         <th rowspan="5" class="align-middle table-success">공<br/>급<br/>자</th>
                         <td>사업자번호</td>
                         <td>092-102-9102-13</td>
                     </tr>
                     <tr>
                         <td>회사명</td>
-                        <td th:text="${compInfo.compName}"></td>
+                        <td th:text="${data.company_name}"></td>
                         <td>회사명</td>
                         <td>(주)어노테이션</td>
                     </tr>
                     <tr>
                         <th rowspan="2" class="align-middle table-success">담당자</th>
-                        <td rowspan="2" class="align-middle" th:text="${compInfo.managerName}"></td>
+                        <td rowspan="2" class="align-middle" th:text="${data.manager}"></td>
                         <td>주소</td>
-                        <td th:text="${compInfo.address}"></td>
+                        <td th:text="${data.company_address}"></td>
                         <td>주소</td>
                         <td>수원시 어쩌구 저쩌동</td>
                     </tr>
                     <tr>
                         <td>전화번호</td>
-                        <td th:text="${compInfo.tel}"></td>
+                        <td th:text="${data.manager_tel}"></td>
                         <td rowspan="2" class="align-middle">전화번호</td>
                         <td rowspan="2" class="align-middle">010-1234-5678</td>
                     </tr>
                     <tr>
                         <th class="table-success">발주번호</th>
-                        <td id = "poNum"></td>
+                        <td th:text="${poNum}"></td>
                         <td>합계금액</td>
                         <td th:text="${totalPrice} + '원'"></td>
                     </tr>
                 </table>
+            </div>
+            <div class="table-responsive">
                 <table class="table table-bordered table-sm border-dark">
                     <tr class="table-success">
                         <th class="align-middle">NO.</th>
@@ -74,45 +96,62 @@
                         <th class="align-middle">공급가액</th>
                         <th class="align-middle">비고</th>
                     </tr>
-                    <tr th:each="itemInfo, itemNum : ${itemList}">
+                    <tr th:each="item, itemNum : ${data.itemList}">
                         <td th:text="${itemNum.count}">1</td>
-                        <td th:text="${itemInfo.itemCode}">나는품목코드다 하하</td>
-                        <td th:text="${itemInfo.itemName}">품목이름은 이거임</td>
-                        <td th:text="${itemInfo.price}">3000</td>
-                        <td th:text="${itemInfo.fairQuantity}">200</td>
-                        <td th:text="${itemInfo.itemTotalPrice}">600000</td>
-                        <td></td>
+                        <td th:text="${item.item_code}">나는품목코드다 하하</td>
+                        <td th:text="${item.item_name}">품목이름은 이거임</td>
+                        <td th:text="${item.item_price}">3000</td>
+                        <td th:text="${item.received_quantity}">200</td>
+                        <td th:text="${item.prod_price}">600000</td>
+                        <td th:text="${item.note}"></td>
                     </tr>
                     <tr>
                         <th rowspan="5" class="align-middle table-success">특이사항</th>
-                        <td rowspan="5" colspan="7" class="align-middle"><textarea rows="5" style="resize:none; width:100%; border:none;" ></textarea></td>
+                        <td rowspan="5" colspan="7" class="align-middle"><textarea rows="5" style="resize:none; width:100%; border:none;" th:text="${data.purch_order_detail}" ></textarea></td>
                     </tr>
                 </table>
             </div>
             <div class="row">
                 <div class="col"></div>
                 <div class="col-md-auto">
+                    <input type="hidden" id="_csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                     <button class="btn btn-primary justify-content-end" id="print">발행</button>
                 </div>
             </div>
         </div>
-    </div>
 </div>
 
 <script src="/assets/js/vendor-all.min.js"></script>
 <script src="/assets/js/plugins/bootstrap.min.js"></script>
 <script src="/assets/js/pcoded.min.js"></script>
 <script>
-    $('th').addClass('text-center');
-    $('td').addClass('text-center');
-    var poNum = 'po-'+[[${id}]];
-    $('#poNum').text(poNum)
+    var header = $('meta[name="_csrf_header"]').attr("content");
+    var _csrfToken = $('#_csrf_token').val();
+    $(function(){
+        $('th').addClass('text-center');
+        $('td').addClass('text-center');
+       
+    })
+
 </script>
 <script th:inline="javascript">
     $('#print').on("click",function(){
-        var result = confirm("명세서를 발행하시겠습니까?\n 1부는 이메일로 전송되며, 1부는 저장됩니다.");
+        var result = confirm("명세서를 발행하시겠습니까?");
         if(result){
-            window.close();
+            window.print();
+            $.ajax({
+                type:"get",
+                url:"/invapi/statement-published",
+                data:{
+                    purch_order_number:[[${poNum}]]
+                },
+                success:function(){
+                    console.log("발행횟수증가");
+                }
+                
+            })
+        }else{
+            $('#css').attr('href') = cssSrc;
         }
     })
 </script>

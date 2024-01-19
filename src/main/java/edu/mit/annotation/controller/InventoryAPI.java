@@ -1,41 +1,113 @@
 package edu.mit.annotation.controller;
 
-import edu.mit.annotation.repository.TemporalRepository;
-import edu.mit.annotation.testdto.TemporalReceiveDTO;
+import edu.mit.annotation.realdto.*;
+import edu.mit.annotation.service.InventoryService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 @RestController
 @RequestMapping("/invapi")
 @RequiredArgsConstructor
 public class InventoryAPI {
 
-    private final TemporalRepository temporalRepository;
+    private final InventoryService inventoryService;
 
-    @PutMapping("/receive-save")
-    public void receiveSave(String itemCode, Integer fairQuantity, Integer returnQuantity){
-        TemporalReceiveDTO rDto = TemporalReceiveDTO.builder()
-                .receiveDate(new Date())
-                .fairQuantity(fairQuantity)
-                .returnQuantity(returnQuantity)
-                .itemCode(itemCode)
+
+
+    @GetMapping(value = "/receive-get-data")
+    public ListWithPaging<ReceiveItemDTO> getReceiveData(String  startDate, String  endDate, String type, String keyword, Integer pageNum, Integer amount) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Criteria cri = Criteria.builder()
+                .pageNum(pageNum*amount)
+                .amount(amount)
+                .startDate(sdf.parse(startDate))
+                .endDate(sdf.parse(endDate))
+                .type(type)
+                .keyword("%"+keyword+"%")
                 .build();
-        temporalRepository.saveReceive(rDto);
+
+        System.out.println(cri);
+        return inventoryService.searchReceiveItemList(cri);
     }
 
-    @GetMapping("/get-one-receive-data")
-    public TemporalReceiveDTO getOneReceiveData(String itemCode){
-       return temporalRepository.findByItemCode(itemCode);
+    @GetMapping(value = "/receive-history")
+    public Long getReceivedCount(String  startDate, String  endDate, String item_code) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        return inventoryService.getReceiveHistory(SearchDTO.builder()
+                                                    .item_code(item_code)
+                                                    .startDate(sdf.parse(startDate))
+                                                    .endDate(sdf.parse(endDate))
+                                                    .build());
     }
 
-    @GetMapping("/get-all-receive-data")
-    public List<TemporalReceiveDTO> getAllReceiveData(){
-        return temporalRepository.findAllReceiveData();
+    @PostMapping("/save-received-item/{item_code}/{received_quantity}")
+    public Integer saveReceivedItem(@PathVariable("item_code") String item_code, @PathVariable("received_quantity") Integer received_quantity){
+
+        return inventoryService.saveReceivedItem(ItemSaveDTO.builder()
+                                                    .item_code(item_code)
+                                                    .received_quantity(received_quantity).build());
+    }
+
+    @PostMapping("/close-proc-plan/{proc_plan_number}")
+    public Integer closeProcPlan(@PathVariable("proc_plan_number") String proc_plan_number){
+        return inventoryService.closingProcPlan(proc_plan_number);
+    }
+
+    @PostMapping("/close-purchase-order/{proc_plan_number}")
+    public void closePurchaseOrder(@PathVariable("proc_plan_number") String proc_plan_number){
+        inventoryService.closingPO(proc_plan_number);
+    }
+
+    @GetMapping("/statement-get-data")
+    public ListWithPaging<ClosedPurchaseOrderDTO> statementGetData(String  startDate, String  endDate, String type, String keyword, Integer pageNum, Integer amount) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Criteria cri = Criteria.builder()
+                .pageNum(pageNum*amount)
+                .amount(amount)
+                .startDate(sdf.parse(startDate))
+                .endDate(sdf.parse(endDate))
+                .type(type)
+                .keyword("%"+keyword+"%")
+                .build();
+
+        System.out.println(cri);
+        return inventoryService.getClosedPO(cri);
+    }
+
+    @GetMapping("/release-get-data")
+    public ListWithPaging<ReleasingDTO> releaseGetData(String  startDate, String  endDate, String type, String keyword, Integer pageNum, Integer amount) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Criteria cri = Criteria.builder()
+                .pageNum(pageNum*amount)
+                .amount(amount)
+                .startDate(sdf.parse(startDate))
+                .endDate(sdf.parse(endDate))
+                .type(type)
+                .keyword("%"+keyword+"%")
+                .build();
+        return inventoryService.getReleaseData(cri);
+    }
+
+    @GetMapping("/statement-published")
+    public void statementPublished(String purch_order_number){
+        inventoryService.stmtPbCntUp(purch_order_number);
+    }
+
+    @PostMapping("/save-release-item/{item_code}/{release_quantity}")
+    public Integer saveReleaseItem(@PathVariable("item_code") String item_code, @PathVariable("release_quantity") Integer release_quantity){
+        return inventoryService.saveReleaseItem(ReleaseItemDTO.builder()
+                                            .item_code(item_code)
+                                            .release_quantity(release_quantity).build());
     }
 }

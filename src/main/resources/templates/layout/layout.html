@@ -16,6 +16,7 @@
     <meta name="description" content="" />
     <meta name="keywords" content="">
     <meta name="author" content="Phoenixcoded" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}">
     <!-- Favicon icon -->
     <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
 
@@ -103,7 +104,7 @@
 					<li>
 						<form action="/logout" method="post">
 							<button class="btn btn-secondary btn-sm" id="logout">로그아웃</button>
-							<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+							<input type="hidden" id="_csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 						</form>
 					</li>
 				</ul>

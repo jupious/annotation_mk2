@@ -25,27 +25,30 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                <input type="date" class="form-control-sm" value="2023-12-01"> ~
-                                <input type="date" class="form-control-sm" value="2024-01-01">
-                                <button class="btn  btn-primary btn-sm">조회</button>
+                                <input type="date" id="sDate" class="form-control-sm" th:value="${defaultStartDate}"> ~
+                                <input type="date" id="eDate" class="form-control-sm" th:value="${defaultEndDate}">
+                                <button class="btn  btn-primary btn-sm" id="dateSearchBtn">조회</button>
                             </div>
                             <div class="col-md-auto">
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
-                                        <select name="category" class="btn btn-primary dropdown-toggle dropdown-toggle-split btn-sm">
-                                            <option value="itemName" >품목명</option>
-                                            <option value="productName">제품명</option>
-                                        </select>
+                                        <form>                                    
+                                            <select id="type" name="category" class="btn btn-primary dropdown-toggle dropdown-toggle-split btn-sm">
+                                                <option value="IC">품목코드</option>
+                                                <option value="IN" >품목명</option>
+                                                <option value="PN">제품명</option>
+                                            </select>
+                                            <input id="searchText" type="text" class="form-control-sm" aria-label="Text input with dropdown button">
+                                            <button id="searchBtn" class="btn btn-primary btn-sm"><i class="feather icon-search"></i></button>
+                                        </form>
                                     </div>
-                                    <input type="text" class="form-control-sm" aria-label="Text input with dropdown button">
-                                    <button id="searchBtn" class="btn btn-primary btn-sm"><i class="feather icon-search"></i></button>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-sm">
+                                    <table class="table table-bordered table-sm" style="table-layout: fixed;">
                                         <thead>
                                         <tr>
                                             <th>품목코드</th>
@@ -57,35 +60,13 @@
                                             <th>출고수량</th>
                                         </tr>
                                         </thead>
-                                        <tbody>
-                                        <tr th:each="item : ${releaseList}">
-                                            <td width="13%" th:text="${item.itemCode}">품목코드</td>
-                                            <td th:text="${item.itemName}">밀가루</td>
-                                            <td th:text="${item.product}">제품</td>
-                                            <td width="18%" th:text="${#dates.format(item.prodDate,'yyyy-MM-dd')}"></td>
-                                            <td class="isReleased">123</td>
-                                            <td width="15%" class="itemQuantity" th:text="${item.invQuantity}">1231241</td>
-                                            <td width="15%"><input type="number" class="releaseQuantity" th:value="${item.releaseQuantity}"/></td>
-                                        </tr>
+                                        <tbody id="itemsTbody">
+                                       
                                         </tbody>
                                     </table>
                                     <nav aria-label="Page navigation">
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item">
-                                                <a class="page-link" href="#" aria-label="Previous">
-                                                    <span aria-hidden="true">&laquo;</span>
-                                                    <span class="sr-only">Previous</span>
-                                                </a>
-                                            </li>
-                                            <li class="page-item"><a class="page-link" href="#!">1</a></li>
-                                            <li class="page-item"><a class="page-link" href="#!">2</a></li>
-                                            <li class="page-item"><a class="page-link" href="#!">3</a></li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="#!" aria-label="Next">
-                                                    <span aria-hidden="true">&raquo;</span>
-                                                    <span class="sr-only">Next</span>
-                                                </a>
-                                            </li>
+                                        <ul class="pagination justify-content-end" id="searchPageList">
+                                           
                                         </ul>
                                     </nav>
                                 </div>
@@ -100,30 +81,162 @@
             </div>
         </div>
         <script>
-            $('th').addClass('text-center');
-            $('td').addClass('text-center');
-            $('input').addClass('text-center');
-        </script>
-        <script>
+            var result;
+            var crntPage;
+            var amount = 5;
+            var header = $('meta[name="_csrf_header"]').attr("content");
+            var _csrfToken = $('#_csrf_token').val();
+            $(function(){
+                var criteria = {"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":"IC","keyword":"","pageNum":0,"amount":amount};
+                loadList(criteria);
+                makeCenter();
+            })
+
+            $('#dateSearchBtn').on("click",function(){
+                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount})
+            })
+
+            $('#searchBtn').on("click", function(e){
+                e.preventDefault();
+                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount})
+            })
+
+            $('.pagination').on("click","a", function(){
+                id = $(this).attr('id');
+                id = id.charAt(0);
+                console.log(id);
+                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":id-1,"amount":amount})
+                crntPage = id;
+            })
+
+            $('#prev').on("click",function(){
+                let temp = parseInt(crntPage/10);
+                temp = temp*10;
+                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":temp -1,"amount":amount});
+            })
+
+
+            $('#next').on("click",function(){
+                let temp = parseInt(crntPage/10)+1;
+                temp = temp*10+1;
+                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":temp -1,"amount":amount});
+            })
+
+            $('#itemsTbody').on("click","tr td",function(){
+                console.log("테이블 클릭됨");
+                let isInput = $(this).find("input[type='number']").length;
+                let reqQuantity = $(this).parent().children('.reqQuantity').text();
+                if(!isInput){
+                    if($(this).parent().hasClass('inputOff')){
+                        $(this).parent().addClass('inputOn');
+                        $(this).parent().removeClass('inputOff');
+                        var inputStr = "<input type='number' class='input' value='"+reqQuantity+"' style='width:100%;'>";
+                        $(this).siblings('.releaseCount').html(inputStr);
+                    }else{
+                        $(this).parent().addClass('inputOff');
+                        $(this).parent().removeClass('inputOn');
+                        $(this).siblings('.releaseCount').html("-");
+                    }
+                }
+            })
+
             $('#saveBtn').on("click",function(){
-                $('.itemQuantity').each(function(){
-                    let iQ = $(this).text();
-                    iQ = parseInt(iQ);
-                    let rQ = $(this).next().children().val();
-                    // if((iQ-rQ)>=0){
-                    //     $(this).text(iQ-rQ);
-                    // }else{
-                    //     alert('현재 재고량보다 출고량이 많습니다.');
-                    //     return;
-                    // }
-                })
-                $('.releaseQuantity').each(function(){
-                    $(this).val(0);
-                })
-                $('.isReleased').each(function(){
-                    $(this).text('출고완료');
+                var total = $('.inputOn').length;
+                $('.inputOn').each(function(idx,value){
+                    let item_code = $(this).children('.item_code').text();
+                    let release_quantity = $(this).children('.releaseCount').children().val();
+                    if(parseInt($(this).children('.item_quantity').text()) >= release_quantity){
+                        $.ajax({
+                            type:"post",
+                            url:"/invapi/save-release-item/"+item_code+"/"+release_quantity,
+                            context:this,
+                            beforeSend:function(xhr){
+                                xhr.setRequestHeader(header,_csrfToken)
+                            },
+                            success : function(count){
+                                if(count != 1){
+                                    alert("저장 중 오류가 발생하였습니다. 관리자에게 문의해주세요");
+                                    inputFlag = false;
+                                }else{
+                                  
+                                }
+                            }
+                        })
+                    }else{
+                        alert('재고 수량보다 많이 출고 할 수 없습니다.');
+                        return false;
+                    }
+                    if(idx == total-1){
+                        console.log("지금이 마지막이야",idx,total-1);
+                        setTimeout(reload, 150);
+                    }
                 })
             })
+
+            var reload = function(){
+                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount});
+            }
+
+            function loadList(criteria){
+                $.ajax({
+                    type:"get",
+                    url:"/invapi/release-get-data",
+                    data:criteria,
+                    success:function(res){
+                        console.log("성공, 데이터확인",res);
+                        $('#itemsTbody').empty();
+                        result = res.dataList;
+                        var rsStr = "";
+                        for(let i = 0; i < result.length; i++){
+                            rsStr += "<tr id ='"+i+"result' class='result inputOff'><td class='item_code'>"+result[i].item_code+"</td><td>"+result[i].item_name+"</td><td>"+result[i].product_name+"</td><td>"+dateFormatter(result[i].prod_start_date)+"</td><td class='reqQuantity'>"+result[i].total_required_quantity+"</td><td class='item_quantity'>"+result[i].item_quantity+"</td><td class='releaseCount'>-</td></tr>";
+                        }
+                        $('#itemsTbody').html(rsStr);
+                        makeCenter();
+                        console.log("전체페이지 수",res.page_count);
+                        var pageList = res.pageList;
+                        var pageStr ="";
+                        for(let j = 0; j < pageList.length; j++){
+                            pageStr +="<li class='page-item'>";
+                            if(pageList[j] == "prev"){
+                                pageStr += "<a class='page-link' id='prev' aria-label='Previous'><span aria-hidden='true'>&laquo;</span><span class='sr-only'>Previous</span></a>";
+                            }else if(pageList[j]=="next"){
+                                pageStr += "<a class='page-link' id='next' aria-label='Next'><span aria-hidden='true'>&raquo;</span><span class='sr-only'>Next</span></a>";
+                            }else{
+                                pageStr += "<a class='page-link' id='"+pageList[j]+"page'>"+pageList[j]+"</a>";
+                            }
+                            pageStr +="</li>"
+                        }
+                        $('#searchPageList').html(pageStr);
+                        $('#'+res.currentPage+'page').parent().addClass("active");
+                        crntPage = criteria.pageNum + 1;
+                        makeCenter();
+                    },
+                    error:function(a,b,c){
+                        console.log("에러");
+                        console.log("a",a);
+                        console.log("b",b);
+                        console.log("c",c);
+                    }
+                })
+            }
+
+            function dateFormatter(date){
+                if(date != null){
+                    var d = new Date(date);
+                    let month = d.getMonth()+1;
+                    let year = d.getFullYear();
+                    let day = d.getDate();
+                    return [year,month,day].join('-');
+                }else{
+                    return "-";
+                }
+            }
+
+            function makeCenter(){
+                $('th').addClass('text-center');
+                $('td').addClass('text-center');
+                $('input').addClass('text-center');
+            }
         </script>
     </th:block>
 </th:block>

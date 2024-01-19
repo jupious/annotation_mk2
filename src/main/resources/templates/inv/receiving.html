@@ -29,42 +29,18 @@
                                                 <tr>
                                                     <th  class="align-middle" width="12%">품목코드</th>
                                                     <th  class="align-middle" >품목명</th>
-                                                    <th  class="align-middle" width="20%">발주 수량</th>
+                                                    <th  class="align-middle" width="20%">기입고 수량 / 발주 수량</th>
                                                     <th width="20%">입고 수량</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="itemsTbody">
-                                                <tr >
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr >
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr >
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr >
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                                 <div class="col-md-auto">
-                                    <button class="btn  btn-primary">저장</button><br/><br/>
-                                    <button class="btn  btn-primary">마감</button>
+                                    <button class="btn  btn-primary" id="saveBtn">저장</button><br/><br/>
+                                    <button class="btn  btn-primary" id="closingBtn">마감</button>
                                 </div>
                             </div>
                         </div>
@@ -82,20 +58,24 @@
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <input type="date" id="sDate" class="form-control-sm" value="2023-12-10"> ~
-                                    <input type="date" id="eDate" class="form-control-sm" value="2023-12-20">
-                                    <button class="btn  btn-primary btn-sm">조회</button>
+                                    <input type="date" id="sDate" class="form-control-sm" th:value="${defaultStartDate}"> ~
+                                    <input type="date" id="eDate" class="form-control-sm" th:value="${defaultEndDate}">
+                                    <button class="btn  btn-primary btn-sm" id="dateSearchBtn">조회</button>
                                 </div>
                                 <div class="col-md-auto">
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
-                                            <select name="category" class="btn btn-primary dropdown-toggle dropdown-toggle-split btn-sm">
-                                                <option value="itemName" >품목명</option>
-                                                <option value="companyName">재질</option>
-                                            </select>
+                                            <form>
+                                                <select name="type" id="type" class="btn btn-primary dropdown-toggle dropdown-toggle-split btn-sm">
+                                                    <option value="IC">품목코드</option>
+                                                    <option value="IN" >품목명</option>
+                                                    <option value="MA">재질</option>
+                                                </select>
+                                                <input type="text" class="form-control-sm" id="searchText" aria-label="Text input with dropdown button">
+                                                <button id="searchBtn" class="btn btn-primary btn-sm"><i class="feather icon-search"></i></button>
+                                            </form>
                                         </div>
-                                        <input type="text" class="form-control-sm" aria-label="Text input with dropdown button">
-                                        <button id="searchBtn" class="btn btn-primary btn-sm"><i class="feather icon-search"></i></button>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -111,32 +91,12 @@
                                         </tr>
                                     </thead>
                                     <tbody id="poTbody">
-                                        <tr th:each="purchaseorder,poStat : ${data}" th:id="${poStat.index}">
-                                            <td th:text="${purchaseorder.poCode}"></td>
-                                            <td th:text="${purchaseorder.companyName}"></td>
-                                            <td><th:block th:each="itemname : ${purchaseorder.itemNameList}"><span th:text="${itemname} + ','"></span> </th:block> </td>
-                                            <td th:text="${#dates.format(purchaseorder.poDate,'yyyy-MM-dd')}"></td>
-                                            <td th:text="${#dates.format(purchaseorder.poDueDate,'yyyy-MM-dd')}"></td>
-                                        </tr>
+                                        
                                     </tbody>
                                 </table>
                                 <nav aria-label="Page navigation">
-                                    <ul class="pagination justify-content-end">
-                                        <li class="page-item">
-                                            <a class="page-link" href="#" aria-label="Previous">
-                                                <span aria-hidden="true">&laquo;</span>
-                                                <span class="sr-only">Previous</span>
-                                            </a>
-                                        </li>
-                                        <li class="page-item"><a class="page-link" href="#!">1</a></li>
-                                        <li class="page-item"><a class="page-link" href="#!">2</a></li>
-                                        <li class="page-item"><a class="page-link" href="#!">3</a></li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="#!" aria-label="Next">
-                                                <span aria-hidden="true">&raquo;</span>
-                                                <span class="sr-only">Next</span>
-                                            </a>
-                                        </li>
+                                    <ul class="pagination justify-content-end" id="searchPageList">
+                                        
                                     </ul>
                                 </nav>
                             </div>
@@ -147,44 +107,249 @@
         </div>
         <script>
             $(function(){
-                $('th').addClass('text-center');
-                $('td').addClass('text-center');
+                makeCenter();
             })
 
         </script>
         <script th:inline="javascript">
+            var amount = 5;
+            var result;
+            var whoIsUpper = [];
+            var header = $('meta[name="_csrf_header"]').attr("content");
+            var _csrfToken = $('#_csrf_token').val();
+            var crntPage;
             $(function(){
-                var data = [[${data}]];
-                
-               
-                $('#poTbody').on("click","tr",function(){
-                    var idx = $(this).attr('id');
-                    var dataList = data[idx].receiveItemList;
-                    console.log("리스트 이거맞냐",dataList);
-                    var itemTableStr = "";
-                    for(let i = 0; i < dataList.length; i++){
-                        itemTableStr += "<tr><td class='text-center'>"+dataList[i].itemCode+"</td><td class='text-center'>"+dataList[i].itemName+"</td><td class='text-center' >"+dataList[i].poItemQuantity+"</td><td><input type='number' id='fair'"+i+" class='text-center' /></td></tr>";
-                    }
-                    $('#itemsTbody').html(itemTableStr);
-                    
-                })
-
-                $('#sDate').change(function(){
-                    console.log("날짜바뀜");
-                    var sDate = $(this).val();
-                    var eDate = $('#eDate').val();
-                    if(eDate < sDate){
-                        $('#eDate').val(sDate);
-                    }
-                })
-                $('#eDate').change(function(){
-                    var sDate = $('#sDate').val();
-                    var eDate = $(this).val();
-                    if(eDate < sDate){
-                        $('#sDate').val(eDate);
-                    }
-                })
+                var criteria = {"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":"IC","keyword":"","pageNum":0,"amount":amount};
+                loadList(criteria);
+              
             })
+
+            $('#dateSearchBtn').on("click",function(){
+                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount})
+            })
+
+            $('#searchBtn').on("click", function(e){
+                e.preventDefault();
+                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount})
+            })
+
+            $('.pagination').on("click","a", function(){
+                id = $(this).attr('id');
+                id = id.charAt(0);
+                console.log(id);
+                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":id-1,"amount":amount})
+                crntPage = id;
+            })
+
+            $('#poTbody').on("click","tr",function(){
+                console.log(result)
+                var idx = $(this).attr("id").charAt(0);
+                let itemData = result[idx];
+                if(itemData.purch_order_date !=null){
+                    getReceiveHistory(itemData.item_code,itemData.purch_order_date,itemData.proc_duedate,itemData,idx);
+                }else{
+                    alert('해당 품목은 미발주 상태입니다.');
+                }
+            })
+
+            $('#itemsTbody').on("click","tr td",function(){
+                let isInput = $(this).find("input[type='number']").length;
+                let item_code = $(this).parent().children('.code_td').text();
+                console.log("행클릭",isInput);
+                if(!isInput){
+                    console.log("여긴없다");
+                    whoIsUpper = whoIsUpper.filter(e => e != item_code);
+                    $(this).parent().remove();
+                }
+            })
+
+            $('#prev').on("click",function(){
+                let temp = parseInt(crntPage/10);
+                temp = temp*10;
+                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":temp -1,"amount":amount});
+            })
+
+
+            $('#next').on("click",function(){
+                let temp = parseInt(crntPage/10)+1;
+                temp = temp*10+1;
+                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":temp -1,"amount":amount});
+            })
+
+            $('#closingBtn').on("click",function(){
+                let conf = confirm("정말 마감 하시겠습니까?");
+                let proc_plan_number;
+                if(conf){
+                    $('.rec-item').each(function(){
+                        proc_plan_number = $(this).attr("content");
+                        $.ajax({
+                            type:"post",
+                            url:"/invapi/close-proc-plan/"+proc_plan_number,
+                            beforeSend:function(xhr){
+                                xhr.setRequestHeader(header,_csrfToken)
+                            },
+                            success:function(c){
+                                if(c == 1){
+                                    console.log("마감완료");
+                                    closePO(proc_plan_number);
+                                    loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":"IC","keyword":"","pageNum":0,"amount":amount});
+                                }else{
+                                    alert("마감 중 오류가 발생하였습니다. 관리자에게 문의해주세요");
+                                }
+                            }
+                        })
+                    })
+                    saveReceived();
+                    
+                }
+
+            })
+
+            $('#saveBtn').on("click",function(){
+                saveReceived();
+                
+            })
+
+            function closePO(proc_plan_number){
+                $.ajax({
+                    type:"post",
+                    url:"/invapi/close-purchase-order/"+proc_plan_number,
+                    beforeSend:function(xhr){
+                        xhr.setRequestHeader(header,_csrfToken)
+                    },
+                    success:function(){
+                        console.log("발주서마감전송성공함");
+                    }
+                })
+            }
+
+            function saveReceived(){
+                var inputFlag = true;
+                $('.rec-item').each(function(idx,val){
+                    let received_quantity = $(this).children().children('input').val();
+                    if(received_quantity == ""){
+                        received_quantity = 0;
+                    }
+                    let item_code = $(this).children('.code_td').text();
+                    console.log(item_code,"Aaaaa",received_quantity);
+                    $.ajax({
+                        type:"post",
+                        url:"/invapi/save-received-item/"+item_code+"/"+received_quantity,
+                        context:this,
+                        beforeSend:function(xhr){
+                            xhr.setRequestHeader(header,_csrfToken)
+                        },
+                        success : function(count){
+                            if(count != 1){
+                                alert("저장 중 오류가 발생하였습니다. 관리자에게 문의해주세요");
+                                inputFlag = false;
+                            }else{
+                                console.log($(this));
+                                whoIsUpper = whoIsUpper.filter(e => e != item_code);
+                                $(this).remove();
+                            }
+                        }
+                    })
+                })
+            }
+
+            function loadList(criteria){
+                $.ajax({
+                    type:"get",
+                    url:"/invapi/receive-get-data",
+                    data:criteria,
+                    success:function(res){
+                        console.log("성공, 데이터확인",res);
+                        $('#poTbody').empty();
+                        result = res.dataList;
+                        var rsStr = "";
+                        for(let i = 0; i < result.length; i++){
+                            rsStr += "<tr id ='"+i+"result' class='result'><td>"+result[i].item_code+"</td><td>"+result[i].item_name+"</td><td>"+result[i].material+"</td><td>"+dateFormatter(result[i].purch_order_date)+"</td><td>"+dateFormatter(result[i].proc_duedate)+"</td></tr>";
+                        }
+                        $('#poTbody').html(rsStr);
+                        $('th').addClass('text-center');
+                        $('td').addClass('text-center');
+                        console.log("전체페이지 수",res.page_count);
+                        var pageList = res.pageList;
+                        var pageStr ="";
+                        for(let j = 0; j < pageList.length; j++){
+                            pageStr +="<li class='page-item'>";
+                            if(pageList[j] == "prev"){
+                                pageStr += "<a class='page-link' id='prev' aria-label='Previous'><span aria-hidden='true'>&laquo;</span><span class='sr-only'>Previous</span></a>";
+                            }else if(pageList[j]=="next"){
+                                pageStr += "<a class='page-link' id='next' aria-label='Next'><span aria-hidden='true'>&raquo;</span><span class='sr-only'>Next</span></a>";
+                            }else{
+                                pageStr += "<a class='page-link' id='"+pageList[j]+"page'>"+pageList[j]+"</a>";
+                            }
+                            pageStr +="</li>"
+                        }
+                        $('#searchPageList').html(pageStr);
+                        $('#'+res.currentPage+'page').parent().addClass("active");
+                        crntPage = criteria.pageNum + 1;
+                        makeCenter();
+                    },
+                    error:function(a,b,c){
+                        console.log("에러");
+                        console.log("a",a);
+                        console.log("b",b);
+                        console.log("c",c);
+                    }
+                })
+            }
+
+            function getReceiveHistory(item_code,startDate,endDate,itemData,idx){
+                $.ajax({
+                    type:"get",
+                    url:"/invapi/receive-history",
+                    data:{
+                        item_code:item_code,
+                        startDate:startDate,
+                        endDate:endDate
+                    },
+                    success:function(res){
+                        console.log(res);
+                        if(itemData.purch_order_date != null){
+                            if(!(whoIsUpper.includes(itemData.item_code))){
+                                itemStr = "<tr class='rec-item' content='"+itemData.proc_plan_number+"'><td class='code_td'>"+itemData.item_code+"</td><td>"+itemData.item_name+"</td><td>"+res+"/"+itemData.purch_order_quantity+"</td><td onclick='event.cancleBubble=true;'><input type='number' id='"+idx+"receiveCount' ></td></tr>";
+                                $('#itemsTbody').append(itemStr);
+                                whoIsUpper.push(itemData.item_code);
+                            }else{
+                                alert('해당 품목은 이미 추가되어있습니다.');
+                            }
+                        }else{
+                            alert('해당 품목은 미발주 상태입니다.');
+                        }
+                        makeCenter();
+                    },
+                    error:function(a,b,c){
+                        console.log("에러");
+                        console.log("a",a);
+                        console.log("b",b);
+                        console.log("c",c);
+                    }
+                })
+            }
+
+            function dateFormatter(date){
+                if(date != null){
+                    var d = new Date(date);
+                    let month = d.getMonth()+1;
+                    let year = d.getFullYear();
+                    let day = d.getDate();
+                    return [year,month,day].join('-');
+                }else{
+                    return "-";
+                }
+            }
+
+            function makeCenter(){
+                $('th').addClass('text-center');
+                $('td').addClass('text-center');
+            }
+            
+            
+
+
         </script>
     </th:block>
 </th:block>
