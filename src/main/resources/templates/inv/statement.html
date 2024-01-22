@@ -72,7 +72,7 @@
         </div>
        
         <script>
-             var amount = 5;
+             var amount = 10;
              var header = $('meta[name="_csrf_header"]').attr("content");
             var _csrfToken = $('#_csrf_token').val();
             var crntPage;
@@ -90,17 +90,16 @@
                 loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount})
             })
 
-            $('#prev').on("click",function(){
-                let temp = parseInt(crntPage/10);
-                temp = temp*10;
-                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":temp -1,"amount":amount});
-            })
-
-
-            $('#next').on("click",function(){
-                let temp = parseInt(crntPage/10)+1;
-                temp = temp*10+1;
-                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":temp -1,"amount":amount});
+            $('.pagination').on("click","a", function(){
+                id = $(this).data("paging");
+                if(id == 'next'){
+                    id = parseInt(crntPage/10)+1;
+                    id = id*10+1;
+                }else if(id == 'prev'){
+                    id = parseInt(crntPage/10);
+                    id = id*10;
+                }
+                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":id-1,"amount":amount});
             })
 
             $('#poTbody').on("click","button",function(){
@@ -135,16 +134,16 @@
                         for(let j = 0; j < pageList.length; j++){
                             pageStr +="<li class='page-item'>";
                             if(pageList[j] == "prev"){
-                                pageStr += "<a class='page-link' id='prev' aria-label='Previous'><span aria-hidden='true'>&laquo;</span><span class='sr-only'>Previous</span></a>";
+                                pageStr += "<a class='page-link' data-paging='prev' aria-label='Previous'><span aria-hidden='true'>&laquo;</span><span class='sr-only'>Previous</span></a>";
                             }else if(pageList[j]=="next"){
-                                pageStr += "<a class='page-link' id='next' aria-label='Next'><span aria-hidden='true'>&raquo;</span><span class='sr-only'>Next</span></a>";
+                                pageStr += "<a class='page-link'  data-paging='next' aria-label='Next'><span aria-hidden='true'>&raquo;</span><span class='sr-only'>Next</span></a>";
                             }else{
-                                pageStr += "<a class='page-link' id='"+pageList[j]+"page'>"+pageList[j]+"</a>";
+                                pageStr += "<a class='page-link'  data-paging='"+pageList[j]+"'>"+pageList[j]+"</a>";
                             }
                             pageStr +="</li>"
                         }
                         $('#searchPageList').html(pageStr);
-                        $('#'+res.currentPage+'page').parent().addClass("active");
+                        $('[data-paging ='+res.currentPage+']').parent().addClass("active");
                         crntPage = criteria.pageNum + 1;
                     
                         makeCenter();

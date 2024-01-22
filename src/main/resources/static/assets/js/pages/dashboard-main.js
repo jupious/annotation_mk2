@@ -2,7 +2,7 @@
 $(document).ready(function() {
     setTimeout(function() {
         floatchart()
-    }, 100);
+    }, 150);
 });
 
 function floatchart() {

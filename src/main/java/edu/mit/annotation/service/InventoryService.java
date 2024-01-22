@@ -36,4 +36,9 @@ public interface InventoryService {
     //출고내용 저장
     Integer saveReleaseItem(ReleaseItemDTO dto);
 
+    //재고산출
+    ListWithPaging<InventoryCalcDTO> getInvCalcData(Criteria cri);
+
+    //재고금액 리포트
+    List<InventoryReportDTO> getInvReport(Criteria cri);
 }

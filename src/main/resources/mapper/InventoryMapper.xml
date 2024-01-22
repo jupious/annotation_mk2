@@ -19,6 +19,20 @@
         </choose>
     </sql>
 
+    <sql id="calcSearchType">
+        <choose>
+            <when test='type=="IC"'>
+                item_code like #{keyword}
+            </when>
+            <when test='type=="MA"'>
+                material like #{keyword}
+            </when>
+            <when test='type=="IN"'>
+                item_name like #{keyword}
+            </when>
+        </choose>
+    </sql>
+
 
 
     <select id="searchReceiveItemList" resultType="edu.mit.annotation.realdto.ReceiveItemDTO">
@@ -176,7 +190,7 @@
         from(
         select item_code, item_name, item_quantity, item_required_quantity, product_code
         from(
-        select item_code, item_name, all_receive_quantity-ifnull(all_release_quantity,0) item_quantity
+        select item_code, item_name, ifnull(all_receive_quantity,0)-ifnull(all_release_quantity,0) item_quantity
         from (
         select item_code, item_name, all_receive_quantity
         from item a join (select item_code, sum(receive_quantity) all_receive_quantity
@@ -194,4 +208,84 @@
     <insert id="saveReleaseItem">
         insert into `release` (release_quantity, item_code) values (#{release_quantity},#{item_code})
     </insert>
+
+    <select id="getInvCalcData" resultType="edu.mit.annotation.realdto.InventoryCalcDTO">
+        <![CDATA[
+        select SQL_CALC_FOUND_ROWS item_code, item_name, width, length, height, material, prime_quantity, received_in_date, released_in_date, ifnull(item_price,-1) item_price_nonull
+        from(
+        select item_code, item_name, width, length, height, material, prime_quantity, ifnull(receive_in_date,0) received_in_date, ifnull(release_in_date,0) released_in_date
+        from(
+        select item_code, item_name, width, length, height, material, ifnull(primary_quantity,0) prime_quantity
+        from item aa left outer join(
+        select item_code, ifnull(all_receive_quantity,0)-ifnull(all_release_quantity,0) primary_quantity
+			from(
+				select item_code, sum(ifnull(receive_quantity, 0)) all_receive_quantity
+				from receive
+				where receive_date < date(#{startDate})
+				group by item_code) a left outer join (select item_code, sum(ifnull(release_quantity,0)) all_release_quantity
+														from `release`
+														where release_date <  date(#{startDate})
+														group by item_code) b using (item_code)
+				union
+				select item_code, ifnull(all_receive_quantity,0)-ifnull(all_release_quantity,0) primary_quantity
+				from(select item_code, sum(ifnull(receive_quantity, 0)) all_receive_quantity
+				from receive
+				where receive_date < date(#{startDate})
+				group by item_code) j right outer join( select item_code, sum(ifnull(release_quantity,0)) all_release_quantity
+														from `release`
+														where release_date <  date(#{startDate})
+														group by item_code) k using (item_code)) bb using(item_code)) aaa left outer join ((select *
+                                                                                            from(
+                                                                                                select item_code, sum(ifnull(receive_quantity,0)) receive_in_date
+                                                                                                from receive
+                                                                                                where receive_date between date(#{startDate}) and date(#{endDate})+1
+                                                                                                group by item_code) c left join (select item_code, sum(ifnull(release_quantity,0)) release_in_date
+                                                                                                                                        from `release`
+                                                                                                                                        where release_date between date(#{startDate}) and date(#{endDate})+1
+                                                                                                                                        group by item_code) d using (item_code))
+                                                                                            union
+
+                                                                                            (select item_code, ifnull(receive_in_date,0), ifnull(release_in_date,0)
+                                                                                            from(
+                                                                                                select item_code, sum(ifnull(receive_quantity,0)) receive_in_date
+                                                                                                from receive
+                                                                                                where receive_date between date(#{startDate}) and date(#{endDate})+1
+                                                                                                group by item_code) c right join (select item_code, sum(ifnull(release_quantity,0)) release_in_date
+                                                                                                                                        from `release`
+                                                                                                                                        where release_date between date(#{startDate}) and date(#{endDate})+1
+                                                                                                                                        group by item_code) d using (item_code))) bbb using (item_code)) cc left outer join contract_item dd using(item_code)
+        where  ]]>
+        <include refid="calcSearchType" />
+        <![CDATA[order by length(item_code), item_code limit #{pageNum},#{amount}]]>
+    </select>
+
+    <select id="getInvReport" resultType="edu.mit.annotation.realdto.InventoryReportDTO">
+        select ${type}_name type_name, sum(inv_amount) inv_amount
+        from(
+        select ${keyword}, ${type}_name,  item_quantity*item_price inv_amount
+        from (
+        select item_code, unit_code, assy_code, part_code, item_quantity, ifnull(item_price,0) item_price
+        from contract_item c right join (
+        select item_code, unit_code, assy_code, part_code, ifnull(item_quantity,0) item_quantity
+        from item aaa left join(
+        select item_code, ifnull(all_receive_quantity,0)-ifnull(all_release_quantity,0) item_quantity
+        from(
+        select item_code, sum(ifnull(receive_quantity, 0)) all_receive_quantity
+        from receive
+        where receive_date between date(#{startDate}) and date(#{endDate})
+        group by item_code) a left outer join (select item_code, sum(ifnull(release_quantity,0)) all_release_quantity
+        from `release`
+        where release_date between date(#{startDate}) and date(#{endDate})
+        group by item_code) b using (item_code)
+        union
+        select item_code, ifnull(all_receive_quantity,0)-ifnull(all_release_quantity,0) item_quantity
+        from(select item_code, sum(ifnull(receive_quantity, 0)) all_receive_quantity
+        from receive
+        where receive_date between date(#{startDate}) and date(#{endDate})
+        group by item_code) aa right outer join( select item_code, sum(ifnull(release_quantity,0)) all_release_quantity
+        from `release`
+        where release_date between date(#{startDate}) and date(#{endDate})
+        group by item_code) bb using (item_code))bbb using (item_code)) d using(item_code)) e join ${type} f using (${keyword})) g
+        group by ${keyword}
+    </select>
 </mapper>

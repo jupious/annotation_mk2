@@ -40,12 +40,12 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth
                             .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                            .requestMatchers("/**").permitAll()
                             .requestMatchers("/error**").permitAll()
                             .requestMatchers("/assets/**").permitAll()
                             .requestMatchers("/fonts/**").permitAll()
                             .requestMatchers("/auth/error").permitAll()
                             .requestMatchers("/invapi/**").permitAll()
+                            .requestMatchers("/orderapi/**").permitAll()
                             .anyRequest().authenticated();
 
                 }).formLogin(

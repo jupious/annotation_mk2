@@ -118,6 +118,18 @@ public class InventoryServiceImpl implements InventoryService{
         return inventoryMapper.saveReleaseItem(dto);
     }
 
+    @Override
+    public ListWithPaging<InventoryCalcDTO> getInvCalcData(Criteria cri) {
+        List<InventoryCalcDTO> list = inventoryMapper.getInvCalcData(cri);
+
+        return pagingSupport(list,cri);
+    }
+
+    @Override
+    public List<InventoryReportDTO> getInvReport(Criteria cri) {
+        return inventoryMapper.getInvReport(cri);
+    }
+
     private List<ClosedPurchaseOrderDTO> search(List<ClosedPurchaseOrderDTO> list){
 
         for (ClosedPurchaseOrderDTO x : list) {
@@ -154,14 +166,16 @@ public class InventoryServiceImpl implements InventoryService{
         if(nowPage > 10){
             pageList.add("prev");
         }
-        for(int i = (nowPage/10)*10+1; i < i+10; i++){
+        Integer startPage = (int) ((Math.ceil(nowPage/10.0))*10 - 9);
+        for(int i = startPage; i < startPage+10; i++){
             if(i <= pageCount){
                 pageList.add(i+"");
             }else {
                 break;
             }
         }
-        if(Integer.parseInt(pageList.get(pageList.size()-1)) < pageCount){
+        Integer lastPage = Integer.parseInt(pageList.get(pageList.size()-1));
+        if(lastPage < pageCount){
             pageList.add("next");
         }
         return ListWithPaging.<T>builder()

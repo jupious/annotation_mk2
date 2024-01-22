@@ -23,18 +23,18 @@
                         <span class="badge badge-primary">조회 일자 선택</span>
                         <div class="row">
                             <div class="col">
-                                <input type="date" class="form-control-sm" value="2023-12-01">
-                                <button class="btn btn-primary btn-sm">조회</button>
+                                <input id="date" type="date" class="form-control-sm" th:value="${defaultDate}">
+                                <button class="btn btn-primary btn-sm" id="getReport">조회</button>
 
                             </div>
                             <div class="col-7">
-                                <div class="custom-control custom-checkbox">
+                                <div class="custom-control custom-checkbox month">
                                     <input type="checkbox" class="custom-control-input" id="monthlyCheck" checked>
-                                    <label class="custom-control-label" for="monthlyCheck">월별</label>
+                                    <label class="custom-control-label monthly" for="monthlyCheck">월별</label>
                                 </div>
-                                <div class="custom-control custom-checkbox">
+                                <div class="custom-control custom-checkbox day">
                                     <input type="checkbox" class="custom-control-input" id="dailyCheck">
-                                    <label class="custom-control-label" for="dailyCheck">일별</label>
+                                    <label class="custom-control-label daily" for="dailyCheck">일별</label>
                                 </div>
                             </div>
                             <div class="col-md-auto">
@@ -69,33 +69,102 @@
 <!--        <script src="/assets/js/pages/chart-apex.js"></script>-->
         <script src="/assets/js/pages/chart-annotation.js"></script>
         <script th:inline="javascript">
+            var chartType = 'unit';
+            var termSelect = 'monthly';
             $(function(){
-                getChart(uCate,uAmount);
+                loadChart($('#date').val(),chartType,termSelect);
             })
+
+            $('.monthly').on("click",function(){
+                $('#dailyCheck').prop("checked",false);
+                termSelect = 'monthly';
+                loadChart($('#date').val(),chartType,termSelect);
+            })
+
+            $('.daily').on("click",function(){
+                $('#monthlyCheck').prop("checked",false);
+                termSelect = 'daily';
+                loadChart($('#date').val(),chartType,termSelect);
+            })
+
+            
+            $('#unitBtn').on("click",function(){
+                chartType = 'unit';
+                loadChart($('#date').val(),chartType,termSelect);
+            })
+            $('#assyBtn').on("click",function(){
+                chartType = 'assy';
+                loadChart($('#date').val(),chartType,termSelect);
+            })
+            $('#partBtn').on("click",function(){
+                chartType = 'part';
+                loadChart($('#date').val(),chartType,termSelect);
+            })
+            $('#getReport').on("click",function(){
+                loadChart($('#date').val(),chartType,termSelect);
+            })
+
             function getChart(categories,amounts){
                 $('#bar-chart-1').empty();
                 $('#pie-chart-1').empty();
                 invChart.barChart(categories,amounts);
                 invChart.pieChart(categories,amounts);
             }
-            var uCate = [[${unitCategories}]];
-            var uAmount = [[${unitAmounts}]];
 
-            var aCate = [[${assyCategories}]];
-            var aAmount = [[${assyAmounts}]];
+            function loadChart(date, type, term){
+                let startDate;
+                let endDate;
+                if(term == 'monthly'){
+                    startDate = getStartEndDate(date,0);
+                    endDate = getStartEndDate(date,1);
+                }else{
+                    startDate = '1000-01-01';
+                    endDate = date;
+                }
+                $.ajax({
+                    type:"get",
+                    url:"/invapi/inv-report",
+                    data:{
+                        startDate:startDate,
+                        endDate:endDate,
+                        type:type
+                    },
+                    success : function(res){
+                        let categories = [];
+                        let amounts = [];
+                        for(let i = 0; i < res.length; i++){
+                            categories.push(res[i].type_name);
+                            amounts.push((res[i].inv_amount)/10000);
+                        }
+                        getChart(categories,amounts);
+                    },
+                    error : function(a,b,c){
+                        console.log("에러");
+                        console.log("a",a);
+                        console.log("b",b);
+                        console.log("c",c);
+                    }
+                })
 
-            var pCate = [[${partCategories}]];
-            var pAmount = [[${partAmounts}]];
+            }
 
-            $('#unitBtn').on("click",function(){
-                getChart(uCate,uAmount);
-            })
-            $('#assyBtn').on("click",function(){
-                getChart(aCate,aAmount);
-            })
-            $('#partBtn').on("click",function(){
-                getChart(pCate,pAmount);
-            })
+            function getStartEndDate(date, flag){
+                let dateGiven = new Date(date);
+                let prevYear = dateGiven.getFullYear();
+                let returnDate;
+                if(flag == 0){
+                    returnDate = new Date(prevYear, dateGiven.getMonth(),1);
+                }else{
+                    returnDate = new Date(prevYear, dateGiven.getMonth()+1,1);
+                }
+                return dateToString(returnDate);
+            }
+
+            function dateToString(date){
+                let parseDate = new Date(date);
+                return parseDate.getFullYear()+"-"+(parseDate.getMonth()+1)+"-"+parseDate.getDate();
+            }
+
 
         </script>
 

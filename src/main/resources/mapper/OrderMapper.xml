@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.mit.annotation.mapper.OrderMapper">
+    <sql id="searchType">
+        <choose>
+            <when test='type=="IC"'>
+                item_code like #{keyword} and
+            </when>
+            <when test='type=="MA"'>
+                material like #{keyword} and
+            </when>
+            <when test='type=="IN"'>
+                item_name like #{keyword} and
+            </when>
+            <when test='type=="PN"'>
+                product_name like #{keyword} and
+            </when>
+            <when test='type=="CN"'>
+                company_name like #{keyword} and
+            </when>
+        </choose>
+    </sql>
+
+
+    <select id="getProcPlanList" resultType="edu.mit.annotation.realdto.ProcPlanNoPO">
+        <![CDATA[
+        select SQL_CALC_FOUND_ROWS proc_plan_number, company_name, item_name, proc_duedate, business_number
+        from(
+        select proc_plan_number, item_name, proc_duedate, contract_number, business_number
+        from(
+        select proc_plan_number, item_name, proc_duedate, contract_number
+        from(
+        select item_code, item_name, proc_duedate, proc_plan_number
+        from(
+        select proc_plan_number, item_code, proc_duedate
+        from procurement_plan
+        where proc_plan_number not in (select proc_plan_number from purchase_order_item)) a left join item b using (item_code)) aa left join contract_item bb
+        using (item_code)) aaa left join contract bbb using (contract_number)) c left join `co-op_company` using (business_number)
+        where]]>
+        <include refid="searchType" />
+        <![CDATA[
+        proc_duedate between date(#{startDate}) and date(#{endDate})
+        order by company_name, proc_duedate limit #{pageNum},#{amount}]]>
+    </select>
+
+    <select id="getSearchDataCount" resultType="long">
+        select found_rows() data_count
+    </select>
+
+    <select id="getCompanyInfo" resultType="edu.mit.annotation.realdto.CompanyInfoDTO">
+        select company_name, business_number, manager, company_address
+        from `co-op_company`
+        where business_number = #{business_number}
+    </select>
+
+    <select id="getPurchOrderItemList" resultType="edu.mit.annotation.realdto.PurchOrderItemsDTO">
+        select item_code, item_name, width, length, height, material, proc_quantity, item_price, proc_duedate, proc_plan_number
+        from(
+        select item_code, item_name, width, length, height, material, proc_quantity, proc_duedate, proc_plan_number
+        from(
+        select item_code, proc_quantity, proc_duedate, proc_plan_number
+        from procurement_plan
+        where proc_plan_number in (${prcpNumbers})) a left join item b using (item_code)) aa
+        left join contract_item bb using (item_code)
+        order by length(item_code), item_code
+    </select>
+</mapper>

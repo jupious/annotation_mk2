@@ -3,7 +3,7 @@
 <th:block th:fragment="setContent(content)">
 
     <head>
-        <script src="https://code.jquery.com/jquery-3.7.1.slim.js" integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc=" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <title>nnotation</title>
         <!--[if lt IE 11]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -16,6 +16,7 @@
         <meta name="description" content="" />
         <meta name="keywords" content="">
         <meta name="author" content="Phoenixcoded" />
+        <meta name="_csrf_header" th:content="${_csrf.headerName}">
         <!-- Favicon icon -->
         <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
 
@@ -30,6 +31,7 @@
 
     </head>
     <body class="">
+    <input type="hidden" id="_csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     <th:block th:replace = "${content}">
 
     </th:block>

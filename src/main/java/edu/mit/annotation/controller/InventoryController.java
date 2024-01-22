@@ -78,27 +78,28 @@ public class InventoryController {
     }
     @GetMapping("/inv-calc")
     public void invCalc(Model model){
-        List<InventoryCalcDTO> invCalcDtoList = new ArrayList<>();
-        for(int i = 1; i <= 7; i++){
-            int oQ = i*471;
-            int iQ = i*35;
-            int rQ = i*27;
-            InventoryCalcDTO icDto = InventoryCalcDTO.builder()
-                    .itemCode((char)(i+65)+""+i)
-                    .itemName("품목명"+i)
-                    .size(i*10+"x"+(i*10+i)+"x"+(i+14))
-                    .material("재질"+i)
-                    .originQuantity(oQ)
-                    .receiveQuantity(iQ)
-                    .releaseQuantity(rQ)
-                    .calculatedQuantity(oQ+iQ-rQ)
-                    .build();
-            invCalcDtoList.add(icDto);
-        }
-        model.addAttribute("invCalc",invCalcDtoList);
+        LocalDate nowDate = LocalDate.now();
+        DateTimeFormatter dtm = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        String monthBefore= dtm.format(nowDate.minusMonths(1L));
+        String nowStr = dtm.format(nowDate);
+
+
+        model.addAttribute("defaultStartDate",monthBefore);
+        model.addAttribute("defaultEndDate",nowStr);
+
     }
     @GetMapping("/inv-amount")
     public void invAmount(Model model){
+        LocalDate nowDate = LocalDate.now();
+        DateTimeFormatter dtm = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        String nowStr = dtm.format(nowDate);
+
+
+        model.addAttribute("defaultDate",nowStr);
+
+        //이 아래로 지워
         Random rand = new Random();
         String[] unitCate = {"관제부","압착부","용접부","장착부","절단부","정렬부","제어부","주입부","충전부"};
         Integer[] unitAmount = new Integer[unitCate.length];

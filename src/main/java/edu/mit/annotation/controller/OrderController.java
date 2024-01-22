@@ -1,6 +1,8 @@
 package edu.mit.annotation.controller;
 
 
+import edu.mit.annotation.realdto.PurchOrderItemsDTO;
+import edu.mit.annotation.service.OrderService;
 import edu.mit.annotation.test2dto.CheckDTO;
 import edu.mit.annotation.test2dto.OrderDTO;
 import edu.mit.annotation.test2dto.TestItemDTO;
@@ -9,9 +11,12 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,15 +26,39 @@ import java.util.List;
 @Controller
 public class OrderController {
 
+    private final OrderService orderService;
 
     @GetMapping("/order/pur-order") //구매발주서 페이지
-    public void test(){
+    public void purOrder(Model model){
+        LocalDate nowDate = LocalDate.now();
+        DateTimeFormatter dtm = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        String nowStr = dtm.format(nowDate);
+        String monthAfter= dtm.format(nowDate.plusMonths(1L));
+
+
+        model.addAttribute("defaultStartDate",nowStr);
+        model.addAttribute("defaultEndDate",monthAfter);
 
     }
 
-    @GetMapping("/order/pur-order-pop") //발주서작성/수정 페이지
-    public void test1(){
+    @GetMapping("/order/pur-order-pop/{business_number}/{prcpNumbers}") //발주서작성/수정 페이지
+    public String  purOrderPop(@PathVariable("business_number") String business_number, @PathVariable("prcpNumbers") String prcpNumbers, Model model){
+        System.out.println(business_number);
+        System.out.println("'"+prcpNumbers+"'");
+        LocalDate nowDate = LocalDate.now();
+        DateTimeFormatter dtm = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String nowStr = dtm.format(nowDate);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
+
+        List<PurchOrderItemsDTO> list = orderService.getPOItems("'"+prcpNumbers+"'");
+        model.addAttribute("dueDate",sdf.format(list.get(0).getProc_duedate()));
+        model.addAttribute("today",nowStr);
+        model.addAttribute("companyInfo",orderService.getCompInfo(business_number));
+        model.addAttribute("itemList",list);
+
+        return "/order/pur-order-pop";
     }
 
     @GetMapping("/order/pur-order-print") //발주서프린트 페이지

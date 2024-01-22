@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 @RestController
 @RequestMapping("/invapi")
@@ -109,5 +110,31 @@ public class InventoryAPI {
         return inventoryService.saveReleaseItem(ReleaseItemDTO.builder()
                                             .item_code(item_code)
                                             .release_quantity(release_quantity).build());
+    }
+
+    @GetMapping("/inv-calc")
+    public ListWithPaging<InventoryCalcDTO> invCalc(String  startDate, String  endDate, String type, String keyword, Integer pageNum, Integer amount) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Criteria cri = Criteria.builder()
+                .pageNum(pageNum*amount)
+                .amount(amount)
+                .startDate(sdf.parse(startDate))
+                .endDate(sdf.parse(endDate))
+                .type(type)
+                .keyword("%"+keyword+"%")
+                .build();
+        return inventoryService.getInvCalcData(cri);
+    }
+
+    @GetMapping("/inv-report")
+    public List<InventoryReportDTO> invReport(String  startDate, String  endDate, String type) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Criteria cri = Criteria.builder()
+                .type(type)
+                .keyword(type+"_code")
+                .startDate(sdf.parse(startDate))
+                .endDate(sdf.parse(endDate))
+                .build();
+        return  inventoryService.getInvReport(cri);
     }
 }

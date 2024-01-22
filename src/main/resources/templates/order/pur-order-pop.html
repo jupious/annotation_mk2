@@ -14,7 +14,7 @@
                             </div>
                             <div class="col-md-auto">
                                 <button type="button" class="btn  btn-primary btn-sm" id="saveBtn">저장</button>
-                                <button type="button" class="btn  btn-danger btn-sm" id="backBtn">취소</button>
+                                <button type="button" class="btn  btn-danger btn-sm" id="cancleBtn">취소</button>
                             </div>
 
                         </div>
@@ -29,27 +29,24 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <th>발주번호</th>
-                                    <td colspan="3">PO-00006</td>
-
-                                </tr>
+                               
                                 <tr>
                                     <th>발주일</th>
-                                    <td>2019-02-01</td>
-                                    <th>발주납기일</th>
-                                    <td><input type="date"  value="2024-01-13"></td>
+                                    <td th:text="${today}"></td>
+                                    <th>입고예정일</th>
+                                    <td><input type="date" id="receive_duedate" th:value="${dueDate}"></td>
                                 </tr>
                                 <tr>
                                     <th>업체명</th>
-                                    <td>(주)그린피앤엘</td>
+                                    <td th:text="${companyInfo.company_name}">(주)그린피앤엘</td>
                                     <th>사업자번호</th>
-                                    <td>198-81-00081</td>
+                                    <td th:text="${companyInfo.business_number}">198-81-00081</td>
                                 </tr>
                                 <tr>
+                                    <th>주소</th>
+                                    <td th:text="${companyInfo.company_address}">ㅁㅁㅁㅁ</td>
                                     <th>담당자</th>
-                                    <td>김동석</td>
-
+                                    <td th:text="${companyInfo.manager}">김동석</td>
                                 </tr>
 
                                 </tbody>
@@ -82,74 +79,24 @@
                                     <th>공급가격</th>
                                     <th>비고</th>
                                 </tr>
-                                <tr>
+                                <tr th:each="item, itemStat :${itemList}" th:data-prcp="${item.proc_plan_number}" class="prcp">
                                     <td>
                                         <label class="check-task custom-control custom-checkbox d-flex justify-content-center done-task">
                                             <input type="checkbox" class="custom-control-input">
                                             <span class="custom-control-label"></span>
                                         </label>
                                     </td>
-                                    <td class="count">1</td>
-                                    <td>A21</td>
-                                    <td>의자</td>
-                                    <td>50x100x30</td>
-                                    <td>나무</td>
-                                    <td><input type="number" value="10"></td>
-                                    <td>10,500</td>
-                                    <td></td>
-                                    <td></td>
+                                    <td th:text="${itemStat.count}"></td>
+                                    <td class="item_code" th:text="${item.item_code}"></td>
+                                    <td th:text="${item.item_name}"></td>
+                                    <td th:text="${item.width}+'×'+${item.length}+'×'+${item.height}"></td>
+                                    <td th:text="${item.material}"></td>
+                                    <td class="orderCount"><input type="number" th:value="${item.proc_quantity}"></td>
+                                    <td th:text="${item.item_price}"></td>
+                                    <td class="orderPrice"></td>
+                                    <td class="note"><input type="text"></td>
                                 </tr>
-                                <tr>
-                                    <td>
-                                        <label class="check-task custom-control custom-checkbox d-flex justify-content-center done-task">
-                                            <input type="checkbox" class="custom-control-input">
-                                            <span class="custom-control-label"></span>
-                                        </label>
-                                    </td>
-                                    <td class="count">2</td>
-                                    <td>A22</td>
-                                    <td>키보드</td>
-                                    <td>70x20x5</td>
-                                    <td>플라스틱</td>
-                                    <td><input type="number" value="25"></td>
-                                    <td>100,000</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="check-task custom-control custom-checkbox d-flex justify-content-center done-task">
-                                            <input type="checkbox" class="custom-control-input">
-                                            <span class="custom-control-label"></span>
-                                        </label>
-                                    </td>
-                                    <td class="count">3</td>
-                                    <td>A23</td>
-                                    <td>스피커</td>
-                                    <td>40x70x20</td>
-                                    <td>나무</td>
-                                    <td><input type="number" value="36"></td>
-                                    <td>80,000</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="check-task custom-control custom-checkbox d-flex justify-content-center done-task">
-                                            <input type="checkbox" class="custom-control-input">
-                                            <span class="custom-control-label"></span>
-                                        </label>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
+
                                 <tr id="totalPrice">
                                     <td colspan="7"></td>
                                     <td>합계</td>
@@ -158,7 +105,7 @@
                                 </tr>
                                 <tr>
                                     <td class="align-middle text-center">특이사항</td>
-                                    <td colspan="9"><textarea rows="5" style="resize:none; width:100%; border:none;" ></textarea></td>
+                                    <td colspan="9"><textarea rows="5" style="resize:none; width:100%; border:none;" id="detail"></textarea></td>
                                 </tr>
 
                                 </tbody>
@@ -216,41 +163,56 @@
         <script>
             $(document).ready(function() {
                 // 취소 버튼 클릭 시 팝업 닫기
-                $("#backBtn").on('click', function() {
+                $("#cancleBtn").on('click', function() {
                     window.close();
                 });
             });
         </script>
         <script>
-            $(document).ready(function() {
-    $("#saveBtn").on('click', function() {
-        // 실제 데이터를 저장하는 코드 작성
+            var header = $('meta[name="_csrf_header"]').attr("content");
+            var _csrfToken = $('#_csrf_token').val();
 
-        // 발주번호와 업체명 가져오기 (예시)
-        const orderNumber = $("th:contains('발주번호')").next().text().trim();
-        const companyName = $("th:contains('업체명')").next().text().trim();
-
-        // 데이터 저장하는 부분 (여기에 실제 저장 로직을 추가해야 합니다.)
-
-        // 알림창에 발주번호와 업체명 표시
-        alert(`[${orderNumber}] ${companyName} 발주서를 저장했습니다.`);
-
-        // 팝업창 닫기
-        window.close();
-    });
-
-    $("#backBtn").on('click', function() {
-        // 팝업창 닫기
-        window.close();
-    });
-});
-        </script>
-        <script>
             $(function(){
                 $('#item th').addClass('text-center');
                 $('#item td').addClass('text-center');
                 $('th').addClass('align-middle');
                 $('td').addClass('align-middle');
+            })
+
+            $('#saveBtn').on("click",function(){
+                let data;
+                var dataArr = [];
+                $('.prcp').each(function(){
+                    let purch_order_quantity = $(this).children('.orderCount').children().val();
+                    let note = $(this).children('.note').children().val();
+                    let proc_plan_number = $(this).data('prcp');
+                    data = {purch_order_quantity:purch_order_quantity, note:note, proc_plan_number:proc_plan_number};
+                    dataArr.push(data);
+                })
+                let receive_duedate = $('#receive_duedate').val();
+                let purch_order_detail = $('#detail').value;
+                $.ajax({
+                    type:"post",
+                    url:"/orderapi/po-new-order",
+                    beforeSend:function(xhr){
+                                xhr.setRequestHeader(header,_csrfToken);
+                    },
+                    data:{
+                        receive_duedate:receive_duedate,
+                        purch_order_detail:purch_order_detail,
+                        newPurchOrderItem:JSON.stringify(dataArr)
+                    },
+                    success:function(res){
+                        console.log(res);
+                    },
+                    error:function(a,b,c){
+                        console.log("에러");
+                        console.log("a",a);
+                        console.log("b",b);
+                        console.log("c",c);
+                    }
+                })
+
             })
         </script>
     </th:block>

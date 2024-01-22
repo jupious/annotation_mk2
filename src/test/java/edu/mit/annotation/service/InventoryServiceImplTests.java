@@ -61,4 +61,19 @@ public class InventoryServiceImplTests {
                 .build();
         System.out.println(inventoryService.getReleaseData(cri));
     }
+
+    @Test
+    public void testGetInvCalcData() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Criteria cri = Criteria.builder()
+                .pageNum(0)
+                .amount(10)
+                .type("IC")
+                .keyword("%C1%")
+                .startDate(sdf.parse("20240122"))
+                .endDate(sdf.parse("20240122"))
+                .build();
+        System.out.println(inventoryService.getInvCalcData(cri));
+    }
+
 }

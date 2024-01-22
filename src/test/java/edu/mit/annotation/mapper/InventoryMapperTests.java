@@ -91,4 +91,29 @@ public class InventoryMapperTests {
                 .build();
         inventoryMapper.getReleaseList(cri).forEach(System.out::println);
     }
+
+    @Test
+    public void testGetInvCalc() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Criteria cri = Criteria.builder()
+                .pageNum(0)
+                .amount(10)
+                .type("IC")
+                .keyword("%C1%")
+                .startDate(sdf.parse("20240122"))
+                .endDate(sdf.parse("20240122"))
+                .build();
+        inventoryMapper.getInvCalcData(cri);
+    }
+
+    @Test
+    public void testInvReport() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        inventoryMapper.getInvReport(Criteria.builder()
+                .startDate(sdf.parse("20240101"))
+                .endDate(sdf.parse("20240131"))
+                .type("unit")
+                .keyword("unit_code")
+                .build()).forEach(System.out::println);
+    }
 }
