@@ -15,6 +15,10 @@ public interface OrderService {
     //발주품목정보
     List<PurchOrderItemsDTO> getPOItems(String prcpNumbers);
 
+    //발주서 저장
+    Integer savePurchaseOrder(NewPurchaseOrderDTO newPurchaseOrderDTO);
+
+
 
 
 }

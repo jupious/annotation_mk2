@@ -1,29 +1,40 @@
 <!DOCTYPE html>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="UTF-8" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{/layout/layout::setContent(~{::content})}">
     <th:block th:fragment="content">
+        <head>
+            <meta name="_csrf" th:content="${_csrf.token}">
+            <meta name="_csrf_header" th:content="${_csrf.headerName}">
+        </head>
         <div class="pcoded-content">
             <div class="page-header">
                 <div class="page-block">
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h5>진척검수관리</h5>
+                                <h4>진척검수관리</h4>
                             </div>
+
+                            <button type="submit" class="btn  btn-primary btn-lg" id="checkPlan">검수계획</button>
+
+                            <button type="submit" class="btn  btn-primary btn-lg" id="checkResult">검수처리</button><br>
+
                         </div>
                     </div>
                 </div>
 
                 <!-- [ basic-table ] start -->
-                <div class="col-xl-12" id="getdata">
-                    <div class="card">
+                <div class="col-xl-12" >
+                    <div class="card" id="card1">
+
+
 
                         <div class="card-header">
                             <div class="row">
                                 <div class="col">
-                                    <h5>진척검수</h5>
+                                    <h5>검수계획</h5>
                                 </div>
                                 <div class="col-md-auto">
                                     <script>
@@ -33,178 +44,449 @@
                                             });
                                         });
                                     </script>
-                                    <button id="save" type="button" class="btn  btn-primary btn-sm">저장</button>
 
-                                    <button id="removebutton" type="button" class="btn  btn-danger btn-sm">취소</button>
-                                    <script>
-                                        document.getElementById('removebutton').addEventListener('click', function() {
-                                            var table1 = document.getElementById('table1');
-                                            var cellsToRemove1 = table1.querySelectorAll('td');
+<!--                                    <button id="save" type="button" class="btn  btn-primary btn-sm">저장</button>-->
 
-                                            var table2 = document.getElementById('table2');
-                                            var cellsToRemove2 = table2.querySelectorAll('td');
+<!--                                    <button id="removebutton" type="button" class="btn  btn-danger btn-sm">취소</button>-->
 
-                                            cellsToRemove1.forEach(function(cell) {
-                                                cell.innerHTML = '';
-                                            });
-
-                                            cellsToRemove2.forEach(function(cell) {
-                                                cell.innerHTML = '';
-                                            });
-                                        });
-                                    </script>
                                 </div>
 
                             </div>
                         </div>
-                        <div class="card-body table-border-style">
 
-                            <div class="table-responsive">
-                                <table  class="table table-bordered table-hover table-sm" id="table1">
-                                    <thead>
-                                    <tr>
-                                        <th colspan="4">공급자정보</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody >
-                                    <tr >
-                                        <th>발주번호</th>
-                                        <td colspan="3" th:text="${orderList[0].poCode}"></td>
+                            <div class="card-body table-border-style">
+                                <div class="table-responsive">
+                                    <table  class="table table-bordered table-hover table-sm" >
+                                        <thead>
+                                        <tr>
+                                            <th colspan="4">공급자정보</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody >
+                                        <tr >
+                                            <th>발주번호</th>
+                                            <td id="p1"></td>
 
-                                    </tr>
-                                    <tr>
-                                        <th>발주일</th>
-                                        <td th:text="${orderList[0].orderDate}"></td>
-                                        <th>발주납기일</th>
-                                        <td th:text="${orderList[0].delDate}"></td>
-                                    </tr>
-                                    <tr>
-                                        <th>업체명</th>
-                                        <td th:text="${orderList[0].comName}"></td>
-                                        <th>사업자번호</th>
-                                        <td th:text="${orderList[0].businessNum}"></td>
-                                    </tr>
-                                    <tr>
-                                        <th>담당자</th>
-                                        <td th:text="${orderList[0].eName}"></td>
+                                            <th>발주일</th>
+                                            <td id="p2"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>입고예정일</th>
+                                            <td id="p3"></td>
+                                            <th>업체명</th>
+                                            <td id="p4"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>사업자번호</th>
+                                            <td id="p5"></td>
+                                            <th>담당자</th>
+                                            <td id="p6"></td>
+                                        </tr>
 
-                                    </tr>
+                                        </tbody>
+                                    </table>
 
-                                    </tbody>
-                                </table>
-                            </div>
+
+                                    <table class="table table-bordered table-hover table-sm" id="myTable">
+                                        <thead>
+                                        <tr>
+                                            <th colspan="7">품목정보/검수일정</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+
+
+                                        <tr>
+                                            <th>품목코드</th>
+                                            <td id="p7"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>품목명</th>
+                                            <td id="p8"></td>
+
+                                        </tr>
+                                        <tr>
+                                            <th>발주수량</th>
+                                            <td id="p9"></td>
+                                        </tr>
+                                        </tbody>
+                                        <thead>
+                                        <tr>
+                                            <th>차수</th>
+                                            <th>일정</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td><input id="p10" type="text" value="1"></td>
+                                            <td><input class="form-control-sm" id="p10_1" type="Date" value=""></td>
+                                        </tr>
+                                        <tr>
+                                            <td><input id="p11" type="text" value="2"></td>
+                                            <td><input class="form-control-sm" id="p11_1" type="Date" value=""></td>
+                                        </tr>
+
+
+
+
+                                        </tbody>
+
+                                    </table>
+                                        <button id="orderCheckPlan"  class="btn  btn-primary btn-sm" style="float: right;">저장</button>
                         </div>
+                                <script>
+                                    $(document).ready(function() {
+                                        $("#orderCheckPlan").click(function() {
+                                            alert("저장되었습니다.");
+                                        });
+                                    });
+                                </script>
+                                <script>
+                                    $(document).ready(function () {
+                                        $('#orderCheckPlan').on('click',function(){
+                                        var p1 = $('#p1').text();
+                                        var p10 = $('#p10').val();
+                                        var p10_1 = $('#p10_1').val();
+                                        var p11 = $('#p11').val();
+                                        var p11_1 = $('#p11_1').val();
+                                        var csrfToken = $('meta[name="_csrf"]').attr('content');
+                                        var csrfHeader = $('meta[name="_csrf_header"]').attr('content');
+                                        var url = "/order/progress-check/itemPlan"
 
+
+                                        var data = {
+                                            p1: p1,
+                                            p10: p10,
+                                            p10_1: p10_1,
+                                            p11: p11,
+                                            p11_1: p11_1
+                                        };
+
+                                            $.ajax({
+                                                url: url,
+                                                type: 'POST',
+                                                data: data,
+                                                dataType: 'json',
+                                                beforeSend: function (xhr) {
+                                                    xhr.setRequestHeader(csrfHeader, csrfToken);
+                                                },
+                                                success: function (response) {
+                                                    console.log('response 데이터 검수일정' + response);
+                                                    console.log('요청된 URL :::: ' + url);
+                                                },
+                                                error: function (error) {
+                                                    console.log(error);
+                                                }
+                                            });
+                                        });
+                                    });
+
+                                </script>
+
+                    </div>
+                </div>
+                <div class="col-xl-12">
+                    <div class="card" id="card1_1">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col">
+                                    <h5>검수계획리스트</h5>
+                                </div>
+                                <div class="col-md-auto">
+                                </div>
+                            </div>
+
+                        </div>
                         <div class="card-body table-border-style">
+                            <div class="row">
+                                <div class="col">
+                                    <form action="/order/progress-check/dateCheck" method="GET">
+                                    <input class="form-control-sm" type="date" value="" id="date1" name="date1"> ~ <input class="form-control-sm" type="date" value="" name="date2" id="date2">
+                                    <button class="btn btn-primary btn-sm" type="submit">조회</button>
+                                    </form>
+                                </div>
+
+                                <!--                                <div class="col-md-auto">-->
+                                <!--                                    &lt;!&ndash; 체크박스와 뱃지 &ndash;&gt;-->
+                                <!--                                    <div class="d-flex align-items-center">-->
+                                <!--                                        <span class="badge badge-primary">검수결과값 필요만 보기</span>-->
+                                <!--                                        <div class="custom-control custom-checkbox ml-1">-->
+                                <!--                                            <input type="checkbox" class="custom-control-input" id="customCheckaa" checked>-->
+                                <!--                                            <label class="custom-control-label" for="customCheckaa"></label>-->
+                                <!--                                        </div>-->
+                                <!--                                    </div>-->
+
+                                <!--                                    <div class="d-flex align-items-center">-->
+                                <!--                                        <span class="badge badge-primary">검수일정 미등록만 보기</span>-->
+                                <!--                                        <div class="custom-control custom-checkbox ml-1">-->
+                                <!--                                            <input type="checkbox" class="custom-control-input" id="customCheckbb" checked>-->
+                                <!--                                            <label class="custom-control-label" for="customCheckbb"></label>-->
+                                <!--                                        </div>-->
+                                <!--                                    </div>-->
+                                <!--                                </div>-->
+
+                                <div class="col-md-auto">
+                                    <form action="/order/progress-check/searchPlan" method="get">
+                                    <!-- 셀렉트 박스, 입력 필드, 검색 버튼 -->
+                                            <select name="option" id="option" class="form-control-sm" onchange="selectBoxChange(this.value)">
+                                                <option value="pocode" selected>발주번호</option>
+                                                <option value="coname">업체명</option>
+                                                <option value="itname">품목명</option>
+                                            </select>
+                                        <input name="search1" type="text" class="form-control-sm">
+                                    <button class="btn btn-primary btn-sm" id="searchPlan" type="submit">검색</button>
+                                    </form>
+                                </div>
+                            </div>
 
                             <div class="table-responsive">
-
-                                <table class="table table-bordered table-hover table-sm" id="table2">
+                                <table class="table table-bordered table-hover table-sm" >
                                     <thead>
                                     <tr>
-                                        <th colspan="7">품목정보</th>
+                                        <th>발주번호</th>
+                                        <th>업체명</th>
+                                        <th>품목코드</th>
+                                        <th>품목명</th>
+                                        <th>입고예정일</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                        <th>순번</th>
-                                        <th>품목코드</th>
-                                        <th>품목명</th>
-                                        <th>수량</th>
-                                        <th>단가</th>
-                                        <th>공급가격</th>
-                                    </tr>
-                                    <tr>
-                                        <td><span th:text="${itemList[0].num}"></span></td>
-                                        <td><span th:text="${itemList[0].iCode}"></span></td>
-                                        <td><span th:text="${itemList[0].iName}"></span></td>
-                                        <td><span th:text="${itemList[0].count}"></span></td>
-                                        <td><span th:text="${itemList[0].unitPrice}"></span></td>
-                                        <td><span th:text="${itemList[0].supPrice}"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><span th:text="${itemList[1].num}"></span></td>
-                                        <td><span th:text="${itemList[1].iCode}"></span></td>
-                                        <td><span th:text="${itemList[1].iName}"></span></td>
-                                        <td><span th:text="${itemList[1].count}"></span></td>
-                                        <td><span th:text="${itemList[1].unitPrice}"></span></td>
-                                        <td><span th:text="${itemList[1].supPrice}"></span></td>
-                                    </tr>
-                                    </tbody>
+                                    <tr th:each="lists : ${List}" th:attr="data-id=${lists.purch_order_number}, data-code=${lists.item_code}" th:onclick="redirectToURL(this)">
+                                        <td th:text="${lists.purch_order_number}"></td>
+                                        <td th:text="${lists.company_name}"></td>
+                                        <td th:text="${lists.item_code}"></td>
+                                        <td th:text="${lists.item_name}"></td>
+                                        <td th:text="${lists.receive_duedate}"></td>
 
+                                    </tr>
+
+                                    </tbody>
                                 </table>
+                                <script>
+                                    var responseData = {};
+                                    function redirectToURL(row) {
+                                        var id = row.getAttribute('data-id')
+                                        var code = row.getAttribute('data-code')
+
+                                        console.log('클릭한 행의 발주번호 '+ id);
+                                        console.log('클릭한 행의 품목코드 '+ code);
+
+                                        var url = '/order/progress-check';
+                                        var csrfToken = $('meta[name="_csrf"]').attr('content');
+                                        var csrfHeader = $('meta[name="_csrf_header"]').attr('content');
+
+                                        var postData ={
+                                            id:id,
+                                            code:code
+                                        };
+
+                                        $.ajax({
+                                            type:'POST',
+                                            url:url,
+                                            data:postData,
+                                            beforeSend: function(xhr){
+                                                xhr.setRequestHeader(csrfHeader,csrfToken);
+                                            },
+                                            dataType:'json',
+                                            success: function(response) {
+                                                console.log('Post 성공',response);
+                                                responseData = response;
+                                                console.log('리스폰스 데이터'+responseData.purch_order_number)
+                                                $('#p1').text(responseData.purch_order_number);
+                                                $('#p2').text(responseData.purch_order_date);
+                                                $('#p3').text(responseData.receive_duedate);
+                                                $('#p4').text(responseData.company_name);
+                                                $('#p5').text(responseData.business_number);
+                                                $('#p6').text(responseData.manager);
+                                                $('#p7').text(responseData.item_code);
+                                                $('#p8').text(responseData.item_name);
+                                                $('#p9').text(responseData.purch_order_quantity);
+                                            },
+                                            error: function(error) {
+                                                console.log('Post 실패',error);
+                                            }
+                                        });
+
+                                    }
+                                </script>
+
+
+<!--                                <nav aria-label="Page navigation example">-->
+<!--                                    <ul class="pagination justify-content-end">-->
+<!--                                        <li class="page-item"><a class="page-link" href="#!" aria-label="Previous"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>-->
+<!--                                        <li class="page-item"><a class="page-link" href="#!">1</a></li>-->
+<!--                                        <li class="page-item"><a class="page-link" href="#!">2</a></li>-->
+<!--                                        <li class="page-item"><a class="page-link" href="#!">3</a></li>-->
+<!--                                        <li class="page-item"><a class="page-link" href="#!">4</a></li>-->
+<!--                                        <li class="page-item"><a class="page-link" href="#!">5</a></li>-->
+<!--                                        <li class="page-item"><a class="page-link" href="#!" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>-->
+<!--                                    </ul>-->
+<!--                                </nav>-->
                             </div>
 
                         </div>
+                    </div>
+                </div>
+                <div class="col-xl-12" id="getdata">
+                    <div class="card" id="card2" hidden>
+
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col">
+                                    <h5>검수처리</h5>
+                                </div>
+                                <div class="col-md-auto">
+                                    <script>
+                                        $(document).ready(function() {
+                                            $("#chPlan").click(function() {
+                                                alert("저장되었습니다.");
+                                            });
+                                        });
+                                    </script>
+<!--                                    <button id="save1" type="button" class="btn  btn-primary btn-sm">저장</button>-->
+<!--                                    <button id="removebutton" type="button" class="btn  btn-danger btn-sm">취소</button>-->
+
+                                </div>
+
+                            </div>
+                        </div>
+
 
                         <div class="card-body table-border-style">
 
                             <div class="table-responsive">
-                                <table class="table table-bordered table-hover table-sm">
+                                <table class="table table-bordered table-hover table-sm" >
+                                    <thead>
+                                        <tr>
+                                            <th>발주번호</th>
+                                            <th>업체명</th>
+                                            <th>사업자번호</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="p21"></td>
+                                            <td id="p22"></td>
+                                            <td id="p23"></td>
+                                        </tr>
+                                    </tbody>
+                                    <thead>
+                                        <tr>
+                                            <th>품목코드</th>
+                                            <th>품목명</th>
+                                            <th>발주수량</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="p24"></td>
+                                            <td id="p25"></td>
+                                            <td id="p26"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="table table-bordered table-hover table-sm" id="secondTable">
                                     <thead>
                                     <tr>
-                                        <th colspan="6">
+                                        <th colspan="7">
                                             <div class="row">
                                                 <div class="col">
                                                     검수처리
                                                 </div>
-                                                <div class="col-md-auto">
-                                                    <button type="button" class="btn  btn-danger btn-sm">삭제</button>
-                                                </div>
-
                                             </div>
-
                                         </th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
-                                        <th></th>
+
                                         <th>차수</th>
-                                        <th>검수일정</th>
+                                        <th>일정</th>
                                         <th>검수결과</th>
-                                        <th>제작수량합계</th>
+                                        <th>제작수량</th>
                                         <th>보완사항</th>
                                     </tr>
                                     <tr>
-                                        <td>
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="customCheckC1">
-                                                <label class="custom-control-label" for="customCheckC1"></label>
-                                            </div>
-                                        </td>
-                                        <td><span th:text="${checkList[0].num}"></span></td>
-                                        <td><input type="date" th:value="${checkList[0].checkDate}" /></td>
-                                        <td><input class="input-border-none" th:value="${checkList[0].result}" type="text"></td>
-                                        <td><input class="input-border-none" th:value="${checkList[0].sum}" type="text"></td>
-                                        <td><input class="input-border-none" type="text"></td>
+
+                                        <td id="p30" value="1">1</td>
+                                        <td id="p31"><input type="Date" value=""></td>
+                                        <td id="p32"><input type="text" value=""></td>
+                                        <td id="p33"><input type="text" value=""></td>
+                                        <td id="p34"><input type="text" value=""></td>
                                     </tr>
                                     <tr>
-                                        <td>
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="customCheckC2">
-                                                <label class="custom-control-label" for="customCheckC2"></label>
-                                            </div>
-                                        </td>
-                                        <td>2</td>
-                                        <td><input type="date"></td>
-                                        <td><input class="input-border-none" type="text"></td>
-                                        <td><input class="input-border-none" type="text"></td>
-                                        <td><input class="input-border-none" type="text"></td>
+
+                                        <td id="p35" value="2">2</td>
+                                        <td id="p36"><input type="Date" value=""></td>
+                                        <td id="p37"><input type="text" value=""></td>
+                                        <td id="p38"><input type="text" value=""></td>
+                                        <td id="p39"><input type="text" value=""></td>
                                     </tr>
+
                                     </tbody>
                                 </table>
+                                <button id="chPlan" class="btn  btn-primary btn-sm" style="float: right;">저장</button>
                             </div>
+                            <script>
+                                $(document).ready(function () {
+                                    $('#chPlan').on('click',function(){
+                                    var p21 = $('#p21').text();
+                                    var p30 = $('#p30').val();
+                                    var p32 = $('#p32').val();
+                                    var p33 = $('#p33').val();
+                                    var p34 = $('#p34').val();
+                                    var p35 = $('#p35').val();
+                                    var p37 = $('#p37').val();
+                                    var p38 = $('#p38').val();
+                                    var p39 = $('#p39').val();
+                                    var csrfToken = $('meta[name="_csrf"]').attr('content');
+                                    var csrfHeader = $('meta[name="_csrf_header"]').attr('content');
+                                    var url = "/order/progress-check/itemPlan"
+
+
+                                    var data = {
+                                        p21:p21,
+                                        p30:p30,
+                                        p32:p32,
+                                        p33:p33,
+                                        p34:p34,
+                                        p35:p35,
+                                        p37:p37,
+                                        p38:p38,
+                                        p39:p39
+                                    };
+
+                                        $.ajax({
+                                            url: url,
+                                            type: 'POST',
+                                            data: data,
+                                            dataType: 'json',
+                                            beforeSend: function (xhr) {
+                                                xhr.setRequestHeader(csrfHeader, csrfToken);
+                                            },
+                                            success: function (response) {
+                                                console.log('response 데이터 검수처리' + response);
+                                                console.log('요청된 URL :::: ' + url);
+                                            },
+                                            error: function (error) {
+                                                console.log(error);
+                                            }
+                                        });
+                                    });
+
+
+                            </script>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-xl-12">
-                    <div class="card">
+                    <div class="card" id="card2_1" hidden>
                         <div class="card-header">
                             <div class="row">
                                 <div class="col">
-                                    <h5>구매발주서리스트</h5>
+                                    <h5>검수처리리스트</h5>
                                 </div>
                             </div>
 
@@ -217,33 +499,13 @@
                                     <button class="btn btn-primary btn-sm" type="submit">조회</button>
                                 </div>
 
-                                <div class="col-md-auto">
-                                    <!-- 체크박스와 뱃지 -->
-                                    <div class="d-flex align-items-center">
-                                        <span class="badge badge-primary">검수결과값 필요만 보기</span>
-                                        <div class="custom-control custom-checkbox ml-1">
-                                            <input type="checkbox" class="custom-control-input" id="customCheckaa" checked>
-                                            <label class="custom-control-label" for="customCheckaa"></label>
-                                        </div>
-                                    </div>
-
-                                    <div class="d-flex align-items-center">
-                                        <span class="badge badge-primary">검수일정 미등록만 보기</span>
-                                        <div class="custom-control custom-checkbox ml-1">
-                                            <input type="checkbox" class="custom-control-input" id="customCheckbb" checked>
-                                            <label class="custom-control-label" for="customCheckbb"></label>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <div class="col-md-auto">
                                     <!-- 셀렉트 박스, 입력 필드, 검색 버튼 -->
                                     <select id="inputState1" class="form-control-sm">
-                                        <option selected>발주번호</option>
-                                        <option>업체명</option>
+                                        <option selected>품목코드</option>
                                         <option>품목명</option>
-                                        <option>검수진행</option>
-                                        <option>발주납기일</option>
+                                        <option>입고예정일</option>
                                     </select>
 
                                     <input type="text" class="form-control-sm" id="inputZip1">
@@ -255,73 +517,85 @@
                                 <table class="table table-bordered table-hover table-sm" id="table3">
                                     <thead>
                                     <tr>
-                                        <!--                                        <th></th>-->
                                         <th>발주번호</th>
-                                        <th>업체명</th>
+                                        <th>품목코드</th>
                                         <th>품목명</th>
-                                        <th>검수진행</th>
+                                        <th>검수결과</th>
                                         <th>진척도</th>
-                                        <th>발주납기일</th>
+                                        <th>입고예정일</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr th:each="order : ${orderList}" onclick="refreshPage()">
-                                        <td th:text="${order.poCode}"></td>
-                                        <td th:text="${order.comName}"></td>
-                                        <td th:text="${order.pName}"></td>
-                                        <td th:text="${order.resultnum}"></td>
-                                        <td>
-                                            <div class="progress-bar progress-bar-striped bg-success"
-                                                 role="progressbar"
-                                                 th:style="'width: ' + ${order.progress} + '%;'"
-                                                 aria-valuenow="${order.progress}"
-                                                 aria-valuemin="0"
-                                                 aria-valuemax="100">
-                                                <span th:text="${order.progress+'%'}"></span></div>
-                                        </td>
-                                        <td th:text="${order.delDate}"></td>
-
-
+                                    <tr th:each="checkList : ${checkList}" th:attr="data-number=${checkList.purch_order_number}, data-code=${checkList.item_code}" th:onclick="redirectToURL2(this)">
+                                        <td th:text="${checkList.purch_order_number != null ? checkList.purch_order_number : 'N/A'}"></td>
+                                        <td th:text="${checkList.item_code != null ? checkList.item_code : 'N/A'}"></td>
+                                        <td th:text="${checkList.item_name != null ? checkList.item_name : 'N/A'}"></td>
+                                        <td th:text="${checkList.prog_check_result != null ? checkList.prog_check_result : 'N/A'}"></td>
+                                        <td th:text="${checkList.completed_quantity != null ? checkList.completed_quantity : 'N/A'}"></td>
+                                        <td th:text="${checkList.receive_duedate != null ? checkList.receive_duedate : 'N/A'}"></td>
                                     </tr>
-
-                                    <!--                                    <tr>-->
-
-                                    <!--                                        <td><span th:text="${order.poCode}"></span></td>-->
-                                    <!--                                        <td><span th:text="${order.comName}"></span></td>-->
-                                    <!--                                        <td><span th:text="${order.pName}"></span></td>-->
-                                    <!--                                        <td><span th:text="${order.resultnum}"></span></td>-->
-                                    <!--                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 66%;" aria-valuenow=<span th:text="${order.progress}"></span> aria-valuemin="0" aria-valuemax="100">66%</div></td>-->
-                                    <!--                                        <td><span th:text="${order.deldate}"></span></td>-->
-                                    <!--                                    </tr>-->
-                                    <!--                                    <tr>-->
-
-                                    <!--                                        <td>P-00003</td>-->
-                                    <!--                                        <td>(주)그린피앤엘</td>-->
-                                    <!--                                        <td>마우스.헤드셋...</td>-->
-                                    <!--                                        <td>2차완료</td>-->
-                                    <!--                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div></td>-->
-                                    <!--                                        <td>2019-01-01</td>-->
-                                    <!--                                    </tr>-->
-                                    <!--                                    <tr>-->
-
-                                    <!--                                        <td>P-00004</td>-->
-                                    <!--                                        <td>(주)그린피앤엘</td>-->
-                                    <!--                                        <td>마우스.헤드셋...</td>-->
-                                    <!--                                        <td>2차완료</td>-->
-                                    <!--                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0%;" aria-valuenow="00" aria-valuemin="0" aria-valuemax="100">0%</div></td>-->
-                                    <!--                                        <td>2019-01-01</td>-->
-                                    <!--                                    </tr>-->
-                                    <!--                                    <tr>-->
-
-                                    <!--                                        <td>P-00005</td>-->
-                                    <!--                                        <td>(주)그린피앤엘</td>-->
-                                    <!--                                        <td>마우스.헤드셋...</td>-->
-                                    <!--                                        <td>2차완료</td>-->
-                                    <!--                                        <td><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">80%</div></td>-->
-                                    <!--                                        <td>2019-01-01</td>-->
-                                    <!--                                    </tr>-->
                                     </tbody>
                                 </table>
+                                <script>
+                                    var responseData = {};
+                                    function redirectToURL2(row) {
+                                        var number = row.getAttribute('data-number')
+                                        var code = row.getAttribute('data-code')
+
+                                        console.log('클릭한 행의 발주번호 '+ number);
+                                        console.log('클릭한 행의 품목코드 '+ code);
+
+                                        var url = '/order/progress-check/checkItem';
+                                        var csrfToken = $('meta[name="_csrf"]').attr('content');
+                                        var csrfHeader = $('meta[name="_csrf_header"]').attr('content');
+
+                                        var postData ={
+                                            number:number,
+                                            code:code
+                                        };
+
+                                        $.ajax({
+                                            type:'POST',
+                                            url:url,
+                                            data:postData,
+                                            beforeSend: function(xhr){
+                                                xhr.setRequestHeader(csrfHeader,csrfToken);
+                                            },
+                                            dataType:'json',
+                                            success: function(response) {
+                                                console.log('Post 성공',response);
+                                                responseData = response;
+                                                console.log('리스폰스 데이터'+responseData.purch_order_number)
+                                                $('#p21').text(responseData.purch_order_number);
+                                                $('#p22').text(responseData.company_name);
+                                                $('#p23').text(responseData.business_number);
+                                                $('#p24').text(responseData.item_code);
+                                                $('#p25').text(responseData.item_name);
+                                                $('#p26').text(responseData.purch_order_quantity);
+                                            },
+                                            error: function(error) {
+                                                console.log('Post 실패',error);
+                                            }
+                                        });
+                                    }
+<!--                                    function updateInspectionTable(manyProg) {-->
+<!--                                    var table = $('#secondTable tbody');-->
+<!--                                    table.empty();-->
+
+<!--                                    $.each(manyProg, function (index, progCheck) {-->
+<!--                                        var row = $('<tr>');-->
+<!--                                        row.append('<td>' + progCheck.prog_check_order + '</td>');-->
+<!--                                        row.append('<td><input type="Date" value="' + progCheck.prog_check_date + '"></td>');-->
+<!--                                        row.append('<td><input type="text" value="' + progCheck.prog_check_result + '"></td>');-->
+<!--                                        row.append('<td><input type="text" value="' + progCheck.completed_quantity + '"></td>');-->
+<!--                                        row.append('<td><input type="text" value="' + progCheck.supplementation + '"></td>');-->
+
+<!--                                        table.append(row);-->
+<!--                                    });-->
+<!--                                }-->
+
+
+                                </script>
                                 <nav aria-label="Page navigation example">
                                     <ul class="pagination justify-content-end">
                                         <li class="page-item"><a class="page-link" href="#!" aria-label="Previous"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
@@ -334,18 +608,61 @@
                                     </ul>
                                 </nav>
                             </div>
-                            <script>
-                                function refreshPage() {
-                                  location.reload();
-                                }
-                            </script>
+
 
 
 
                         </div>
                     </div>
                 </div>
+
+
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var toggleButton = document.getElementById('checkPlan');
+                        var checkButton = document.getElementById('checkResult');
+                        var card1 = document.getElementById('card1');
+                        var toggleButton = document.getElementById('checkPlan');
+                        var card1_1 = document.getElementById('card1_1');
+                        var card2 = document.getElementById('card2');
+                        var checkButton = document.getElementById('checkResult');
+                        var card2_1 = document.getElementById('card2_1');
+
+                        toggleButton.addEventListener('click', function() {
+                            if (card1.hidden) {
+                                card1.hidden = false;
+                                card1_1.hidden = false;
+                                card2.hidden= true;
+                                card2_1.hidden =true;
+
+                            } else {
+                                card1.hidden = true;
+                                card1_1.hidden = true;
+
+                              }
+                        });
+
+
+
+                       checkButton.addEventListener('click', function() {
+                            if (card2.hidden) {
+                                card2.hidden = false;
+                                card2_1.hidden = false;
+                                card1.hidden = true;
+                                card1_1.hidden = true;
+                            } else {
+                                card2.hidden = true;
+                                card2_1.hidden = true;
+                            }
+                        });
+                    });
+                </script>
+
+
+
             </div>
+        </div>
         </div>
     </th:block>
 </th:block>

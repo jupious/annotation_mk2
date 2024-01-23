@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 public class NewPurchaseOrderDTO {
     private Date purch_order_date;
-    private String receive_duedate;
+    private Date receive_duedate;
     private String purch_order_number;
     private String purch_order_detail;
     private List<NewPurchOrderItem> newPurchOrderItem;

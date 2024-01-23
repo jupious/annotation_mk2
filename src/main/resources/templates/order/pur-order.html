@@ -122,8 +122,8 @@
                                     
                                     </tbody>
                                 </table>
-                                <nav aria-label="Page navigation example">
-                                    <ul class="pagination justify-content-end" id="lowerPaing">
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination justify-content-end" id="lowerPaging">
                                     </ul>
                                 </nav>
                             </div>
@@ -134,9 +134,9 @@
         </div>
 
         <script th:inline="javascript">
-            var result;
+          
             var crntPage;
-            var amount = 5;
+            var amount = 10;
             var header = $('meta[name="_csrf_header"]').attr("content");
             var _csrfToken = $('#_csrf_token').val();
             var upperTbody = $('#upperTbody');
@@ -153,7 +153,10 @@
                 let popOption = "width = 1400px, height = 730px, top = 100px, left = 100px, scrollbars=yes";
                 let business_number = business_numberArr[0];
                 let popUrl = '/order/pur-order-pop/'+ business_number +"/"+prcpNumberArr.join("','");
-                window.open(popUrl,'pop',popOption);
+                var poPop = window.open(popUrl,'pop',popOption);
+                poPop.onbeforeunload = function(){
+                    loadList({"startDate":$('#upperSDate').val(),"endDate":$('#upperEDate').val(),"type":$('#upperType').val(),"keyword":$('#upperSearchText').val(),"pageNum":0,"amount":amount},upperTbody,upperPaging, 0);
+                }
             })
 
             $('#upperDateSearchBtn, #upperSearchBtn').on("click",function(e){
@@ -168,17 +171,17 @@
                 
             })
 
-            $('#upperPaging').on("click","a", function(){
-                id = $(this).data("paging");
-                if(id == 'next'){
-                    id = parseInt(crntPage/10)+1;
-                    id = id*10+1;
-                }else if(id == 'prev'){
-                    id = parseInt(crntPage/10);
-                    id = id*10;
-                }
-                loadList({"startDate":$('#upperSDate').val(),"endDate":$('#upperEDate').val(),"type":$('#upperType').val(),"keyword":$('#upperSearchText').val(),"pageNum":id-1,"amount":amount},upperTbody,upperPaging, 0);
-            })
+            // $('#upperPaging').on("click","a", function(){
+            //     id = $(this).data("paging");
+            //     if(id == 'next'){
+            //         id = parseInt(crntPage/10)+1;
+            //         id = id*10+1;
+            //     }else if(id == 'prev'){
+            //         id = parseInt(crntPage/10);
+            //         id = id*10;
+            //     }
+            //     loadList({"startDate":$('#upperSDate').val(),"endDate":$('#upperEDate').val(),"type":$('#upperType').val(),"keyword":$('#upperSearchText').val(),"pageNum":id-1,"amount":amount},upperTbody,upperPaging, 0);
+            // })
 
             $('#lowerPaging').on("click","a", function(){
                 id = $(this).data("paging");
@@ -212,7 +215,7 @@
                 }
             })
 
-            $('#lowerTbody').on("click","tr",function(){
+            $('#lowerTbody').on("click","tr td",function(){
                 if($(this).children().children().children('input').is(':checked') == true){
                     $(this).children().children().children('input').prop('checked',false);
                 }else{
@@ -228,7 +231,7 @@
                     success:function(res){
                         console.log("성공, 데이터확인",res);
                         $('#upperTbody').empty();
-                        result = res.dataList;
+                        let result = res.dataList;
                         var rsStr = "";
                         for(let i = 0; i < result.length; i++){
                             rsStr += "<tr id ='"+i+"result' data-bsno='"+result[i].business_number+"'><td><div class='custom-control custom-checkbox'><input type='checkbox' class='custom-control-input' id='"+i+"checkbox'> <label class='custom-control-label' for='"+i+"checkbox'></label></div></td><td class ='prcNumber'>"+result[i].proc_plan_number+"</td><td>"+result[i].company_name+"</td><td>"+result[i].item_name+"</td><td>"+dateFormatter(result[i].proc_duedate)+"</td></tr>";
@@ -236,23 +239,23 @@
                         $('#upperTbody').html(rsStr);
                         makeCenter();
                         console.log("전체페이지 수",res.page_count);
-                        var pageList = res.pageList;
-                        var pageStr ="";
-                        for(let j = 0; j < pageList.length; j++){
-                            pageStr +="<li class='page-item'>";
-                            if(pageList[j] == "prev"){
-                                pageStr += "<a class='page-link' data-type='"+flag+"' data-paging='prev' aria-label='Previous'><span aria-hidden='true'>&laquo;</span><span class='sr-only'>Previous</span></a>";
-                            }else if(pageList[j]=="next"){
-                                pageStr += "<a class='page-link' data-type='"+flag+"' data-paging='next' aria-label='Next'><span aria-hidden='true'>&raquo;</span><span class='sr-only'>Next</span></a>";
-                            }else{
-                                pageStr += "<a class='page-link' data-type='"+flag+"' data-paging='"+pageList[j]+"'>"+pageList[j]+"</a>";
-                            }
-                            pageStr +="</li>"
-                        }
+                        // var pageList = res.pageList;
+                        // var pageStr ="";
+                        // for(let j = 0; j < pageList.length; j++){
+                        //     pageStr +="<li class='page-item'>";
+                        //     if(pageList[j] == "prev"){
+                        //         pageStr += "<a class='page-link' data-type='"+flag+"' data-paging='prev' aria-label='Previous'><span aria-hidden='true'>&laquo;</span><span class='sr-only'>Previous</span></a>";
+                        //     }else if(pageList[j]=="next"){
+                        //         pageStr += "<a class='page-link' data-type='"+flag+"' data-paging='next' aria-label='Next'><span aria-hidden='true'>&raquo;</span><span class='sr-only'>Next</span></a>";
+                        //     }else{
+                        //         pageStr += "<a class='page-link' data-type='"+flag+"' data-paging='"+pageList[j]+"'>"+pageList[j]+"</a>";
+                        //     }
+                        //     pageStr +="</li>"
+                        // }
                         
-                        pagingTag.html(pageStr);
-                        $('[data-type='+flag+'][data-paging ='+res.currentPage+']').parent().addClass("active");
-                        crntPage = criteria.pageNum + 1;
+                        // pagingTag.html(pageStr);
+                        // $('[data-type='+flag+'][data-paging ='+res.currentPage+']').parent().addClass("active");
+                        // crntPage = criteria.pageNum + 1;
                         makeCenter();
                     },
                     error:function(a,b,c){
@@ -272,7 +275,7 @@
                     success:function(res){
                         console.log("성공, 데이터확인",res);
                         $('#lowerTbody').empty();
-                        result = res.dataList;
+                        let result = res.dataList;
                         var rsStr = "";
                         for(let i = 0; i < result.length; i++){
                             rsStr += "<tr id ='"+i+"result' class='result'><td><div class='custom-control custom-checkbox'><input type='checkbox' data-lowerCheckbox ='"+i+"' class='custom-control-input' > <label class='custom-control-label' for='"+i+"checkbox'></label></div></td><td class='poNum'>"+result[i].purch_order_number+"</td><td>"+result[i].company_name+"</td><td>"+result[i].item_name_string+"</td><td>"+dateFormatter(result[i].purch_order_date)+"</td><td>"+dateFormatter(result[i].receive_duedate)+"</td>\</tr>";
@@ -285,12 +288,13 @@
                             if(pageList[j] == "prev"){
                                 pageStr += "<a class='page-link' data-paging='prev' aria-label='Previous'><span aria-hidden='true'>&laquo;</span><span class='sr-only'>Previous</span></a>";
                             }else if(pageList[j]=="next"){
-                                pageStr += "<a class='page-link lowerPage'  data-paging='next' aria-label='Next'><span aria-hidden='true'>&raquo;</span><span class='sr-only'>Next</span></a>";
+                                pageStr += "<a class='page-link'  data-paging='next' aria-label='Next'><span aria-hidden='true'>&raquo;</span><span class='sr-only'>Next</span></a>";
                             }else{
-                                pageStr += "<a class='page-link'  data-paging='"+pageList[j]+"'>"+pageList[j]+"</a>";
+                                pageStr += "<a class='page-link lowerPage'  data-paging='"+pageList[j]+"'>"+pageList[j]+"</a>";
                             }
                             pageStr +="</li>"
                         }
+                        console.log(pageStr)
                         $('#lowerPaging').html(pageStr);
                         $('.lowerPage[data-paging ='+res.currentPage+']').parent().addClass("active");
                         crntPage = criteria.pageNum + 1;

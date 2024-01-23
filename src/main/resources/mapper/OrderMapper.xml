@@ -40,7 +40,7 @@
         <include refid="searchType" />
         <![CDATA[
         proc_duedate between date(#{startDate}) and date(#{endDate})
-        order by company_name, proc_duedate limit #{pageNum},#{amount}]]>
+        order by company_name, proc_duedate ]]>
     </select>
 
     <select id="getSearchDataCount" resultType="long">
@@ -64,4 +64,19 @@
         left join contract_item bb using (item_code)
         order by length(item_code), item_code
     </select>
+
+    <select id="getLatestPurchOrderNumber" resultType="string">
+        select purch_order_number
+        from purchase_order
+        order by length(purch_order_number) desc, purch_order_number desc limit 0,1
+    </select>
+
+    <insert id="savePurchaseOrder">
+        insert into purchase_order (purch_order_number, purch_order_date, receive_duedate, purch_order_detail)
+        values (#{purch_order_number}, date(#{purch_order_date}), date(#{receive_duedate}), #{purch_order_detail})
+    </insert>
+
+    <insert id="savePurchaseOrderItem">
+        insert into purchase_order_item values (#{purch_order_quantity}, #{note}, #{purch_order_number}, #{proc_plan_number})
+    </insert>
 </mapper>

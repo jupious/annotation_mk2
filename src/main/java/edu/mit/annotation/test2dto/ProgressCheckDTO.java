@@ -11,20 +11,16 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CheckDTO {
-    // 차수
-    private Integer num;
-
+public class ProgressCheckDTO { // 진척검수
+    //검수번호
+    private Integer prog_check_number;
+    //발주번호
+    private String purch_order_number;
+    //차수
+    private Integer prog_check_order;
     //검수일정
-    private Date checkDate;
+    private Date prog_check_date;
 
-    //검수결과
-    private String result;
 
-    //제작수량합계
-    private Integer sum;
-
-    //보완사항
-    private String etc;
 
 }

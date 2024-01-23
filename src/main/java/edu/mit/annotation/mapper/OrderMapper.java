@@ -1,9 +1,6 @@
 package edu.mit.annotation.mapper;
 
-import edu.mit.annotation.realdto.CompanyInfoDTO;
-import edu.mit.annotation.realdto.Criteria;
-import edu.mit.annotation.realdto.ProcPlanNoPO;
-import edu.mit.annotation.realdto.PurchOrderItemsDTO;
+import edu.mit.annotation.realdto.*;
 
 import java.util.List;
 
@@ -18,6 +15,14 @@ public interface OrderMapper {
     CompanyInfoDTO getCompanyInfo(String business_number);
     //발주서 품목정보
     List<PurchOrderItemsDTO> getPurchOrderItemList(String prcpNumbers);
+
+    //발주서 저장
+    void savePurchaseOrder(NewPurchaseOrderDTO newPurchaseOrderDTO);
+    //발주내용 저장
+    void savePurchaseOrderItem(NewPurchOrderItem newPurchOrderItem);
+
+    //발주번호가 가장 큰값 가져오기
+    String getLatestPurchOrderNumber();
 
 
 }

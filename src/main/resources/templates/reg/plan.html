@@ -1,33 +1,30 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{/layout/layout::setContent(~{::content})}">
+<th:block th:replace="~{./layout/layout::setContent(~{::content})}">
     <th:block th:fragment = "content">
-        <!-- 메인 시작 -->
-
         <div class="pcoded-content">
-            <!-- [ breadcrumb ] start -->
-
-            <!-- [ breadcrumb ] end -->
-            <!-- 본문내용 시작 -->
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-header">조달계획등록</h5>
                     <div class="card-body table-border-style">
-                        <button type="button" class="btn btn-primary btn-sm" style="float:right;">조달계획등록</button>
-                        <button type="button" class="btn btn-danger btn-sm" style="float:right;">리스트에서제거</button>
+                        <button type="button" id="save" class="btn btn-primary btn-sm" style="float:right;">조달계획등록</button>
                         <div class="table-responsive">
                             <table id="table1" class="table table-bordered table-sm text-center" width="100%">
                                 <thead>
                                 <tr>
-                                    <th><input type="checkbox" id="check_all"></th>
-                                    <th>품목코드</th>
-                                    <th>품목명</th>
-                                    <th>소요수량</th>
-                                    <th>재고수량</th>
-                                    <th>조달수량</th>
-                                    <th>평균반품율</th>
-                                    <th>소요예정일</th>
-                                    <th>조달납기일</th>
+                                    <th class="text-center">생산시작일</th>
+                                    <th class="text-center">생산종료일</th>
+                                    <th class="text-center">생산제품코드</th>
+                                    <th class="text-center">생산제품명</th>
+                                    <th class="text-center">생산수량</th>
+                                    <th class="text-center">품목코드</th>
+                                    <th class="text-center">품목명</th>
+                                    <th class="text-center">품목소요수량</th>
+                                    <th class="text-center">조달간격</th>
+                                    <th class="text-center">평균반품율</th>
+                                    <th class="text-center">조달수량</th>
+                                    <th class="text-center">조달납기일</th>
+                                    <th class="text-center"></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -35,93 +32,82 @@
                             </table>
                         </div>
                     </div>
-                    <nav>
-                        <ul class="pagination">
-                            <li class="page-item disabled"><span class="page-link">이전</span></li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><span class="page-link">2<span class="sr-only">현재</span></span></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><span class="page-link">다음</span></li>
-                        </ul>
-                    </nav>
                 </div>
-            </div>
+            </div>  
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-header">조달계획관리</h5>
+                    <h5 class="card-header">생산계획조회</h5>
                     <div class="card-body table-border-style">
-                        <select name="검색항목" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" style="float:left;">
-                            <option value="">선택</option>
-                            <option value="품목코드">품목코드</option>
-                            <option value="품목명">품목명</option>
+                        <input type="date" id="startDate" class="form-control-sm" th:value="${startDate}">
+                        ~
+                        <input type="date" id="endDate" class="form-control-sm" th:value="${endDate}">
+                        <button class="btn  btn-primary btn-sm" id="searchDate">조회</button><br>
+                        <select id="type" name="type" title="검색분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" style="float:left; height:31px;">
+                            <option value="">검색어</option>
+                            <option value="PC" th:selected="${pageMaker.cri.type eq 'PC'}">제품코드</option>
+                            <option value="PN" th:selected="${pageMaker.cri.type eq 'PN'}">제품명</option>
+                            <option value="IC" th:selected="${pageMaker.cri.type eq 'IC'}">품목코드</option>
+                            <option value="IN" th:selected="${pageMaker.cri.type eq 'IN'}">품목명</option>
                         </select>
-                        <input type="text" class="form-control-sm" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;">
-                        <button class="btn btn-primary btn-sm" type="button" style="float:left;">검색</button>
-                        <button type="button" class="btn  btn-primary btn-sm" style="float:right;" onclick="moveSelectedRows()">리스트에추가</button>
+                        <input type="text" class="form-control-sm" id="keyword" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;">
+                        <button class="btn btn-primary btn-sm" type="button" style="float:left;" id="search">검색</button>
                         <button type="button" class="btn  btn-danger btn-sm" style="float:right;">미등록건만보기</button>
-                        <button type="button" class="btn  btn-primary btn-sm" style="float:right;">전체보기</button>
+                        <button type="button" id="ShowAll" class="btn  btn-primary btn-sm" style="float:right;">전체보기</button>
                         <div class="table-responsive">
                             <table id="table2" class="table table-bordered table-sm" width="100%">
                                 <thead>
                                 <tr>
-                                    <th class="text-center"></th>
+                                    <th class="text-center">생산시작일</th>
+                                    <th class="text-center">생산종료일</th>
+                                    <th class="text-center">생산제품코드</th>
+                                    <th class="text-center">생산제품명</th>
+                                    <th class="text-center">생산수량</th>
                                     <th class="text-center">품목코드</th>
                                     <th class="text-center">품목명</th>
-                                    <th class="text-center">소요수량</th>
-                                    <th class="text-center">소요예정일</th>
-                                    <th class="text-center">조달납기일</th>
-                                    <th class="text-center">진행단계</th>
+                                    <th class="text-center">품목소요수량</th>
+                                    <th class="text-center">조달간격</th>
+                                    <th class="text-center">평균반품율</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td align="center" valign="middle"><input type="checkbox" class="checkbox"></td>
-                                    <td align="center" valign="middle">00000</td>
-                                    <td align="center" valign="middle">00000</td>
-                                    <td align="center" valign="middle">00000</td>
-                                    <td align="center" valign="middle">0000-00-00</td>
-                                    <td align="center" valign="middle">0000-00-00</td>
-                                    <td align="center" valign="middle" >조달계획미등록</td>
-                                </tr>
-                                <tr>
-                                    <td align="center" valign="middle"><input type="checkbox" class="checkbox"></td>
-                                    <td align="center" valign="middle">11111</td>
-                                    <td align="center" valign="middle">11111</td>
-                                    <td align="center" valign="middle">11111</td>
-                                    <td align="center" valign="middle">0000-00-00</td>
-                                    <td align="center" valign="middle">0000-00-00</td>
-                                    <td align="center" valign="middle">조달완료</td>
-                                </tr>
-                                <tr>
-                                    <td align="center" valign="middle"><input type="checkbox" class="checkbox"></td>
-                                    <td align="center" valign="middle">22222</td>
-                                    <td align="center" valign="middle">22222</td>
-                                    <td align="center" valign="middle">22222</td>
-                                    <td align="center" valign="middle">0000-00-00</td>
-                                    <td align="center" valign="middle">0000-00-00</td>
-                                    <td align="center" valign="middle">조달계획등록완료</td>
-                                </tr><tr>
-                                    <td align="center" valign="middle"><input type="checkbox" class="checkbox"></td>
-                                    <td align="center" valign="middle">44444</td>
-                                    <td align="center" valign="middle">44444</td>
-                                    <td align="center" valign="middle">44444</td>
-                                    <td align="center" valign="middle">0000-00-00</td>
-                                    <td align="center" valign="middle">0000-00-00</td>
-                                    <td align="center" valign="middle">발주진행중</td>
+                                <tr th:each="prodPlan:${prodPlan}">
+                                    <td th:text="${prodPlan.prod_start_date}"></td>
+                                    <td th:text="${prodPlan.prod_end_date}"></td>
+                                    <td th:text="${prodPlan.product_code}"></td>
+                                    <td th:text="${prodPlan.product_name}"></td>
+                                    <td th:text="${prodPlan.prod_quantity}"></td>
+                                    <td th:text="${prodPlan.item_code}"></td>
+                                    <td th:text="${prodPlan.item_name}"></td>
+                                    <td th:text="${prodPlan.item_required_quantity}"></td>
+                                    <td th:text="${prodPlan.procure_term}"></td>
+                                    <td th:text="${prodPlan.avg_return_rate}"></td>
                                 </tr>
                                 </tbody>
                             </table>
+                            <nav th:if="${pageMaker.total}">
+                                <th:if test="${pageMaker.prev}">
+                                    <th:block th:if="${pageMaker.startPage > 1}">
+                                        <a th:href="@{'/reg/plan?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount}}">prev</a>
+                                    </th:block>
+                                </th:if>
+                                
+                                <span th:each="num : ${#numbers.sequence(pageMaker.startPage, pageMaker.endPage)}">
+                                    <th:block th:if="${num == pageMaker.cri.pageNum}">
+                                        <b th:text="${num}"></b>
+                                    </th:block>
+                                    <th:block th:unless="${num == pageMaker.cri.pageNum}">
+                                        <a th:href="@{'/reg/plan?pageNum=' + ${num} + '&amount=' + ${pageMaker.cri.amount}}" th:text="${num}"></a>
+                                    </th:block>
+                                </span>
+                                
+                                <th:if test="${pageMaker.next}">
+                                    <th:block th:if="${pageMaker.endPage*pageMaker.cri.amount < pageMaker.total}">
+                                        <a th:href="@{'/reg/plan?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount}}">next</a>
+                                    </th:block>
+                                </th:if>
+                            </nav>
                         </div>
                     </div>
-                    <nav>
-                        <ul class="pagination">
-                            <li class="page-item disabled"><span class="page-link">이전</span></li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><span class="page-link">2<span class="sr-only">현재</span></span></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><span class="page-link">다음</span></li>
-                        </ul>
-                    </nav>
                 </div>
             </div>
             <!-- 본문내용 종료 -->
@@ -130,125 +116,196 @@
         <!-- 메인 종료 -->
 
         <!-- 스크립트 -->
-        <script>
-            function changeProgress(progress) {
-            document.querySelector('.btn-outline-primary').innerHTML = progress + '<span class="sr-only"></span>';
-            }
+<script th:inline="javascript">
+    var prodPlan=/*[[${prodPlan}]]*/;
+    console.log(prodPlan);
+    var header = $('meta[name="_csrf_header"]').attr("content");
+            var _csrfToken = $('#_csrf_token').val();
+</script>
+<script>
+    function search() {
+                var type = $("#type").val();
+                var keyword = $("#keyword").val();
+                var pageNum = $("#table2_paginate .active a").text(); // 현재 선택된 페이지 번호 가져오기
 
-            function moveSelectedRows() {
-            const checkboxes = document.querySelectorAll('#table2 .checkbox:checked');
-            const table1Body = document.querySelector('#table1 tbody');
-
-            checkboxes.forEach(checkbox => {
-            const row = checkbox.closest('tr');
-
-            if (!row.classList.contains('moved')) {
-                const clonedRow = row.cloneNode(true);
-                clonedRow.querySelector('.checkbox').remove();
-                table1Body.appendChild(clonedRow);
-                row.classList.add('moved');
-                checkbox.checked = false;
-            }
-            });
-        }
-        </script>
-        <script>
-            const table = document.getElementById('table2');
-            const rows = table.getElementsByTagName('tr');
-
-            for (let i = 1; i < rows.length; i++) {
-              const cells = rows[i].getElementsByTagName('td');
-              const statusValue = cells[6].textContent.trim();
-
-              switch (statusValue) {
-                case '조달완료':
-                  cells[6].style.backgroundColor = '#aaffaa'; // 녹색
-                  break;
-                case '발주진행중':
-                  cells[6].style.backgroundColor = '#aaaaff'; // 노란색
-                  break;
-                case '조달계획등록완료':
-                  cells[6].style.backgroundColor = '#f1c40f'; // 주황색
-                  break;
-                case '조달계획미등록':
-                  cells[6].style.backgroundColor = '#ffaaaa'; // 빨간색
-                  break;
-                default:
-                  break;
-              }
-            }
-        </script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                var table2Rows = document.querySelectorAll('#table2 tbody tr');
-
-                table2Rows.forEach(function (row) {
-                    row.addEventListener('click', function () {
-                        copyRowToTable1(row);
-                    });
-                });
-
-                function copyRowToTable1(row) {
-                    var table1Body = document.querySelector('#table1 tbody');
-
-                    if (table1Body) {
-                        var newRow = document.createElement('tr');
-
-                        var checkboxCell = document.createElement('td');
-                        var checkbox = document.createElement('input');
-                        checkbox.type = 'checkbox';
-                        checkbox.class = 'text-center';
-                        checkbox.checked = false;
-                        checkbox.name = 'check';
-                        checkboxCell.appendChild(checkbox);
-                        newRow.appendChild(checkboxCell);
-
-                        for (var i = 1; i <= 3; i++) {
-                            var newCell = document.createElement('td');
-                            newCell.innerHTML = row.cells[i].innerHTML;
-                            newRow.appendChild(newCell);
-                        }
-
-                        for (var i = 4; i <= 6; i++) {
-                            var newCell = document.createElement('td');
-                            newRow.appendChild(newCell);
-                        }
-
-                        for (var i = 4; i <= 5; i++) {
-                            var newCell = document.createElement('td');
-                            if (row.cells[i]) {
-                                newCell.innerHTML = row.cells[i].innerHTML;
-                            }
-                            newRow.appendChild(newCell);
-                        }
-
-                        table1Body.appendChild(newRow);
-                    } else {
-                        console.error('Table1 tbody not found.');
+                console.log(type);
+                console.log(keyword);
+                console.log(pageNum);
+                $.ajax({
+                    type: "GET",
+                    url: "/reg/planSearch",
+                    data: { "type": type, "keyword": keyword },
+                    success: function (response) {
+                        updateTable(response);
+                    },
+                    error: function (error) {
+                        console.error("검색 실패");
+                        console.error(error);
                     }
+                });
+            }
+            function updateTable(response) {
+                // itemList를 이용하여 테이블 등을 업데이트하는 로직 추가
+                // 예시: 테이블의 tbody를 찾아서 아이템 리스트로 업데이트
+                var tbody = $("#table2 tbody");
+                tbody.empty();  // 기존 데이터 삭제
+
+                for (var i = 0; i < response.length; i++) {
+                    var item = response[i];
+                    var row = "<tr>" +
+                            "<td>" + item.prod_start_date + "</td>" +
+                            "<td>" + item.prod_end_date + "</td>" +
+                            "<td>" + item.product_code  + "</td>" +
+                            "<td>" + item.product_name + "</td>" +
+                            "<td>" + item.prod_quantity + "</td>" +
+                            "<td>" + item.item_code + "</td>" +
+                            "<td>" + item.item_name + "</td>" +
+                            "<td>" + item.item_required_quantity + "</td>" +
+                            "<td>" + item.procure_term + "</td>" +
+                            "<td>" + item.avg_return_rate + "</td>" +
+                            "</tr>";
+                    tbody.append(row);
+                }
+            }
+        </script>
+</script>
+<script>
+    $('th').addClass('text-center');
+    $('td').addClass('text-center');
+    $('th').addClass('align-middle');
+    $('td').addClass('align-middle');
+</script>
+<script>
+    $(document).ready(function () {
+        $("#search").on("click", function () {
+                    search();
+                });
+        function showAllRows() {
+            $("#table2 tbody tr").show();
+        }
+        $("#ShowAll").on("click", function () {
+            showAllRows();
+        });
+        $("#searchDate").on("click", function () {
+            var startDate = new Date($("#startDate").val());
+            var endDate = new Date($("#endDate").val());
+            $("#table2 tbody tr").each(function () {
+                var rowStartDateStr = $(this).find("td:eq(0)").text();
+                var rowStartDate = new Date(rowStartDateStr);
+                if (startDate <= rowStartDate && rowStartDate <= endDate) {
+                    $(this).show();
+                } 
+                else {
+                    $(this).hide();
                 }
             });
-        </script>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                    $("#check_all").click(function() {
-                        if($("#check_all").is(":checked"))
-                            $("input[name=check]").prop("checked", true);
-                        else
-                            $("input[name=check]").prop("checked", false);
-                    });
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+    // 복사된 행의 플래그를 저장할 객체
+    var copiedRows = {};
 
-                    $("input[name=check]").click(function() {
-                        var total = $("input[name=check]").length;
-                        var checked = $("input[name=check]:checked").length;
+    // table2의 행 클릭 시
+    $("#table2 tbody").on("click", "tr", function () {
+        // 이미 복사된 행인 경우 무시
+        if (copiedRows[$(this).index()]) {
+            return;
+        }
 
-                        if(total != checked)
-                            $("#check_all").prop("checked", false);
-                        else
-                            $("#check_all").prop("checked", true);
-                    });
-                });
-        </script>
+        // 새로운 행의 고유 식별자 생성
+        var rowId = new Date().getTime();
+
+        var rowData = $(this).find("td").map(function () {
+            return $(this).text();
+        }).get();
+
+        // 새로운 행 생성
+        var newRow = $("<tr>");
+        newRow.append("<td class='prod_start_date'>" + rowData[0] + "</td>");
+        newRow.append("<td class='prod_end_date'>" + rowData[1] + "</td>");
+        newRow.append("<td class='product_code'>" + rowData[2] + "</td>");
+        newRow.append("<td class='product_name'>" + rowData[3] + "</td>");
+        newRow.append("<td class='prod_quantity'>" + rowData[4] + "</td>");
+        newRow.append("<td class='item_code'>" + rowData[5] + "</td>");
+        newRow.append("<td class='item_name'>" + rowData[6] + "</td>");
+        newRow.append("<td class='item_required_quantity'>" + rowData[7] + "</td>");
+        newRow.append("<td class='procure_term'>" + rowData[8] + "</td>");
+        newRow.append("<td class='avg_return_rate'>" + rowData[9] + "</td>");
+        newRow.append('<td><input type="text" class="proc_quantity"></td>');
+        newRow.append('<td><input type="date" class="proc_duedate"></td>');
+        newRow.append('<td><button type="button" class="btn btn-sm btn-danger deleteRow">삭제</button></td>');
+
+        // table1에 새로운 행 추가
+        $("#table1 tbody").append(newRow);
+
+        // 복사된 행의 플래그 설정
+        copiedRows[$(this).index()] = true;
+
+        // 삭제 버튼 클릭 시 복사 상태 초기화
+        $(".deleteRow").on("click", function () {
+            var rowIdToDelete = $(this).closest("tr").index();
+            // 복사된 행의 플래그 해제
+            delete copiedRows[rowIdToDelete];
+        });
+    });
+
+    // table1의 삭제 버튼 클릭 시
+    $("#table1 tbody").on("click", ".deleteRow", function () {
+        // 클릭한 행 삭제
+        $(this).closest("tr").remove();
+
+        // 복사된 행의 식별자 초기화
+        copiedRowId = null;
+    });
+
+    // 저장 버튼 클릭 시
+    $("#save").on("click", function () {
+        // FormData 초기화
+        var formData = new FormData();
+
+        // table1의 각 행에 대해 처리
+        $("#table1 tbody tr").each(function () {
+            var row = $(this);
+            formData.append('prod_start_date[]',row.find(".prod_start_date").text());
+            formData.append('prod_end_date[]',row.find(".prod_end_date").text());
+            formData.append('product_code[]', row.find(".product_code").text());
+            formData.append('product_name[]',row.find(".product_name").text());
+            formData.append('prod_quantity[]', row.find(".prod_quantity").text());
+            formData.append('item_code[]', row.find(".item_code").text());
+            formData.append('item_name[]',row.find(".item_name").text());
+            formData.append('item_required_quantity[]',row.find(".item_required_quantity").text());
+            formData.append('procure_term[]',row.find(".procure_term").text());
+            formData.append('avg_return_rate[]',row.find(".avg_return_rate").text());
+            formData.append('proc_quantity[]',row.find(".proc_quantity").val());
+            formData.append('proc_duedate[]',row.find(".proc_duedate").val());
+        });
+        for (var pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
+        $.ajax({
+            type: "POST",
+            url: "/reg/planInput",
+            processData: false,
+            contentType: false,
+            data: formData,
+            beforeSend:function(xhr){
+                                xhr.setRequestHeader(header,_csrfToken)
+                            },
+            success: function (response) {
+                console.log("조달계획 저장 성공");
+                $("#table1 tbody").empty();
+                copiedRows = {};
+            },
+            error: function (error) {
+                console.log("조달계획 저장 실패");
+                console.error(error);
+            }
+        });
+    });
+});
+</script>
     </th:block>
 </th:block>
 </html>

@@ -2,8 +2,341 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="edu.mit.annotation.mapper.TestMapper">
 
+    <sql id="item_Criteria">
+        <if test='keyword!=null'>
+            where
+            <choose>
+                <when test='type=="IC"'>
+                    item.item_code like '%${keyword}%'
+                </when>
+                <when test='type=="IN"'>
+                    item.item_name like '%${keyword}%'
+                </when>
+                <when test='type=="M"'>
+                    item.material like '%${keyword}%'
+                </when>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="contract_Criteria">
+        <if test='keyword!=null'>
+            where
+            <choose>
+                <when test='type=="IN"'>
+                    item.item_name like '%${keyword}%'
+                </when>
+                <when test='type=="CN"'>
+                    `co-op_company`.company_name like '%${keyword}%'
+                </when>
+                <when test='type=="BN"'>
+                    `co-op_company`.business_number like '%${keyword}%'
+                </when>
+                <when test='type=="CNn"'>
+                    contract.contract_number like '%${keyword}%'
+                </when>
+            </choose>
+        </if>
+    </sql>
+
+    <sql id="prodplan_Criteria">
+        <if test='keyword!=null'>
+            where
+            <choose>
+                <when test='type=="PC"'>
+                    p.product_code like '%${keyword}%'
+                </when>
+                <when test='type=="PN"'>
+                    p.product_name like '%${keyword}%'
+                </when>
+                <when test='type=="IC"'>
+                    i.item_code like '%${keyword}%'
+                </when>
+                <when test='type=="IN"'>
+                    i.item_name like '%${keyword}%'
+                </when>
+            </choose>
+        </if>
+    </sql>
+
     <select id="findAll" resultType="edu.mit.annotation.testdto.TestMemberDTO">
         select * from member
     </select>
 
+    <select id="getListItem" resultType="edu.mit.annotation.testdto.TestItemDTO">
+        select * from item
+    </select>
+
+    <select id="getListItemWithPaging" resultType="edu.mit.annotation.testdto.TestItemDTO">
+        <![CDATA[
+    select item_code, item_name, width, length, height, material, blueprint_origin_name
+    from item
+    ]]><include refid="item_Criteria"></include>
+        limit #{amount} offset #{pageNum}
+    </select>
+
+    <select id="searchListItemWithPaging" resultType="edu.mit.annotation.testdto.TestItemDTO">
+        <![CDATA[
+    select item_code, item_name, width, length, height, material, blueprint_origin_name
+    from item
+    ]]><include refid="item_Criteria"></include>
+    </select>
+
+    <select id="getTotalItemCount" resultType="int">
+        select count(*) from item
+    </select>
+
+    <select id="getListUnitCode" resultType="edu.mit.annotation.testdto.TestCodeDTO">
+        select * from unit
+    </select>
+
+    <select id="getListAssyCode" resultType="edu.mit.annotation.testdto.TestCodeDTO">
+        select * from assy
+    </select>
+
+    <select id="getListPartCode" resultType="edu.mit.annotation.testdto.TestCodeDTO">
+        select * from part
+    </select>
+
+    <delete id="removeItem">
+        delete from item where item_code=#{item_code}
+    </delete>
+
+    <insert id="inputUnitCode">
+        insert into unit(unit_code,unit_name)
+        values(#{unit_code},#{unit_name})
+    </insert>
+
+    <insert id="inputAssyCode">
+        insert into assy(assy_code,assy_name)
+        values(#{assy_code},#{assy_name})
+    </insert>
+
+    <insert id="inputPartCode">
+        insert into part(part_code,part_name)
+        values(#{part_code},#{part_name})
+    </insert>
+
+
+    <insert id="registerItem">
+        insert into item(item_code,item_name,width,length,height,material,blueprint_save_name,blueprint_origin_name,unit_code,assy_code,part_code)
+        values(#{item_code},#{item_name},#{width},#{length},#{height},#{material},#{blueprint_save_name},#{blueprint_origin_name},#{unit_code},#{assy_code},#{part_code})
+    </insert>
+
+    <select id="checkDuplicateItemCode" resultType="int">
+        SELECT COUNT(*) FROM item WHERE item_code = #{item_code}
+    </select>
+
+    <select id="checkDuplicateUnitCode" resultType="int">
+        SELECT COUNT(*) FROM unit WHERE unit_code = #{unit_code}
+    </select>
+
+    <select id="checkDuplicateAssyCode" resultType="int">
+        SELECT COUNT(*) FROM assy WHERE assy_code = #{assy_code}
+    </select>
+
+    <select id="checkDuplicatePartCode" resultType="int">
+        SELECT COUNT(*) FROM part WHERE part_code = #{part_code}
+    </select>
+
+    <select id="getListCoop" resultType="edu.mit.annotation.testdto.TestCoopDTO">
+        select business_number,company_Name,company_address,manager,manager_tel,manager_email, replace(company_account, '-', '') as company_account
+        from `co-op_company`
+    </select>
+
+    <select id="auto_business_number" resultType="java.util.Map">
+        select business_number,company_name,company_account
+        from `co-op_company`
+        where business_number like #{business_number}
+    </select>
+
+    <insert id="registerContract">
+        insert into
+        contract(contract_number,contract_save_name,contract_origin_name,note,business_number)
+        values(#{contract_number},#{contract_save_name},#{contract_origin_name},#{note},#{business_number})
+    </insert>
+
+    <insert id="registerContractItem">
+        insert into
+        contract_item(lead_time,item_price,details,item_code,contract_number)
+        values(#{lead_time},#{item_price},#{details},#{item_code},#{contract_number})
+    </insert>
+
+    <update id="updateContract">
+        update contract
+        set contract_number=#{contract_number},
+        contract_save_name=#{contract_save_name},
+        contract_origin_name=#{contract_origin_name},
+        note=#{note},
+        business_number=#{business_number}
+    </update>
+
+    <update id="updateContractItem">
+        update contract_item
+        set lead_time=#{lead_time},
+        item_price=#{item_price},
+        details=#{details},
+        item_code=#{item_code},
+        contract_number=#{contract_number}
+    </update>
+
+    <select id="getListContract" resultType="edu.mit.annotation.testdto.ContractListDTO">
+        <![CDATA[
+            SELECT
+                item.item_code,
+                item.item_name,
+                contract_item.lead_time,
+                contract_item.item_price,
+                contract_item.details,
+                contract.contract_save_name,
+                contract.contract_origin_name,
+                contract_item.contract_number,
+                contract.note,
+                `co-op_company`.business_number,
+                `co-op_company`.company_name,
+                `co-op_company`.company_account
+            FROM
+                item
+            LEFT JOIN
+                contract_item ON item.item_code = contract_item.item_code
+            LEFT JOIN
+                contract ON contract_item.contract_number = contract.contract_number
+            LEFT JOIN
+                `co-op_company` ON contract.business_number = `co-op_company`.business_number
+        ]]>
+    </select>
+
+    <select id="getListContractWithPaging" resultType="edu.mit.annotation.testdto.ContractListDTO">
+        <![CDATA[
+        SELECT
+                item.item_code,
+                item.item_name,
+                contract_item.lead_time,
+                contract_item.item_price,
+                contract_item.details,
+                contract.contract_save_name,
+                contract.contract_origin_name,
+                contract_item.contract_number,
+                contract.note,
+                `co-op_company`.business_number,
+                `co-op_company`.company_name,
+                `co-op_company`.company_account
+            FROM
+                item
+            LEFT JOIN
+                contract_item ON item.item_code = contract_item.item_code
+            LEFT JOIN
+                contract ON contract_item.contract_number = contract.contract_number
+            LEFT JOIN
+                `co-op_company` ON contract.business_number = `co-op_company`.business_number
+                ]]><include refid="contract_Criteria"></include>
+        limit #{amount} offset #{pageNum}
+    </select>
+
+    <select id="searchListContractWithPaging" resultType="edu.mit.annotation.testdto.ContractListDTO">
+        <![CDATA[
+        SELECT
+                item.item_code,
+                item.item_name,
+                contract_item.lead_time,
+                contract_item.item_price,
+                contract_item.details,
+                contract.contract_save_name,
+                contract.contract_origin_name,
+                contract_item.contract_number,
+                contract.note,
+                `co-op_company`.business_number,
+                `co-op_company`.company_name,
+                `co-op_company`.company_account
+            FROM
+                item
+            LEFT JOIN
+                contract_item ON item.item_code = contract_item.item_code
+            LEFT JOIN
+                contract ON contract_item.contract_number = contract.contract_number
+            LEFT JOIN
+                `co-op_company` ON contract.business_number = `co-op_company`.business_number
+                ]]><include refid="contract_Criteria"></include>
+    </select>
+
+    <select id="getTotalContractCount" resultType="int">
+        select count(*) from contract
+    </select>
+
+    <delete id="removeContract">
+        delete from contract where contract_number=#{contract_number}
+    </delete>
+
+    <select id="checkDuplicateContractNumber" resultType="int">
+        SELECT COUNT(*) FROM contract WHERE contract_number = #{contract_number}
+    </select>
+
+    <select id="getListforTable1" resultType="edu.mit.annotation.testdto.PlanTable1">
+        SELECT
+        pp.prod_plan_code,
+        pp.product_code AS production_plan_product_code,
+        p.product_code,
+        p.product_name AS product_name,
+        pp.prod_start_date,
+        pp.prod_end_date,
+        pp.prod_quantity,
+        pp.procure_term,
+        ci.avg_return_rate,
+        ci.item_required_quantity,
+        ci.avg_return_rate,
+        i.item_code,
+        i.item_name
+        FROM
+        production_plan pp
+        JOIN
+        product p ON pp.product_code = p.product_code
+        LEFT JOIN
+        composition_item ci ON pp.product_code = ci.product_code
+        LEFT JOIN
+        item i ON ci.item_code = i.item_code
+    </select>
+
+    <select id="getListprodPlan" resultType="edu.mit.annotation.testdto.ProductionPlanDTO">
+        SELECT pp.prod_start_date, pp.prod_end_date, p.product_code, p.product_name, pp.prod_quantity, i.item_code, i.item_name, ci.item_required_quantity, ci.avg_return_rate, pp.procure_term
+        FROM product AS p
+        JOIN composition_item AS ci ON ci.product_code = p.product_code
+        JOIN item AS i ON i.item_code = ci.item_code
+        JOIN production_plan AS pp ON pp.product_code = ci.product_code
+        ORDER BY pp.prod_start_date ASC;
+
+    </select>
+
+    <insert id="registerPlan">
+        insert into procurement_plan(proc_plan_number,proc_quantity,proc_duedate,proc_progress,item_code)
+        values(#{proc_plan_number},#{proc_quantity},#{proc_duedate},#{proc_progress},#{item_code})
+    </insert>
+
+    <select id="checkDuplicateProcPlanNumber" resultType="int">
+        SELECT COUNT(*) FROM procurement_plan WHERE proc_plan_number=#{proc_plan_number}
+    </select>
+
+    <select id="getListProdPlanWithPaging" resultType="edu.mit.annotation.testdto.ProductionPlanDTO">
+        <![CDATA[
+        SELECT pp.prod_start_date, pp.prod_end_date, p.product_code, p.product_name, pp.prod_quantity, i.item_code, i.item_name, ci.item_required_quantity, ci.avg_return_rate, pp.procure_term
+        FROM product AS p
+        JOIN composition_item AS ci ON ci.product_code = p.product_code
+        JOIN item AS i ON i.item_code = ci.item_code
+        JOIN production_plan AS pp ON pp.product_code = ci.product_code
+        ]]><include refid="prodplan_Criteria"></include>
+        limit #{amount} offset #{pageNum}
+    </select>
+
+    <select id="searchListProdPlanWithPaging" resultType="edu.mit.annotation.testdto.ProductionPlanDTO">
+        <![CDATA[
+        SELECT pp.prod_start_date, pp.prod_end_date, p.product_code, p.product_name, pp.prod_quantity, i.item_code, i.item_name, ci.item_required_quantity, ci.avg_return_rate, pp.procure_term
+        FROM product AS p
+        JOIN composition_item AS ci ON ci.product_code = p.product_code
+        JOIN item AS i ON i.item_code = ci.item_code
+        JOIN production_plan AS pp ON pp.product_code = ci.product_code
+        ]]><include refid="prodplan_Criteria"></include>
+    </select>
+
+    <select id="getTotalProdPlanCount" resultType="int">
+        select count(*) from production_plan
+    </select>
 </mapper>

@@ -1,64 +1,287 @@
 package edu.mit.annotation.service;
 
-import edu.mit.annotation.dto.ContractDTO;
-import edu.mit.annotation.dto.ItemDTO;
-import edu.mit.annotation.dto.ProcurementPlanDTO;
+import edu.mit.annotation.mapper.TestMapper;
+import edu.mit.annotation.testdto.*;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
-@Log4j2
+@Primary
 @Service
-public abstract class RegisterServiceImpl implements  RegisterService{
+public class RegisterServiceImpl implements RegisterService {
+
+    TestMapper mapper;
 
     @Override
-    public String registerItem(ItemDTO itemDTO) {
+    public List<TestItemDTO> getListItem()  {
+        return mapper.getListItem();
+    }
+
+    @Override
+    public List<TestItemDTO> getListItemWithPaging(Criteria cri)    {
+        return mapper.getListItemWithPaging(cri);
+    }
+
+    @Override
+    public List<TestItemDTO> searchListItemWithPaging(Criteria cri)    {
+        return mapper.searchListItemWithPaging(cri);
+    }
+
+    @Override
+    public int getTotalItemCount(Criteria cri)  {
+        return mapper.getTotalItemCount(cri);
+    }
+
+    @Override
+    public void registerItem(TestItemDTO dto) {
+        try{
+            mapper.registerItem(dto);
+        }
+        catch (DuplicateKeyException e) {
+            e.printStackTrace();
+            dto.setItem_code((getUniqueItemCode(dto.getItem_code())));
+            registerItem(dto);
+        }
+        System.out.println("결과 : " + dto.getItem_code());
+    }
+    @Override
+    public String getUniqueItemCode(String item_code) {
+
+        int index = Integer.parseInt(item_code.split("_")[1]);
+        String baseItemCode = item_code.substring(0, 7);
+        System.out.println("index : " + index);
+        System.out.println("baseItemCode : " + baseItemCode);
+
+            while (mapper.checkDuplicateItemCode(item_code) > 0) {
+                index++;
+                item_code = baseItemCode + String.format("%03d", index);
+            }
+        return item_code;
+    }
+    /*
+    public String getUniqueContractNumber(String contract_number) {
+        int index = Integer.parseInt(contract_number.split("-")[1]);
+
+        String baseContractNumber = "co-";
+        String contractNumber = baseContractNumber + (index+1);
+
+        while (mapper.checkDuplicateContractNumber(contractNumber) > 0) {
+            index++;
+            contractNumber = baseContractNumber + index;
+        }
+        return contractNumber;
+    }
+     */
+
+    @Override
+    public List<TestCodeDTO> getListUnitCode() {
+        return mapper.getListUnitCode();
+    }
+
+    @Override
+    public void inputUnitCode(TestCodeDTO codeDTO) {
+        mapper.inputUnitCode(codeDTO);
+    }
+
+    @Override
+    public String getUniqueUnitCode(String unit_code) {
+        int index = 1;
+
+        while (mapper.checkDuplicateUnitCode(unit_code + index) > 0) {
+            index++;
+        }
+
+        return unit_code + index;
+    }
+
+    @Override
+    public List<TestCodeDTO> getListAssyCode() {
+        return mapper.getListAssyCode();
+    }
+
+    @Override
+    public void inputAssyCode(TestCodeDTO codeDTO) {
+        mapper.inputAssyCode(codeDTO);
+    }
+
+    @Override
+    public String getUniqueAssyCode(String assy_code) {
+        int index = 1;
+        while (mapper.checkDuplicateAssyCode(assy_code + index) > 0) {
+            index++;
+        }
+        return assy_code + index;
+    }
+
+    @Override
+    public List<TestCodeDTO> getListPartCode() {
+        return mapper.getListPartCode();
+    }
+
+    @Override
+    public void inputPartCode(TestCodeDTO codeDTO) {
+        mapper.inputPartCode(codeDTO);
+    }
+
+    @Override
+    public String getUniquePartCode(String part_code) {
+        int index = 1;
+
+        while (mapper.checkDuplicatePartCode(part_code + index) > 0) {
+            index++;
+        }
+
+        return part_code + index;
+    }
+
+    @Transactional
+    @Override
+    public boolean removeItem(@RequestParam("item_code") String item_code) {
+        int result = mapper.removeItem(item_code);
+        if (result == 1) {
+            System.out.println("삭제된 아이템코드 : " + item_code);
+            return true;
+        } else {
+            // 삭제 실패
+            System.out.println("삭제하지 못한 아이템코드 : " + item_code);
+            return false;
+        }
+    }
+
+    @Override
+    public List<Map<String, String>> auto_business_number(String business_number) {
+        return mapper.auto_business_number("%" + business_number + "%");
+    }
+
+    @Override
+    public List<ContractListDTO> getListContract() {
+        return mapper.getListContract();
+    }
+
+    @Override
+    public List<ContractListDTO> getListContractWithPaging(Criteria cri)    {
+        return mapper.getListContractWithPaging(cri);
+    }
+
+    @Override
+    public List<ContractListDTO> searchListContractWithPaging(Criteria cri)    {
+        return mapper.searchListContractWithPaging(cri);
+    }
+
+    @Override
+    public int getTotalContractCount(Criteria cri)  {
+        return mapper.getTotalContractCount(cri);
+    }
+
+    @Transactional
+    @Override
+    public boolean removeContract(@Param("contract_number") String contract_number) {
+        return mapper.removeContract(contract_number) == 1 ? true : false;
+    }
+
+    @Override
+    public void registerContract(ContractDTO dto) {
+        try{
+            mapper.registerContract(dto);
+            mapper.registerContractItem(dto);
+        }
+        catch (DuplicateKeyException e) {
+            e.printStackTrace();
+            dto.setContract_number(getUniqueContractNumber(dto.getContract_number()));
+            registerContract(dto);
+        }
+        System.out.println("결과 : " + dto.getContract_number());
+    }
+
+    @Override
+    public String getUniqueContractNumber(String contract_number) {
+        int index = Integer.parseInt(contract_number.split("-")[1]);
+
+        String baseContractNumber = "co-";
+        String contractNumber = baseContractNumber + (index+1);
+
+        while (mapper.checkDuplicateContractNumber(contractNumber) > 0) {
+            index++;
+            contractNumber = baseContractNumber + index;
+        }
+        return contractNumber;
+    }
+
+    @Override
+    public List<ProductionPlanDTO> getListprodPlan() {
+        return mapper.getListprodPlan();
+    }
+
+    @Override
+    public List<PlanTable1> getListforTable1()  {
+        return mapper.getListforTable1();
+    }
+
+    @Override
+    public List<ProductionPlanDTO> getListProdPlanWithPaging(Criteria cri){
+        return mapper.getListProdPlanWithPaging(cri);
+    }
+
+    @Override
+    public List<ProductionPlanDTO> searchListProdPlanWithPaging(Criteria cri){
+        return mapper.searchListProdPlanWithPaging(cri);
+    }
+    @Override
+    public int getTotalProdPlanCount(Criteria cri){
+        return mapper.getTotalProdPlanCount(cri);
+    }
+    @Override
+    public void registerPlan(ProcurementPlanDTO dto)    {
+        try{
+            mapper.registerPlan(dto);
+        }
+        catch(DuplicateKeyException e)  {
+            e.printStackTrace();
+            dto.setProc_plan_number((getUniqueProcPlanNumber(dto.getProc_plan_number())));
+            registerPlan(dto);
+        }
+        System.out.println("결과 : " + dto.getProc_plan_number());
+    }
+
+    @Override
+    public String getUniqueProcPlanNumber(String proc_plan_number)  {
+        int index = Integer.parseInt(proc_plan_number.split("-")[1]);
+        String baseProcPlanNumber="prc-";
+        String ProcPlanNumber=baseProcPlanNumber+(index+1);
+
+        while (mapper.checkDuplicateProcPlanNumber(ProcPlanNumber) > 0) {
+            index++;
+            ProcPlanNumber = baseProcPlanNumber+index;
+        }
+
+        return ProcPlanNumber;
+    }
+
+}
+
+/*
+
+    @Override
+    public boolean removeContract(String cCode) {
+        return false;
+    }
+
+    @Override
+    public List<ProcurementPlanDTO> getListPlan() {
         return null;
     }
 
     @Override
-    public List<ItemDTO> getListItem()  {
-        List<ItemDTO> list = new ArrayList<>();
-        list.add(new ItemDTO("품목코드1", "품목명1", "대분류1", "중분류1", "소분류1", 10F, 10F, 10F, "재질1", "품목명1_도면", 10));
-        return list;
-    }
-
-    public void registerItem()  {
+    public void registerPlan(ProcurementPlanDTO planDTO) {
 
     }
 
-    public boolean modifyItem(ItemDTO itemDTO)  {
-        return true;
-    }
-
-    public boolean removeItem(String itemCode)  {
-        return true;
-    }
-
-    public void registerContract(ContractDTO contractDTO)   {
-
-    }
-
-    public List<ContractDTO> getListContract()  {
-        return new ArrayList<>();
-    }
-
-    public boolean removeContract(String cCode) {
-        return true;
-    }
-
-    public void registerPlan(ProcurementPlanDTO planDTO)    {
-
-    }
-
-    public List<ProcurementPlanDTO> getListPlan()   {
-        return new ArrayList<>();
-    }
-
-
-
-}
+     */

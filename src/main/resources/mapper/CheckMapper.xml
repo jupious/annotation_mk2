@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.mit.annotation.mapper.CheckMapper">
+
+    <!--    검수계획리스트 가져오기-->
+    <select id="selectOrderList" resultType="edu.mit.annotation.test2dto.OrderList">
+
+        select
+        purchase_order.purch_order_number,
+        receive_duedate,
+        item.item_code,
+        item_name,
+        company_name
+        from purchase_order
+        join purchase_order_item
+        on purchase_order.purch_order_number = purchase_order_item.purch_order_number
+        join procurement_plan
+        on purchase_order_item.proc_plan_number=procurement_plan.proc_plan_number
+        join item
+        on procurement_plan.item_code = item.item_code
+        join contract_item
+        on item.item_code = contract_item.item_code
+        join contract
+        on contract_item.contract_number = contract.contract_number
+        join `co-op_company`
+        on contract.business_number = `co-op_company`.business_number
+    </select>
+
+    <select id="selectpoinfo" resultType="edu.mit.annotation.test2dto.OrderInfo">
+        select 	purchase_order.purch_order_number,
+        purch_order_date,
+        receive_duedate,
+        company_name,
+        `co-op_company`.business_number,
+        manager,
+        item.item_code,
+        item_name,
+        purch_order_quantity
+        from purchase_order
+        join purchase_order_item
+        on purchase_order.purch_order_number = purchase_order_item.purch_order_number
+        join procurement_plan
+        on purchase_order_item.proc_plan_number=procurement_plan.proc_plan_number
+        join item
+        on procurement_plan.item_code = item.item_code
+        join contract_item
+        on item.item_code = contract_item.item_code
+        join contract
+        on contract_item.contract_number = contract.contract_number
+        join `co-op_company`
+        on contract.business_number = `co-op_company`.business_number
+
+        where purchase_order.purch_order_number = #{id} and item.item_code = #{code};
+    </select>
+
+    <!--    검수1차-->
+    <insert id="progressPlan1">
+        insert into progress_check (purch_order_number,prog_check_order,prog_check_date)
+        values (#{p1},#{p10},#{p10_1})
+
+    </insert>
+    <!--    검수2차-->
+    <insert id="progressPlan2">
+        insert into progress_check (purch_order_number,prog_check_order,prog_check_date)
+        values (#{p1},#{p11},#{p11_1})
+    </insert>
+
+    <!--    날짜별 검수계획 리스트 조회-->
+    <select id="dateSelect" resultType="edu.mit.annotation.test2dto.OrderList">
+        <![CDATA[
+        select
+        purchase_order.purch_order_number,
+        receive_duedate,
+        item.item_code,
+        item_name,
+        company_name
+        from purchase_order
+        join purchase_order_item
+        on purchase_order.purch_order_number = purchase_order_item.purch_order_number
+        join procurement_plan
+        on purchase_order_item.proc_plan_number=procurement_plan.proc_plan_number
+        join item
+        on procurement_plan.item_code = item.item_code
+        join contract_item
+        on item.item_code = contract_item.item_code
+        join contract
+        on contract_item.contract_number = contract.contract_number
+        join `co-op_company`
+        on contract.business_number = `co-op_company`.business_number
+        where receive_duedate >= #{date1} and receive_duedate <= #{date2}
+        ]]>
+    </select>
+
+    <!--    페이징 처리-->
+    <select id="getListWithPaging" resultType="edu.mit.annotation.test2dto.CheckList">
+        <![CDATA[
+        SELECT
+            purchase_order.purch_order_number,
+            procurement_plan.item_code,
+            item_name,
+            prog_check_result,
+            completed_quantity,
+            receive_duedate
+        FROM
+            purchase_order
+            LEFT JOIN purchase_order_item ON purchase_order.purch_order_number = purchase_order_item.purch_order_number
+            JOIN procurement_plan ON purchase_order_item.proc_plan_number = procurement_plan.proc_plan_number
+            RIGHT JOIN item ON procurement_plan.item_code = item.item_code
+            LEFT JOIN progress_check_item ON progress_check_item.item_code = item.item_code
+        ORDER BY
+            purchase_order.purch_order_number DESC
+        LIMIT #{startRow}, #{pageSize}
+        ]]>
+
+    </select>
+
+    <select id="getTotal" resultType="int">
+        select
+        count(*)
+        from purchase_order
+        left join purchase_order_item
+        on purchase_order.purch_order_number = purchase_order_item.purch_order_number
+        join procurement_plan
+        on purchase_order_item.proc_plan_number=procurement_plan.proc_plan_number
+        right join item
+        on procurement_plan.item_code = item.item_code
+        left join progress_check_item
+        on progress_check_item.item_code = item.item_code
+    </select>
+
+    <select id="getFreeBoard" resultType="edu.mit.annotation.test2dto.CheckList">
+        select
+        count(*)
+        from purchase_order
+        left join purchase_order_item
+        on purchase_order.purch_order_number = purchase_order_item.purch_order_number
+        join procurement_plan
+        on purchase_order_item.proc_plan_number=procurement_plan.proc_plan_number
+        right join item
+        on procurement_plan.item_code = item.item_code
+        left join progress_check_item
+        on progress_check_item.item_code = item.item_code
+        order by purchase_order.purch_order_number desc
+        limit #{pageNum} ,  #{countPerPage}
+    </select>
+
+    <select id="searchPlan" resultType="edu.mit.annotation.test2dto.OrderList">
+        select
+        purchase_order.purch_order_number,
+        receive_duedate,
+        item.item_code,
+        item_name,
+        company_name
+        from purchase_order
+        join purchase_order_item
+        on purchase_order.purch_order_number = purchase_order_item.purch_order_number
+        join procurement_plan
+        on purchase_order_item.proc_plan_number=procurement_plan.proc_plan_number
+        join item
+        on procurement_plan.item_code = item.item_code
+        join contract_item
+        on item.item_code = contract_item.item_code
+        join contract
+        on contract_item.contract_number = contract.contract_number
+        join `co-op_company`
+        on contract.business_number = `co-op_company`.business_number
+
+        where
+        <if test="option.equals('pocode') ">
+            purchase_order.purch_order_number like CONCAT('%', #{search}, '%')
+        </if>
+        <if test="option.equals('coname')">
+            company_name like CONCAT('%', #{search}, '%')
+        </if>
+        <if test="option.equals('itname')">
+            item.item_name like CONCAT('%', #{search}, '%')
+        </if>
+    </select>
+
+
+    <!--    검수처리리스트가져오기-->
+    <select id="selectCheckList" resultType="edu.mit.annotation.test2dto.CheckList">
+        select
+        purchase_order.purch_order_number,
+        procurement_plan.item_code,
+        item_name,
+        prog_check_result,
+        completed_quantity,
+        receive_duedate
+        from purchase_order
+        left join purchase_order_item
+        on purchase_order.purch_order_number = purchase_order_item.purch_order_number
+        join procurement_plan
+        on purchase_order_item.proc_plan_number=procurement_plan.proc_plan_number
+        right join item
+        on procurement_plan.item_code = item.item_code
+        left join progress_check_item
+        on progress_check_item.item_code = item.item_code
+        order by purchase_order.purch_order_number desc
+    </select>
+
+    <!--    검수처리 정보 보여주기-->
+    <select id="selectCheckinfo" resultType="edu.mit.annotation.test2dto.CheckInfo">
+        select
+        purchase_order.purch_order_number,
+        company_name,
+        `co-op_company`.business_number,
+        item.item_code,
+        item_name,
+        purch_order_quantity,
+        prog_check_order,
+        prog_check_date,
+        prog_check_result,
+        completed_quantity,
+        supplementation
+        from purchase_order
+        join purchase_order_item
+        on purchase_order.purch_order_number = purchase_order_item.purch_order_number
+        join procurement_plan
+        on purchase_order_item.proc_plan_number=procurement_plan.proc_plan_number
+        join item
+        on procurement_plan.item_code = item.item_code
+        join contract_item
+        on item.item_code = contract_item.item_code
+        join contract
+        on contract_item.contract_number = contract.contract_number
+        join `co-op_company`
+        on contract.business_number = `co-op_company`.business_number
+        left join progress_check
+        on progress_check.purch_order_number = purchase_order.purch_order_number
+        left join progress_check_item
+        on progress_check_item.item_code = item.item_code
+        where purchase_order.purch_order_number = #{number} and item.item_code = #{code}
+    </select>
+
+
+
+</mapper>

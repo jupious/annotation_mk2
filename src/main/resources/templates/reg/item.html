@@ -1,6 +1,6 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{/layout/layout::setContent(~{::content})}">
+<th:block th:replace="~{./layout/layout::setContent(~{::content})}">
     <th:block th:fragment = "content">
         <!-- 메인 시작 -->
 
@@ -16,12 +16,8 @@
                                     <td bgcolor="#f6f6f6" rowspan="3" width="1%" align="center" valign="middle">품목코드</td>
                                     <td width="1%" align="center" valign="middle">대분류</td>
                                     <td width="6%" align="center" valign="middle">
-                                        <select name="대분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" id="unitCode">
-                                            <option value="">선택</option>
-                                            <option value="직접입력">직접입력</option>
-                                            <option value="장착부">장착부</option>
-                                            <option value="제어부">제어부</option>
-                                            <option value="투입부">투입부</option>
+                                        <select name="대분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" id="unit_code">
+                                            <option th:each="unitCode:${unitCodeList}" th:value="${unitCode.unit_code}" th:text="${unitCode.unit_name}"></option>
                                         </select>
                                     </td>
                                     <td align="center" valign="middle" colspan="4"><input type="text" id="unitWrite" class="itemInputGroup" style="width:100%; height:100%; border:none;"></td>
@@ -29,12 +25,8 @@
                                 <tr>
                                     <td width="1%" align="center" valign="middle">중분류</td>
                                     <td width="6%" align="center" valign="middle">
-                                        <select name="중분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" id="assyCode">
-                                            <option value="">선택</option>
-                                            <option value="직접입력">직접입력</option>
-                                            <option value="감지기">감지기</option>
-                                            <option value="구동축">구동축</option>
-                                            <option value="커넥터">커넥터</option>
+                                        <select name="중분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" id="assy_code">
+                                            <option th:each="assyCode:${assyCodeList}" th:value="${assyCode.assy_code}" th:text="${assyCode.assy_name}"></option>
                                         </select>
                                     </td>
                                     <td align="center" valign="middle" colspan="4"><input type="text" id="assyWrite" class="itemInputGroup" style="width:100%; height:100%; border:none;"></td>
@@ -42,28 +34,29 @@
                                 <tr>
                                     <td width="1%" align="center" valign="middle">소분류</td>
                                     <td width="6%" align="center" valign="middle">
-                                        <select name="소분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" id="partCode">
-                                            <option value="">선택</option>
-                                            <option value="직접입력">직접입력</option>
-                                            <option value="PLC">PLC</option>
-                                            <option value="GEAR">GEAR</option>
-                                            <option value="CABLE">CABLE</option>
+                                        <select name="소분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" id="part_code">
+                                            <option th:each="partCode:${partCodeList}" th:value="${partCode.part_code}" th:text="${partCode.part_name}"></option>
                                         </select>
                                     </td>
                                     <td align="center" valign="middle" colspan="4"><input type="text" id="partWrite" class="itemInputGroup" style="width:100%; height:100%; border:none;"></td>
                                 </tr>
                                 <tr>
                                     <td bgcolor="#f6f6f6" align="center" valign="middle">품목명</td>
-                                    <td colspan="6" align="center" valign="middle"><input type="text" class="itemInputGroup" style="width:100%; height:100%; border:none;" id="itemName"></td>
+                                    <td colspan="6" align="center" valign="middle"><input type="text" class="itemInputGroup" style="width:100%; height:100%; border:none;" id="item_name"></td>
                                 </tr>
                                 <tr>
-                                    <td bgcolor="#f6f6f6" align="center" valign="middle">규격<br>(mm)</td>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" rowspan="3">규격<br>(mm)</td>
                                     <td align="center" valign="middle" style="width:8%;">가로</td>
-                                    <td><input type="number" class="itemInputGroup" style="width: 100%; height:100%; border:none;" id="width"></td>
+                                    <td><input type="number" class="itemInputGroup" style="width: 100%; height:100%; border:none;" id="width" colspan="4"></td>
+                                    <td colspan="3" rowspan="3"></td>
+                                </tr>
+                                <tr>
                                     <td align="center" valign="middle" style="width:8%;">세로</td>
-                                    <td><input type="number" class="itemInputGroup" style="width: 100%; height:100%; border:none;" id="length"></td>
+                                    <td><input type="number" class="itemInputGroup" style="width: 100%; height:100%; border:none;" id="length" colspan="4"></td>
+                                </tr>
+                                <tr>
                                     <td align="center" valign="middle" style="width:8%;">높이</td>
-                                    <td><input type="number" class="itemInputGroup" style="width: 100%; height:100%; border:none;" id="height"></td>
+                                    <td><input type="number" class="itemInputGroup" style="width: 100%; height:100%; border:none;" id="height" colspan="4"></td>
                                 </tr>
                                 <tr>
                                     <td bgcolor="#f6f6f6" align="center" valign="middle">재질</td>
@@ -71,11 +64,9 @@
                                 </tr>
                                 <tr>
                                     <td bgcolor="#f6f6f6" align="center" valign="middle">도면</td>
-                                    <td colspan="6" align="center" valign="middle"><div class="custom-file" ><input type="file" class="custom-file-input" id="inputGroupFile01"><label class="custom-file-label" for="inputGroupFile01"></label></div></td>
+                                    <td colspan="6" align="center" valign="middle"><div class="custom-file" ><input type="file" accept="image/*" class="custom-file-input" id="blueprint_origin_name" name="blueprint_input" onchange="displayFileName()"><label class="custom-file-label" for="blueprint_origin_name">파일 선택</label></div></td>
                                 </tr>
                             </table>
-                            <button type="submit" class="btn btn-danger btn-sm" style="float:right;" id="clearInput">내용 비우기</button>
-                            <button type="submit" class="btn btn-warning btn-sm" style="float:right;" data-toggle="modal" data-target="#modifyModal">수정</button>
                             <button type="submit" class="btn btn-primary btn-sm" style="float:right;" data-toggle="modal" data-target="#registerModal" onclick="send()">등록</button>
                         </div>
                     </div>
@@ -87,34 +78,65 @@
                     <h5 class="card-header">품목정보관리</h5>
                     <div class="card-body table-border-style">
                         <div class="table-responsive">
-                            <button type="button" class="btn  btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float:left;">선택<span class="sr-only"></span></button>
-                            <div class="dropdown-menu" style="float:left;">
-                                <a class="dropdown-item">품목코드</a>
-                                <a class="dropdown-item">품목명</a>
-                            </div>
-                            <input type="text" class="form-control-sm" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;">
-                            <button class="btn btn-primary btn-sm" type="button" style="float:left;">검색</button>
-                            <button type="button" class="btn btn-primary btn-sm" style="float:right;">전체보기</button>
-                            <button type="button" class="btn btn-danger btn-sm" style="float:right;">리스트에서제거</button>
-                            <table id="table2" class="table table-bordered table-sm" width="100%;">
-                                <tr>
-                                    <td width="1%" align="center" valign="middle"></td>
-                                    <td width="2%" align="center" valign="middle">품목코드</td>
-                                    <td width="20%" align="center" valign="middle">품목명</td>
-                                    <td width="5%" align="center" valign="middle">규격</td>
-                                    <td width="5%" align="center" valign="middle">재질</td>
-                                </tr>
+                            <select id="type" name="type" title="검색분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" style="float:left; height:31px;">
+                                <option value="">검색어</option>
+                                <option value="IC" th:selected="${pageMaker.cri.type eq 'IC'}">품목코드</option>
+                                <option value="IN" th:selected="${pageMaker.cri.type eq 'IN'}">품목명</option>
+                                <option value="M" th:selected="${pageMaker.cri.type eq 'M'}">재질</option>
+                            </select>
+                            <input type="text" class="form-control-sm" id="keyword" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;">
+                            <button class="btn btn-primary btn-sm" type="button" style="float:left;" id="search">검색</button>
+                            <button type="button" onclick="showallList()" class="btn btn-primary btn-sm" style="float:right;">전체보기</button>
+                            <button type="button" class="btn btn-danger btn-sm" style="float:right;" id="removeSelectedRows" onclick="removeSelectedItems()">삭제</button>
+                            <table id="table2" class="table table-bordered table-sm text-center" width="100%;">
+                                <thead>
+                                    <tr>
+                                        <td class="text-center" width="1%" align="center" valign="middle"></td>
+                                        <td class="text-center" width="2%" align="center" valign="middle">품목코드</td>
+                                        <td class="text-center" width="15%" align="center" valign="middle">품목명</td>
+                                        <td class="text-center" width="5%" align="center" valign="middle">규격</td>
+                                        <td class="text-center" width="5%" align="center" valign="middle">재질</td>
+                                        <td class="text-center" width="5%" align="center" valign="middle">도면</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="itemList : ${itemList}">
+                                        <td><input type="checkbox"></td>
+                                        <td th:text="${itemList.item_code}"></td>
+                                        <td th:text="${itemList.item_name}"></td>
+                                        <td th:text="${itemList.width} + 'x' + ${itemList.length} + 'x' + ${itemList.height}"></td>
+                                        <td th:text="${itemList.material}"></td>
+                                        <td>
+                                            <a th:href="@{'/upload/' + ${itemList.blueprint_save_name}}" class="image-link" th:data-filename="${itemList.blueprint_save_name}">
+                                                <span th:text="${itemList.blueprint_origin_name}"></span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
                             </table>
-                            <nav>
-                                <ul class="pagination">
-                                    <li class="page-item disabled"><span class="page-link">이전</span></li>
-                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item"><span class="page-link">2<span class="sr-only">현재</span></span></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item"><span class="page-link">다음</span></li>
-                                </ul>
-                            </nav>
                         </div>
+                        <nav th:if="${pageMaker.total}">
+                            <th:if test="${pageMaker.prev}">
+                                <th:block th:if="${pageMaker.startPage > 1}">
+                                    <a th:href="@{'/reg/item?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount}}">prev</a>
+                                </th:block>
+                            </th:if>
+                            
+                            <span th:each="num : ${#numbers.sequence(pageMaker.startPage, pageMaker.endPage)}">
+                                <th:block th:if="${num == pageMaker.cri.pageNum}">
+                                    <b th:text="${num}"></b>
+                                </th:block>
+                                <th:block th:unless="${num == pageMaker.cri.pageNum}">
+                                    <a th:href="@{'/reg/item?pageNum=' + ${num} + '&amount=' + ${pageMaker.cri.amount}}" th:text="${num}"></a>
+                                </th:block>
+                            </span>
+                            
+                            <th:if test="${pageMaker.next}">
+                                <th:block th:if="${pageMaker.endPage*pageMaker.cri.amount < pageMaker.total}">
+                                    <a th:href="@{'/reg/item?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount}}">next</a>
+                                </th:block>
+                            </th:if>
+                        </nav>
                     </div>
                 </div>
                 <!-- 모달창 -->
@@ -126,9 +148,9 @@
                                     <h5 class="modal-title" id="registerSuccess">등록완료</h5>
                                 </div>
                                 <div class="modal-body">
-                                    <p class="mb-0">
-                                        등록된 품목 :
-                                    </p>
+                                    <div id="registerResult">
+
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn  btn-secondary" id="closeModal1">Close</button>
@@ -170,24 +192,40 @@
                             </div>
                         </div>
                     </div>
+                    <div id="imageModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="imageModal" style="display: none; width: 100%; height: 100%; max-width: none; max-height: none;" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="imageModalLabel">이미지 미리보기</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <button type="button" class="badge badge-primary">전송</button>
+                                    <img id="modalImage" style="width: 100%; height: 100%;" alt="Image Preview">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- 본문내용 종료 -->
         </div>
 
-        <!-- 메인 종료 -->
+<!-- 메인 종료 -->
 
         <!-- 모달창 스크립트 -->
         <script>
+            var header = $('meta[name="_csrf_header"]').attr("content");
+            var _csrfToken = $('#_csrf_token').val();
             $('#registerModal').on('click', function() {
                 $('#registerModal').modal('show');
             });
-
             $('#closeModal1').on('click', function() {
+                // 모달 창 닫기
                 $('#registerModal').modal('hide');
             });
-        <!--  -->
-
             $('#modifyModal').on('click', function() {
                 $('#modifyModal').modal('show');
             });
@@ -203,79 +241,206 @@
             $('#closeModal3').on('click', function() {
                     $('#deleteModal').modal('hide');
             });
-
-
         </script>
-        <!-- 품목정보등록 ajax로 데이터 전송 -->
         <script>
-            function clearInput(){
-                $('#unitCode option[value=""]').prop('selected','selected').change();
-                $('#assyCode option[value=""]').prop('selected','selected').change();
-                $('#partCode option[value=""]').prop('selected','selected').change();
-                $('.itemInputGroup').each(function(){
-                    $(this).val('');
-                })
-            }
-            function send() {
-                    var unitCode=$("#unitCode").val();
-                    var assyCode=$("#assyCode").val();
-                    var partCode=$("#partCode").val();
-                    var itemName=$("#itemName").val();
-                    var width=$("#width").val();
-                    var length=$("#length").val();
-                    var height=$("#height").val();
-                    var material=$("#material").val();
-                    
-                    if(unitCode == "직접입력"){
-                        unitCode = $('#unitWrite').val();
-                    }
-                    if(assyCode == "직접입력"){
-                        assyCode = $('#assyWrite').val();
-                    }
-                    if(partCode == "직접입력"){
-                        partCode = $('#partWrite').val();
-                    }
+            function search() {
+                var type = $("#type").val();
+                var keyword = $("#keyword").val();
+                var pageNum = $("#table2_paginate .active a").text(); // 현재 선택된 페이지 번호 가져오기
 
-                    var data = {
-                        "unitCode": unitCode,
-                        "assyCode": assyCode,
-                        "partCode": partCode,
-                        "itemName": itemName,
-                        "width": width,
-                        "length": length,
-                        "height": height,
-                        "material": material
-                    };
-
-                
-
+                console.log(type);
+                console.log(keyword);
+                console.log(pageNum);
                 $.ajax({
-                    type:"POST",
-                    url:"/reg/itemInput",
-                    contentType:"application/json",
-                    data:JSON.stringify(data),
-                    success:function(response) {
-                        console.log("전송 성공");
-                        console.log(response);
-                        var newRow = "<tr><td></td><td>" +unitCode + assyCode + partCode + "</td><td>" + itemName + "</td><td>" + width +"x"+ length +"x"+ height + "</td><td>" + material + "</td></tr>";
-                        $("#table2").append(newRow);
-                        var modalContent = "<p class='mb-0'>등록된 품목: " + unitCode + assyCode + partCode + " - " + itemName + "</p>";
-                        $("#registerModal .modal-body").html(modalContent);
-                        $('#registerModal').modal('show');
-                        clearInput();
+                    type: "GET",
+                    url: "/reg/itemSearch",
+                    data: { "type": type, "keyword": keyword },
+                    success: function (response) {
+                        updateTable(response);
                     },
-                    error:function(error) {
-                        console.error("전송 실패");
+                    error: function (error) {
+                        console.error("검색 실패");
                         console.error(error);
                     }
                 });
             }
+            function updateTable(response) {
+                var tbody = $("#table2 tbody");
+                tbody.empty();
+
+                for (var i = 0; i < response.length; i++) {
+                    var item = response[i];
+                    var row = "<tr>" +
+                            "<td><input type='checkbox'></td>" +
+                            "<td>" + item.item_code + "</td>" +
+                            "<td>" + item.item_name + "</td>" +
+                            "<td>" + item.width + "x" + (item.length ? item.length : "") + "x" + item.height + "</td>" +
+                            "<td>" + item.material + "</td>" +
+                            "<td>" +
+                                "<a href='/upload/" + item.blueprint_save_name + "' class='image-link' data-filename='" + item.blueprint_save_name + "'>" +
+                                "<span>" + item.blueprint_origin_name + "</span>" +
+                                "</a>" +
+                            "</td>" +
+                            "</tr>";
+                    tbody.append(row);
+                }
+            }
+        </script>
+        <!-- 품목정보등록 ajax로 데이터 전송 -->
+        <script>
+            function clearInput() {
+                $('#unit_code option[value=""]').prop('selected', 'selected').change();
+                $('#assy_code option[value=""]').prop('selected', 'selected').change();
+                $('#part_code option[value=""]').prop('selected', 'selected').change();
+                $('.itemInputGroup').each(function () {
+                    $(this).val('');
+                })
+            }
+
+            // 등록버튼 클릭 시
+            function send() {
+                var unit_code = $("#unit_code").val();
+                var assy_code = $("#assy_code").val();
+                var part_code = $("#part_code").val();
+                var item_name = $("#item_name").val();
+                var width = $("#width").val();
+                var length = $("#length").val();
+                var height = $("#height").val();
+                var material = $("#material").val();
+                var blueprint = $("#blueprint_origin_name")[0];
+                var blueprint_origin_name = blueprint.value.split("\\").pop();
+                var unit_code_flag="0";
+                var assy_code_flag="0";
+                var part_code_flag="0";
+                
+                if (unit_code == "Z") {
+                    unit_code = $('#unitWrite').val();
+                    unit_code_flag="1";
+                }
+                if (assy_code == "Z") {
+                    assy_code = $('#assyWrite').val();
+                    assy_code_flag="1";
+                }
+                if (part_code == "Z") {
+                    part_code = $('#partWrite').val();
+                    part_code_flag="1";
+                }
+
+                var data = {
+                    "unit_code": unit_code,
+                    "assy_code": assy_code,
+                    "part_code": part_code,
+                    "item_name": item_name,
+                    "width": width,
+                    "length": length,
+                    "height": height,
+                    "material": material,
+                    "blueprint_origin_name": blueprint_origin_name,
+                    "blueprint" : blueprint,
+                    "unit_code_flag" : unit_code_flag,
+                    "assy_code_flag" : assy_code_flag,
+                    "part_code_flag" : part_code_flag,
+                };
+
+                var formData = new FormData();
+                formData.append('unit_code', unit_code);
+                formData.append('assy_code', assy_code);
+                formData.append('part_code', part_code);
+                formData.append('item_name', item_name);
+                formData.append('width', width);
+                formData.append('length', length);
+                formData.append('height', height);
+                formData.append('material', material);
+                formData.append('blueprint_origin_name', blueprint_origin_name);
+                formData.append('blueprint', blueprint.files[0]);
+                formData.append('unit_code_flag', unit_code_flag);
+                formData.append('assy_code_flag', assy_code_flag);
+                formData.append('part_code_flag', part_code_flag);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/reg/itemInput",
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    beforeSend:function(xhr){
+                                xhr.setRequestHeader(header,_csrfToken)
+                            },
+                    success: function (response) {
+                        console.log("전송 성공");
+                        //displayRegisterResult(response);
+                        clearInput();
+                    },
+                    error: function (error) {
+                        console.error("전송 실패");
+                        console.error(error);
+                    }
+                });
+            $(document).on("click", ".image-link", function (e) {
+                e.preventDefault();
+                var filename = $(this).data("filename");
+                var imagePath = "/upload/" + filename;
+                $("#modalImage").attr("src", imagePath);
+                $("#imageModal").modal("show");
+            });
+        }
         </script>
         <script>
             $('th').addClass('text-center');
             $('td').addClass('text-center');
             $('th').addClass('align-middle');
             $('td').addClass('align-middle');
+            function displayFileName() {
+                var input = document.getElementById('blueprint_origin_name');
+                var label = input.nextElementSibling;
+                var fileName = input.files[0].name;
+                label.innerHTML = fileName;
+            }
+        </script>
+        <script>
+            $(document).ready(function () {
+                $("#search").on("click", function () {
+                    search();
+                });
+                $('#removeSelectedRows').on('click', function () {
+                    $('#table2 input[type="checkbox"]:checked').each(function () {
+                        $(this).closest('tr').remove();
+                    });
+                });
+            });
+        </script>
+        <script>
+            // 전체보기 버튼
+            function showallList() {
+                var table = document.getElementById('table2');
+                var rows = table.getElementsByTagName('tr');
+
+                for (var i = 1; i < rows.length; i++) {
+                    rows[i].style.display = '';
+                }
+            }
+        </script>
+        <script>
+            function removeSelectedItems() {
+            var selectedRows = $('#table2 tbody tr:has(:checkbox:checked)');
+
+            selectedRows.each(function () {
+                var currentItemCode = $(this).find('td:eq(1)').text();
+                $.ajax({
+                    type: "POST",
+                    url: "/reg/removeItem",
+                    data: { "item_code": currentItemCode },
+                    success: function (response) {
+                        console.log("삭제 성공: " + currentItemCode);
+                        $(this).remove();
+                    },
+                    error: function (error) {
+                        console.error("삭제 실패");
+                        console.error(error);
+                    }
+                });
+            });
+        }
         </script>
     </th:block>
 </th:block>

@@ -6,8 +6,10 @@ import edu.mit.annotation.dto.PurchaseOrderDTO;
 import edu.mit.annotation.mapper.OrderMapper;
 import edu.mit.annotation.realdto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +32,35 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public List<PurchOrderItemsDTO> getPOItems(String prcpNumbers) {
         return orderMapper.getPurchOrderItemList(prcpNumbers);
+    }
+
+    @Override
+    public Integer savePurchaseOrder(NewPurchaseOrderDTO newPurchaseOrderDTO) {
+        String testPoNumber = orderMapper.getLatestPurchOrderNumber();
+        int number = Integer.parseInt(testPoNumber.split("-")[1])+1;
+        newPurchaseOrderDTO.setPurch_order_number("po-"+number);
+
+        while (!testValidPurchOrderNumber(newPurchaseOrderDTO)){
+            number+=1;
+            newPurchaseOrderDTO.setPurch_order_number("po-"+number);
+        }
+
+        String validPoNum = newPurchaseOrderDTO.getPurch_order_number();
+        for (NewPurchOrderItem item :newPurchaseOrderDTO.getNewPurchOrderItem()) {
+            item.setPurch_order_number(validPoNum);
+            orderMapper.savePurchaseOrderItem(item);
+        }
+
+        return null;
+    }
+
+    private Boolean testValidPurchOrderNumber(NewPurchaseOrderDTO newPurchaseOrderDTO){
+        try{
+            orderMapper.savePurchaseOrder(newPurchaseOrderDTO);
+        }catch (DuplicateKeyException e){
+            return false;
+        }
+        return true;
     }
 
     private <T> ListWithPaging<T> pagingSupport(List<T> list, Criteria cri){

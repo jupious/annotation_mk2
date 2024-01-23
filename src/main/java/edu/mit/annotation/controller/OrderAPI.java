@@ -2,7 +2,10 @@ package edu.mit.annotation.controller;
 
 import edu.mit.annotation.realdto.*;
 import edu.mit.annotation.service.OrderService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -30,9 +33,16 @@ public class OrderAPI {
         return orderService.getProcPlanListWithNoPO(cri);
     }
 
-    @PostMapping("/po-new-order")
-    public String  poNewOrder(NewPurchaseOrderDTO newPurchaseOrderDTO){
-        System.out.println(newPurchaseOrderDTO);
+    @PostMapping("/po-new-order/{receive_duedate}/{purch_order_detail}")
+    public String  poNewOrder(@RequestBody List<NewPurchOrderItem> newPurchOrderItem, @PathVariable("receive_duedate") String  receive_duedate, @PathVariable(value = "purch_order_detail", required = false) String purch_order_detail) throws ParseException {
+        System.out.println(newPurchOrderItem+purch_order_detail+receive_duedate);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        orderService.savePurchaseOrder(NewPurchaseOrderDTO.builder()
+                .newPurchOrderItem(newPurchOrderItem)
+                .receive_duedate(sdf.parse(receive_duedate))
+                .purch_order_date(new Date())
+                .purch_order_detail(purch_order_detail)
+                .build());
         return "good";
     }
 }

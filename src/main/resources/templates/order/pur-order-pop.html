@@ -181,7 +181,7 @@
 
             $('#saveBtn').on("click",function(){
                 let data;
-                var dataArr = [];
+                var dataArr = new Array;
                 $('.prcp').each(function(){
                     let purch_order_quantity = $(this).children('.orderCount').children().val();
                     let note = $(this).children('.note').children().val();
@@ -190,20 +190,23 @@
                     dataArr.push(data);
                 })
                 let receive_duedate = $('#receive_duedate').val();
-                let purch_order_detail = $('#detail').value;
+                let purch_order_detail = $('#detail').val();
+                if(purch_order_detail == ""){
+                    purch_order_detail = "-";
+                }
+                console.log(purch_order_detail)
                 $.ajax({
                     type:"post",
-                    url:"/orderapi/po-new-order",
+                    url:"/orderapi/po-new-order/"+receive_duedate+"/"+purch_order_detail,
                     beforeSend:function(xhr){
                                 xhr.setRequestHeader(header,_csrfToken);
                     },
-                    data:{
-                        receive_duedate:receive_duedate,
-                        purch_order_detail:purch_order_detail,
-                        newPurchOrderItem:JSON.stringify(dataArr)
-                    },
+                    traditional:true,
+                    contentType: "application/json; charset=UTF-8",
+                    data:JSON.stringify(dataArr),
                     success:function(res){
                         console.log(res);
+                        window.close();
                     },
                     error:function(a,b,c){
                         console.log("에러");
