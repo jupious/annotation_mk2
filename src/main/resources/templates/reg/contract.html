@@ -357,66 +357,71 @@
 </script>
 <script>
     $('#business_number').on('keyup', function(){
-        $.ajax({
-            type: "POST",
-            url: "/reg/contract/searchBusinessNumber",
-            data: { "business_number":$(this).val() },
-            beforeSend:function(xhr){
-                                xhr.setRequestHeader(header,_csrfToken)
-                            },
-            success: function (data) {
-                console.log(data);
-                $('#dataList').empty();
-                data.slice(0, 10).forEach(function (item) {
-                    var option = $('<option>').text(item.company_name);
-                        option.val(item.business_number);
-                    $('#dataList').append(option);
+        if($(this).val().length == 12){
+            console.log("12자 다찼음")
+        }else{
 
-                    $('#business_number').on('change', function() {
-                        var selectedBusinessNumber = $(this).val();
-                        var selectedCompanyName = '';
-
-                        data.forEach(function (item) {
-                            if (item.business_number === selectedBusinessNumber) {
-                                selectedCompanyName = item.company_name;
+            $.ajax({
+                type: "POST",
+                url: "/reg/contract/searchBusinessNumber",
+                data: { "business_number":$(this).val() },
+                beforeSend:function(xhr){
+                                    xhr.setRequestHeader(header,_csrfToken)
+                                },
+                success: function (data) {
+                    console.log(data);
+                    $('#dataList').empty();
+                    data.slice(0, 10).forEach(function (item) {
+                        var option = $('<option>').text(item.company_name);
+                            option.val(item.business_number);
+                        $('#dataList').append(option);
+    
+                        $('#business_number').on('change', function() {
+                            var selectedBusinessNumber = $(this).val();
+                            var selectedCompanyName = '';
+    
+                            data.forEach(function (item) {
+                                if (item.business_number === selectedBusinessNumber) {
+                                    selectedCompanyName = item.company_name;
+                                    return false;
+                                }
+                            });
+                            $('#company_name').val(selectedCompanyName);
+                        });
+    
+                        $('#business_number').on('change', function() {
+                            var selectedBusinessNumber = $(this).val();
+                            var selectedCompanyAccount = '';
+    
+                            data.forEach(function (item) {
+                                if (item.business_number === selectedBusinessNumber) {
+                                selectedCompanyAccount = item.company_account;
                                 return false;
                             }
                         });
-                        $('#company_name').val(selectedCompanyName);
-                    });
-
-                    $('#business_number').on('change', function() {
-                        var selectedBusinessNumber = $(this).val();
-                        var selectedCompanyAccount = '';
-
-                        data.forEach(function (item) {
-                            if (item.business_number === selectedBusinessNumber) {
-                            selectedCompanyAccount = item.company_account;
-                            return false;
-                        }
-                    });
-                    $('#company_account').val(selectedCompanyAccount);
-                });   
-
-                $('#item_name').on('change', function() {
-                    var selectedItemName = $(this).val();
-                    var selectedItemCode = '';
-
-                    data.forEach(function (item) {
-                        if (item.item_name === selectedItemName) {
-                        selectedItemCode = item.item_code;
-                        return false;
-                        }
-                    });
-
-                    $('#item_code').val(selectedItemCode);
+                        $('#company_account').val(selectedCompanyAccount);
                     });   
-                });
-            },
-            error: function (error) {
-                console.log("에러발생");
-            }
-        });
+    
+                    $('#item_name').on('change', function() {
+                        var selectedItemName = $(this).val();
+                        var selectedItemCode = '';
+    
+                        data.forEach(function (item) {
+                            if (item.item_name === selectedItemName) {
+                            selectedItemCode = item.item_code;
+                            return false;
+                            }
+                        });
+    
+                        $('#item_code').val(selectedItemCode);
+                        });   
+                    });
+                },
+                error: function (error) {
+                    console.log("에러발생");
+                }
+            });
+        }
     });
 </script>
 
