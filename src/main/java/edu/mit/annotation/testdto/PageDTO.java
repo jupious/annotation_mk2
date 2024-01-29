@@ -1,6 +1,5 @@
 package edu.mit.annotation.testdto;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -12,10 +11,10 @@ public class PageDTO {
     private int startPage,endPage;
     private boolean prev,next;
 
-    private Criteria cri; //현재페이지,페이당 글개수
+    private RegisterCriteria cri; //현재페이지,페이당 글개수
     private long total; //전체 글개수
 
-    public PageDTO(Criteria cri,long total){
+    public PageDTO(RegisterCriteria cri, long total){
         this.cri=cri;
         this.total=total;
 

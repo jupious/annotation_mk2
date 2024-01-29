@@ -77,6 +77,7 @@
 							<li><a href="/inv/inv-amount" >재고(금액)관리</a></li>
 						</ul>
 					</li>
+					
 				</ul>
 				
 				
@@ -107,11 +108,54 @@
 							<input type="hidden" id="_csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 						</form>
 					</li>
+					<li>
+						<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModalCenter">메일전송</button>
+					</li>
 				</ul>
 			</div>
 			
 		
 </header>
+<div id="exampleModalCenter" class="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalCenterTitle">Email전송</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+			</div>
+			<div class="modal-body">
+				<p>
+					<form id="layoutMailForm" action="#">
+						<div class="form-group">
+							<label for="to">받는사람 </label><br>
+							<input type="email" id="to" class="form-control-sm" required list="mailList"/>
+							<datalist id="mailList">
+								
+							</datalist>
+						</div>
+						<div class="form-group">
+							<label for="subject">제목</label><br>
+							<input type="text" id="subject" class="form-control-sm" />
+						</div>	
+						<div class="custom-file">
+							<input type="file" id="attatch" class="custom-file-input-sm" />
+							<label class="custom-file-label" for="attatch">첨부파일</label><br>
+						</div>
+						<div class="form-group">
+							<label for="mailText">내용</label><br>
+							<textarea class="form-control-sm" id="mailText" rows="5"></textarea>
+						</div>
+					</form>
+				</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-mail-modal">취소</button>
+				<button type="button" class="btn btn-primary" id="sendMail-modal">전송</button>
+			</div>
+		</div>
+	</div>
+</div>
+	
 <div class="pcoded-main-container">
 	<th:block th:replace = "${content}">
 	</th:block>
@@ -120,7 +164,69 @@
 <script src="/assets/js/vendor-all.min.js"></script>
 <script src="/assets/js/plugins/bootstrap.min.js"></script>
 <script src="/assets/js/pcoded.min.js"></script>
+<script>
+	$('#sendMail-modal').on('click',function(){
+		let to = $('#to').val();
+		let subject = $('#subject').val();
+		let file = $('#attatch')[0].files[0];
+		let message = $('#mailText').val();
+		let header =  $('meta[name="_csrf_header"]').attr("content");
+		let _csrfToken = $('#_csrf_token').val();
+		
+		let formData = new FormData();
+		formData.append('email',to);
+		formData.append('subject',subject);
+		formData.append('file',file);
+		formData.append('message',message);
+		console.log('file',file);
+		$.ajax({
+			type:'post',
+			url:'/orderapi/send',
+			beforeSend:function(xhr){
+                xhr.setRequestHeader(header,_csrfToken)
+            },
+			processData:false,
+            contentType:false,
+			data:formData,
+			success: function(){
+				console.log("이메일 전송 완료");
+				$('#close-mail-modal').trigger('click');
+			},
+			error:function(a,b,c){
+				console.log("에러");
+				console.log("a",a);
+				console.log("b",b);
+				console.log("c",c);
+            }
+		})
+	})
 
+	$('#to').on('keyup', function(){
+		$.ajax({
+			type:'get',
+			url:'/orderapi/search-with-mail',
+			data:{"email":$(this).val()},
+			success: function(res){
+				console.log(res);
+				$('#mailList').empty();
+				res.slice(0,10).forEach(function(data) {
+					let option = $('<option>').text(data.company_name);
+					option.val(data.manager_email);
+					$('#mailList').append(option);
+				});
+			}
+		})
+	});
+
+
+
+	$('#attatch').on('change', function(){
+		let filevalue =  $(this).val().split("\\");
+		let fileName = filevalue[filevalue.length-1];
+		$(this).siblings('label').text(fileName);
+	})
+
+</script>
 </body>
 </th:block>
 </html>

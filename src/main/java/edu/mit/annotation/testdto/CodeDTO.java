@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TestCodeDTO {
+public class CodeDTO {
     private String unit_code;
     private String unit_name;
     private String assy_code;

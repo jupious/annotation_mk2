@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{/layout/layout::setContent(~{::content})}">
+<th:block th:replace="~{./layout/layout::setContent(~{::content})}">
     <th:block th:fragment="content">
         <div class="pcoded-content">
             <div class="page-header">
@@ -17,7 +17,11 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5>발주서 목록</h5>
+                        <div class="row">
+                            <div class="col">
+                                <h5>입고완료 품목 목록</h5>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div>
@@ -34,7 +38,8 @@
                                     <div class="input-group-prepend">
                                         <form>
                                             <select id="type" name="category" class="btn btn-primary dropdown-toggle dropdown-toggle-split btn-sm">
-                                                <option value="OC">발주번호</option>
+                                                <option value="PC">조달번호</option>
+                                                <option value="IC">품목코드</option>
                                                 <option value="IN">품목명</option>
                                                 <option value="CN">업체명</option>
                                             </select>
@@ -45,17 +50,23 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col"></div>
+                            <div class="col-md-auto">
+                                <button class='btn  btn-secondary btn-sm print' id='printBtn'>발행</button>
+                            </div>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover table-sm">
                                 <thead>
                                 <tr>
-                                    <th class="align-middle" >발주번호</th>
+                                    <th><div class='custom-control custom-checkbox'><input type='checkbox' id="selectAll" class='custom-control-input'> <label class='custom-control-label' for='selectAll' id="label-selectAll"></label></div></th>
+                                    <th class="align-middle" >조달번호</th>
                                     <th class="align-middle" >업체명</th>
+                                    <th class="align-middle" >품목코드</th>
                                     <th class="align-middle" >품목명</th>
                                     <th class="align-middle" >발주일</th>
                                     <th class="align-middle" >입고예정일</th>
-                                    <th class="align-middle" style="width:30px;">명세서</th>
-                                    <th class="align-middle" style="width:15px;">발행횟수</th>
                                 </tr>
                                 </thead>
                                 <tbody id = "poTbody">
@@ -72,12 +83,14 @@
         </div>
        
         <script>
-             var amount = 10;
-             var header = $('meta[name="_csrf_header"]').attr("content");
+            var amount = 50;
+            var header = $('meta[name="_csrf_header"]').attr("content");
             var _csrfToken = $('#_csrf_token').val();
             var crntPage;
+            var prcNumberArr = [];
+            var bsNumArr = [];
             $(function(){
-                var criteria = {"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":"IN","keyword":"","pageNum":0,"amount":amount};
+                var criteria = {"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":"PC","keyword":"","pageNum":0,"amount":amount};
                 loadList(criteria);
             })
 
@@ -102,13 +115,96 @@
                 loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":id-1,"amount":amount});
             })
 
-            $('#poTbody').on("click","button",function(){
-                console.log("여기다 애송이",$(this));
-                if(!($(this).hasClass('disabled'))){
-                    let popOption = "width = 1200px, height = 730px, top = 100px, left = 100px, scrollbars=yes";
-                    let popUrl = '/inv/statement-preview/'+$(this).parent().siblings('.poNum').text();
-                    console.log($(this).parent('.poNum').text());
+            $('#printBtn').on("click",function(){
+                if(bsNumArr.length === 0){
+                    alert('선택된 품목이 없습니다.');
+                }else{
+                    let popOption = "width = 800px, height = 630px, top = 100px, left = 100px, scrollbars=yes";
+                    let popUrl = '/inv/statement-preview/'+prcNumberArr.join("','")+"/"+bsNumArr[0];
+                    console.log(prcNumberArr);
                     window.open(popUrl,'pop',popOption);
+                }
+            })
+
+            // $('#poTbody').on("click","button",function(){
+            //     console.log("여기다 애송이",$(this));
+            //     if(!($(this).hasClass('disabled'))){
+            //         let popOption = "width = 1200px, height = 730px, top = 100px, left = 100px, scrollbars=yes";
+            //         let popUrl = '/inv/statement-preview/'+$(this).parent().siblings('.poNum').text();
+            //         console.log($(this).parent('.poNum').text());
+            //         window.open(popUrl,'pop',popOption);
+            //     }
+            // })
+            $('#label-selectAll').on("click",function(){
+                console.log("전체선택눌림");
+                if($(this).siblings('input').is(":checked") == true){
+                    $('.tbodyCheck').each(function(){
+                       $(this).prop("checked",false);
+                    }) 
+                    prcNumberArr = [];
+                    bsNumArr = [];
+                }else{
+                    if(compare_bs() == true){
+                        prcNumberArr = [];
+                        $('.tbodyCheck').each(function(){
+                           $(this).prop("checked",true);
+                           let prcNum = $(this).parent().parent().siblings('.prcNum').text();
+                           prcNumberArr.push(prcNum); 
+                        })
+                    }else{
+                        alert('명세서는 한 회사에 대해서만 발행할 수 있습니다.')
+                        checkedFalse();
+                    }
+                }
+            })
+            function checkedFalse(){
+                $('#selectAll').trigger("click");
+            }
+
+            function compare_bs(){
+                let flag = true;
+                let testBs = $('#0result').children('.bsTd').data('bsnum');
+                $('.bsTd').each(function(){
+                    let bs = $(this).data('bsnum');
+                    if(testBs != bs){
+                        console.log("???")
+                        flag = false;
+                        return false;
+                    }else{
+                        console.log(testBs,"이거랑 비교",bs);
+                    }
+                })
+                testBs = "";
+                return flag;
+            }
+
+            $('#poTbody').on("click","tr",function(){
+                let bs = $(this).children('.bsTd').data('bsnum');
+                if($(this).children().children().children('input').is(':checked') == true){
+                    $(this).children().children().children('input').prop('checked',false);
+                    $('#selectAll').prop("checked",false);
+                    let prcNum = $(this).children('.prcNum').text();
+                    prcNumberArr = prcNumberArr.filter(e => e != prcNum);
+              
+                    for(let i = 0; i < bsNumArr.length; i++){
+                        if(bsNumArr[i] == bs){
+                            bsNumArr.splice(i,1);
+                            console.log("빠져나가라 좀")
+                            break;
+                        }
+                    }
+                    console.log(bsNumArr);
+                }else{
+                    if((bsNumArr.includes(bs)) || bsNumArr.length === 0){
+                        $(this).children().children().children('input').prop('checked',true);
+                        let prcNum = $(this).children('.prcNum').text();
+                        prcNumberArr.push(prcNum);
+                        bsNumArr.push(bs);
+                        console.log(bsNumArr);
+                    }else{
+                        alert('명세서는 한 회사에 대해서만 발행할 수 있습니다.')
+                    }
+                    
                 }
             })
 
@@ -123,7 +219,7 @@
                         result = res.dataList;
                         var rsStr = "";
                         for(let i = 0; i < result.length; i++){
-                            rsStr += "<tr id ='"+i+"result' class='result'><td class='poNum'>"+result[i].purch_order_number+"</td><td>"+result[i].company_name+"</td><td>"+result[i].item_name_string+"</td><td>"+dateFormatter(result[i].purch_order_date)+"</td><td>"+dateFormatter(result[i].receive_duedate)+"</td><td><button class='btn  btn-secondary btn-sm print' id='"+i+"print'>발행</button></td><td>"+result[i].statement_publish_count+"</td></tr>";
+                            rsStr += "<tr id ='"+i+"result'><td><div class='custom-control custom-checkbox'><input type='checkbox' id='"+i+"checkbox' class='custom-control-input tbodyCheck'> <label class='custom-control-label' for='"+i+"checkbox'></label></div></td><td class='prcNum'>"+result[i].proc_plan_number+"</td><td class='bsTd' data-bsNum='"+result[i].business_number+"'>"+result[i].company_name+"</td><td>"+result[i].item_code+"</td><td>"+result[i].item_name+"</td><td>"+dateFormatter(result[i].purch_order_date)+"</td><td>"+dateFormatter(result[i].receive_duedate)+"</td></tr>";
                         }
                         $('#poTbody').html(rsStr);
                         $('th').addClass('text-center');
@@ -145,7 +241,7 @@
                         $('#searchPageList').html(pageStr);
                         $('[data-paging ='+res.currentPage+']').parent().addClass("active");
                         crntPage = criteria.pageNum + 1;
-                    
+                       
                         makeCenter();
                     },
                     error:function(a,b,c){

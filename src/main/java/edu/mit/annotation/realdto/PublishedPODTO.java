@@ -9,10 +9,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class NewPurchOrderItem {
-    private Integer purch_order_quantity;
-    private String note;
-    private String proc_plan_number;
+public class PublishedPODTO {
     private String purch_order_number;
-    private Date receive_duedate;
+    private Date purch_order_date;
+    private String purch_order_detail;
 }

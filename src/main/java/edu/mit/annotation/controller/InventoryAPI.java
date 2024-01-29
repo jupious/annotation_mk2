@@ -2,16 +2,9 @@ package edu.mit.annotation.controller;
 
 import edu.mit.annotation.realdto.*;
 import edu.mit.annotation.service.InventoryService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.springframework.core.annotation.Order;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -42,21 +35,21 @@ public class InventoryAPI {
     }
 
     @GetMapping(value = "/receive-history")
-    public Long getReceivedCount(String  startDate, String  endDate, String item_code) throws ParseException {
+    public Long getReceivedCount(String  startDate, String  endDate, String proc_plan_number) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        return inventoryService.getReceiveHistory(SearchDTO.builder()
-                                                    .item_code(item_code)
+        return inventoryService.getReceiveHistory(ReceiveHistorySearchDTO.builder()
+                                                    .proc_plan_number(proc_plan_number)
                                                     .startDate(sdf.parse(startDate))
                                                     .endDate(sdf.parse(endDate))
                                                     .build());
     }
 
-    @PostMapping("/save-received-item/{item_code}/{received_quantity}")
-    public Integer saveReceivedItem(@PathVariable("item_code") String item_code, @PathVariable("received_quantity") Integer received_quantity){
+    @PostMapping("/save-received-item/{proc_plan_number}/{received_quantity}")
+    public Integer saveReceivedItem(@PathVariable("proc_plan_number") String proc_plan_number, @PathVariable("received_quantity") Integer received_quantity){
 
         return inventoryService.saveReceivedItem(ItemSaveDTO.builder()
-                                                    .item_code(item_code)
+                                                    .proc_plan_number(proc_plan_number)
                                                     .received_quantity(received_quantity).build());
     }
 
@@ -65,13 +58,10 @@ public class InventoryAPI {
         return inventoryService.closingProcPlan(proc_plan_number);
     }
 
-    @PostMapping("/close-purchase-order/{proc_plan_number}")
-    public void closePurchaseOrder(@PathVariable("proc_plan_number") String proc_plan_number){
-        inventoryService.closingPO(proc_plan_number);
-    }
+
 
     @GetMapping("/statement-get-data")
-    public ListWithPaging<ClosedPurchaseOrderDTO> statementGetData(String  startDate, String  endDate, String type, String keyword, Integer pageNum, Integer amount) throws ParseException {
+    public ListWithPaging<ClosedProcPlanDTO> statementGetData(String  startDate, String  endDate, String type, String keyword, Integer pageNum, Integer amount) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Criteria cri = Criteria.builder()
                 .pageNum(pageNum*amount)
@@ -83,7 +73,7 @@ public class InventoryAPI {
                 .build();
 
         System.out.println(cri);
-        return inventoryService.getClosedPO(cri);
+        return inventoryService.getClosedPrc(cri);
     }
 
     @GetMapping("/release-get-data")
@@ -100,10 +90,6 @@ public class InventoryAPI {
         return inventoryService.getReleaseData(cri);
     }
 
-    @GetMapping("/statement-published")
-    public void statementPublished(String purch_order_number){
-        inventoryService.stmtPbCntUp(purch_order_number);
-    }
 
     @PostMapping("/save-release-item/{item_code}/{release_quantity}")
     public Integer saveReleaseItem(@PathVariable("item_code") String item_code, @PathVariable("release_quantity") Integer release_quantity){
@@ -113,17 +99,73 @@ public class InventoryAPI {
     }
 
     @GetMapping("/inv-calc")
-    public ListWithPaging<InventoryCalcDTO> invCalc(String  startDate, String  endDate, String type, String keyword, Integer pageNum, Integer amount) throws ParseException {
+    public ListWithPaging<InventoryCalcDTO> invCalc(String  startDate, String  endDate, String type, String keyword, Integer pageNum, Integer amount, String order) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Criteria cri = Criteria.builder()
                 .pageNum(pageNum*amount)
                 .amount(amount)
                 .startDate(sdf.parse(startDate))
-                .endDate(sdf.parse(endDate))
+                .endDate(sdf.parse(endDateValidate(endDate)))
                 .type(type)
+                .order(order)
                 .keyword("%"+keyword+"%")
                 .build();
         return inventoryService.getInvCalcData(cri);
+    }
+
+    private String  endDateValidate(String endDate){
+        Integer date = Integer.valueOf(endDate.split("-")[2]);
+        Integer month = Integer.valueOf(endDate.split("-")[1]);
+        Integer year = Integer.valueOf(endDate.split("-")[0]);
+        if(month < 8){
+            if(month%2 == 1){
+                if(date == 31){
+                    month+=1;
+                    date = 1;
+                }else{
+                    date += 1;
+                }
+            }else{
+                if(month == 2){
+                    if(date==28 || date==29){
+                        month += 1;
+                        date = 1;
+                    }else{
+                        date+=1;
+                    }
+                }else{
+                    if(date ==30){
+                        month+=1;
+                        date = 1;
+                    }else{
+                        date+=1;
+                    }
+                }
+            }
+        }else{
+            if(month%2==0){
+                if(date==31){
+                    date = 1;
+                    if(month == 12){
+                        year+=1;
+                        month = 1;
+                    }
+                    else{
+                        month+=1;
+                    }
+                }else{
+                    date+=1;
+                }
+            }else{
+                if(date==30){
+                    month+=1;
+                    date = 1;
+                }else{
+                    date+=1;
+                }
+            }
+        }
+        return year+"-"+ (month < 10 ? "0"+month : month) +"-"+ (date < 10? "0"+date : date);
     }
 
     @GetMapping("/inv-report")
@@ -131,9 +173,8 @@ public class InventoryAPI {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Criteria cri = Criteria.builder()
                 .type(type)
-                .keyword(type+"_code")
                 .startDate(sdf.parse(startDate))
-                .endDate(sdf.parse(endDate))
+                .endDate(sdf.parse(endDateValidate(endDate)))
                 .build();
         return  inventoryService.getInvReport(cri);
     }

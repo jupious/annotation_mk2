@@ -40,6 +40,7 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth
                             .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+                          //  .requestMatchers("/**").permitAll()
                             .requestMatchers("/error**").permitAll()
                             .requestMatchers("/assets/**").permitAll()
                             .requestMatchers("/fonts/**").permitAll()

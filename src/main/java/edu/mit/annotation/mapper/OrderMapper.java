@@ -1,6 +1,9 @@
 package edu.mit.annotation.mapper;
 
 import edu.mit.annotation.realdto.*;
+import edu.mit.annotation.testdto.ProgressCheckDTO;
+import edu.mit.annotation.testdto.PurchaseOrderListDTO;
+import edu.mit.annotation.testdto.RegisterCriteria;
 
 import java.util.List;
 
@@ -24,5 +27,53 @@ public interface OrderMapper {
     //발주번호가 가장 큰값 가져오기
     String getLatestPurchOrderNumber();
 
+    //발행된 발주리스트 가져오기
+    List<PublishedPurchaseOrderDTO> getPoList(Criteria cri);
 
+    //발주품목 삭제
+    void deletePurchaseOrderItem(String purch_order_number);
+    //발주서 삭제
+    void deletePurchaseOrder(String purch_order_number);
+
+    //발주품목 정보
+    List<PublishedPOItemDTO> getPOitems(String purch_order_number);
+
+    //발주서 정보
+    PublishedPODTO getPOInfo(String purch_order_number);
+
+    //이메일 자동완성
+    List<CompanyInfoDTO> getCompInfoWithEmail(String email);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 아래부터 나중에 이어붙일 부분
+
+    // 진척검수 관련
+    List<PurchaseOrderListDTO> getListforTable1();
+
+    List<ProgressCheckDTO> getListforProgressCheck(String proc_plan_number, String purch_order_number);
+    void saveProgressCheck(ProgressCheckDTO dto);
+
+    int inspectCheckPlans(String purch_order_plan);
+
+    int getTotalPurOrder(RegisterCriteria cri);
+
+    void updateProgressCheck(ProgressCheckDTO dto);
+
+    int CheckProgDB(String proc_plan_number);
+
+
+    // 발주현황리포트 관련
+    List<PurchaseOrderListDTO> getListPurOrder();
+    int getCountListPurOrder();
+
+    // 총 조달계획 갯수
+    int getCountProcPlan();
+
+    // 발주서 발행 갯수
+    int getCountPublishedPurOrder();
+
+    // 진척검수 진행중 갯수
+    int getCountProgCheckingProcPlan();
+
+    // 조달마감 갯수
+    int getCountFinishedProcPlan();
 }

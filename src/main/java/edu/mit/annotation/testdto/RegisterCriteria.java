@@ -1,11 +1,13 @@
 package edu.mit.annotation.testdto;
 
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @ToString
-public class Criteria {
+@Builder
+@AllArgsConstructor
+public class RegisterCriteria {
     private int pageNum;
     private int amount;
     private int offset;
@@ -13,15 +15,12 @@ public class Criteria {
     private String type;
     private String keyword;
 
-    public Criteria()   {
-        this(1,10);
+
+    public RegisterCriteria() {
+        this.pageNum = 1;
+        this.amount = 10;
     }
 
-    public Criteria(int pageNum, int amount) {
-        this.pageNum = pageNum*amount;
-        this.amount = amount;
-        this.offset = (pageNum - 1) * amount;
-    }
 
     public String[] getTypeArr()    {
         return type == null ? new String[] {} : type.split("");

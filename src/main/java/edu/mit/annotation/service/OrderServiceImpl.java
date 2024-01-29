@@ -5,9 +5,13 @@ import edu.mit.annotation.dto.ProcurementPlanDTO;
 import edu.mit.annotation.dto.PurchaseOrderDTO;
 import edu.mit.annotation.mapper.OrderMapper;
 import edu.mit.annotation.realdto.*;
+import edu.mit.annotation.testdto.ProgressCheckDTO;
+import edu.mit.annotation.testdto.PurchaseOrderListDTO;
+import edu.mit.annotation.testdto.RegisterCriteria;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
@@ -54,6 +58,51 @@ public class OrderServiceImpl implements OrderService{
         return null;
     }
 
+    @Override
+    public ListWithPaging<PublishedPurchaseOrderDTO> getPublishedPOList(Criteria cri) {
+        List<PublishedPurchaseOrderDTO> list = orderMapper.getPoList(cri);
+        for(int i = 0; i < list.size(); i++){
+            PublishedPurchaseOrderDTO dto = list.get(i);
+            String[] sliced = dto.getItem_names().split("!@#");
+            StringBuilder newItemName = new StringBuilder(sliced[0]);
+            for (int j = 1; j < sliced.length; j++) {
+                if (j == 3) {
+                    newItemName.append("...");
+                    break;
+                } else {
+                    newItemName.append(", ").append(sliced[j]);
+                    System.out.println(newItemName);
+                }
+            }
+            dto.setItem_names(String.valueOf(newItemName));
+            list.set(i,dto);
+        }
+
+        return pagingSupport(list,cri);
+    }
+
+    @Override
+    public void deletePurchaseOrder(String purch_order_number) {
+        orderMapper.deletePurchaseOrderItem(purch_order_number);
+        orderMapper.deletePurchaseOrder(purch_order_number);
+    }
+
+    @Override
+    public PublishedPODTO getPOinfo(String purch_order_number) {
+        return orderMapper.getPOInfo(purch_order_number);
+    }
+
+    @Override
+    public List<PublishedPOItemDTO> getPublishedPOItems(String purch_order_number) {
+        return orderMapper.getPOitems(purch_order_number);
+    }
+
+    @Override
+    public List<CompanyInfoDTO> getCompWithEmail(String email) {
+        return orderMapper.getCompInfoWithEmail(email);
+    }
+
+
     private Boolean testValidPurchOrderNumber(NewPurchaseOrderDTO newPurchaseOrderDTO){
         try{
             orderMapper.savePurchaseOrder(newPurchaseOrderDTO);
@@ -92,6 +141,85 @@ public class OrderServiceImpl implements OrderService{
                 .pageList(pageList)
                 .dataList(list)
                 .build();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 아래부터 나중에 이어붙일 부분
+    @Override
+    public List<PurchaseOrderListDTO> getListforTable1()    {
+        return orderMapper.getListforTable1();
+    }
+
+    @Override
+    public List<ProgressCheckDTO> getListforProgressCheck(String proc_plan_number, String purch_order_number) {
+        return orderMapper.getListforProgressCheck(proc_plan_number, purch_order_number);
+    }
+
+    @Override
+    public int inspectCheckPlans(String purch_order_number)    {
+        return orderMapper.inspectCheckPlans(purch_order_number);
+    }
+
+    @Override
+    public void saveProgressCheck(ProgressCheckDTO dto) {
+        orderMapper.saveProgressCheck(dto);
+        System.out.println("발주번호 : " + dto.getPurch_order_number());
+        System.out.println("조달계획번호 : " + dto.getProc_plan_number());
+        System.out.println("차수 : " + dto.getProc_check_order());
+        System.out.println("검수일정 : " + dto.getProc_check_date());
+    }
+
+    @Override
+    public void updateProgressCheck(ProgressCheckDTO dto)   {
+        orderMapper.updateProgressCheck(dto);
+        System.out.println("변경된 발주번호 : " + dto.getPurch_order_number());
+        System.out.println("변경된 조달계획번호: " + dto.getProc_plan_number());
+        System.out.println("변경된 진척검수차수: " + dto.getProc_check_order());
+        System.out.println("변경된 진척검수결과: " + dto.getProg_check_result());
+        System.out.println("변경된 진척검수수량: " + dto.getCompleted_quantity());
+        System.out.println("변경된 보완사항 : " + dto.getSupplementation());
+        System.out.println("변경된 진척검수일자 : " + dto.getProc_check_date());
+
+    }
+
+    @Override
+    public int CheckProgDB(String proc_plan_number) {
+        return orderMapper.CheckProgDB(proc_plan_number);
+    }
+
+
+    @Override
+    public List<PurchaseOrderListDTO> getListPurOrder()    {
+        return orderMapper.getListPurOrder();
+    }
+
+    @Override
+    public int getTotalPurOrder(RegisterCriteria cri)  {
+        return orderMapper.getTotalPurOrder(cri);
+    }
+
+    @Override
+    public int getCountListPurOrder()   {
+        return orderMapper.getCountListPurOrder();
+    }
+
+    @Override
+    public int getCountProcPlan()  {
+        return orderMapper.getCountProcPlan();
+    }
+
+    @Override
+    public int getCountPublishedPurOrder() {
+        return orderMapper.getCountPublishedPurOrder();
+    }
+
+    @Override
+    public int getCountProgCheckingProcPlan()  {
+        return orderMapper.getCountProgCheckingProcPlan();
+    }
+
+    @Override
+    public int getCountFinishedProcPlan()  {
+        return orderMapper.getCountFinishedProcPlan();
     }
 
 }

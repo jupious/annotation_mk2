@@ -11,52 +11,53 @@ import java.util.Map;
 
 @Mapper
 @Repository
-public interface TestMapper {
+public interface RegisterMapper {
 
     List<TestMemberDTO> findAll();
 
-    List<TestItemDTO> getListItem();
-    int getTotalItemCount(Criteria cri);
-    List<TestItemDTO> getListItemWithPaging(Criteria cri);
-    List<TestItemDTO> searchListItemWithPaging(Criteria cri);
-    List<TestCodeDTO> getListUnitCode();
-    void inputUnitCode(TestCodeDTO codeDTO);
-    List<TestCodeDTO> getListAssyCode();
-    void inputAssyCode(TestCodeDTO codeDTO);
-    List<TestCodeDTO> getListPartCode();
-    void inputPartCode(TestCodeDTO codeDTO);
+    List<ItemDTO> getListItem();
+    int getTotalItemCount(RegisterCriteria cri);
+    List<ItemDTO> getListItemWithPaging(RegisterCriteria cri);
+    List<ItemDTO> searchListItemWithPaging(RegisterCriteria cri);
+    List<CodeDTO> getListUnitCode();
+    void inputUnitCode(CodeDTO codeDTO);
+    List<CodeDTO> getListAssyCode();
+    void inputAssyCode(CodeDTO codeDTO);
+    List<CodeDTO> getListPartCode();
+    void inputPartCode(CodeDTO codeDTO);
 
-    void registerItem(TestItemDTO dto);
+    void registerItem(ItemDTO dto);
     int checkDuplicateItemCode(@Param("item_code") String item_code);
     int checkDuplicateUnitCode(@Param("unit_code") String unit_code);
     int checkDuplicateAssyCode(@Param("assy_code") String assy_code);
     int checkDuplicatePartCode(@Param("part_code") String part_code);
     int removeItem(@Param("item_code") String item_code);
 
-    List<TestCoopDTO> getListCoop();
+    List<CoopDTO> getListCoop();
     @MapKey("business_number")
     List<Map<String, String>> auto_business_number(String business_number);
 
     void registerContract(ContractDTO dto);
-    void registerContractItem(ContractDTO dto);
+    void registerContractItem(ContractItemDTO dto);
     void updateContract(ContractDTO dto);
     void updateContractItem(ContractDTO dto);
     List<ContractListDTO> getListContract();
-    int getTotalContractCount(Criteria cri);
-    List<ContractListDTO> getListContractWithPaging(Criteria cri);
+    int getTotalContractCount(RegisterCriteria cri);
+    List<ContractListDTO> getListContractWithPaging(RegisterCriteria cri);
 
-    List<ContractListDTO> searchListContractWithPaging(Criteria cri);
+    List<ContractListDTO> searchListContractWithPaging(RegisterCriteria cri);
     int removeContract(String contract_number);
 
 
-    int checkDuplicateContractNumber(String contract_number);
+    int checkDuplicateContractNumber1(String contract_number);
+    int checkDuplicateContractNumber2(String contract_number);
 
     List<PlanTable1> getListforTable1();
     List<ProductionPlanDTO> getListprodPlan();
 
-    List<ProductionPlanDTO> getListProdPlanWithPaging(Criteria cri);
-    List<ProductionPlanDTO> searchListProdPlanWithPaging(Criteria cri);
-    int getTotalProdPlanCount(Criteria cri);
+    List<ProductionPlanDTO> getListProdPlanWithPaging(RegisterCriteria cri);
+    List<ProductionPlanDTO> searchListProdPlanWithPaging(RegisterCriteria cri);
+    int getTotalProdPlanCount(RegisterCriteria cri);
 
     void registerPlan(ProcurementPlanDTO dto);
     int checkDuplicateProcPlanNumber(String proc_plan_number);

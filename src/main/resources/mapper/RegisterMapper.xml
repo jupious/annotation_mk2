@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="edu.mit.annotation.mapper.TestMapper">
+<mapper namespace="edu.mit.annotation.mapper.RegisterMapper">
 
     <sql id="item_Criteria">
         <if test='keyword!=null'>
@@ -63,38 +63,39 @@
         select * from member
     </select>
 
-    <select id="getListItem" resultType="edu.mit.annotation.testdto.TestItemDTO">
+    <select id="getListItem" resultType="edu.mit.annotation.testdto.ItemDTO">
         select * from item
     </select>
 
-    <select id="getListItemWithPaging" resultType="edu.mit.annotation.testdto.TestItemDTO">
+    <select id="getListItemWithPaging" resultType="edu.mit.annotation.testdto.ItemDTO">
         <![CDATA[
-    select item_code, item_name, width, length, height, material, blueprint_origin_name
+    select item_code, item_name, width, length, height, material, blueprint_origin_name, blueprint_save_name
     from item
-    ]]><include refid="item_Criteria"></include>
-        limit #{amount} offset #{pageNum}
+    ]]><include refid="item_Criteria" />
+        limit #{amount} offset #{offset}
     </select>
 
-    <select id="searchListItemWithPaging" resultType="edu.mit.annotation.testdto.TestItemDTO">
+    <select id="searchListItemWithPaging" resultType="edu.mit.annotation.testdto.ItemDTO">
         <![CDATA[
-    select item_code, item_name, width, length, height, material, blueprint_origin_name
+    select item_code, item_name, width, length, height, material, blueprint_origin_name, blueprint_save_name
     from item
-    ]]><include refid="item_Criteria"></include>
+    ]]><include refid="item_Criteria" />
+        limit #{amount} offset #{offset}
     </select>
 
     <select id="getTotalItemCount" resultType="int">
         select count(*) from item
     </select>
 
-    <select id="getListUnitCode" resultType="edu.mit.annotation.testdto.TestCodeDTO">
+    <select id="getListUnitCode" resultType="edu.mit.annotation.testdto.CodeDTO">
         select * from unit
     </select>
 
-    <select id="getListAssyCode" resultType="edu.mit.annotation.testdto.TestCodeDTO">
+    <select id="getListAssyCode" resultType="edu.mit.annotation.testdto.CodeDTO">
         select * from assy
     </select>
 
-    <select id="getListPartCode" resultType="edu.mit.annotation.testdto.TestCodeDTO">
+    <select id="getListPartCode" resultType="edu.mit.annotation.testdto.CodeDTO">
         select * from part
     </select>
 
@@ -139,7 +140,7 @@
         SELECT COUNT(*) FROM part WHERE part_code = #{part_code}
     </select>
 
-    <select id="getListCoop" resultType="edu.mit.annotation.testdto.TestCoopDTO">
+    <select id="getListCoop" resultType="edu.mit.annotation.testdto.CoopDTO">
         select business_number,company_Name,company_address,manager,manager_tel,manager_email, replace(company_account, '-', '') as company_account
         from `co-op_company`
     </select>
@@ -216,7 +217,7 @@
                 contract_item.details,
                 contract.contract_save_name,
                 contract.contract_origin_name,
-                contract_item.contract_number,
+                contract.contract_number,
                 contract.note,
                 `co-op_company`.business_number,
                 `co-op_company`.company_name,
@@ -226,11 +227,11 @@
             LEFT JOIN
                 contract_item ON item.item_code = contract_item.item_code
             LEFT JOIN
-                contract ON contract_item.contract_number = contract.contract_number
+                contract ON contract.contract_number = contract_item.contract_number
             LEFT JOIN
                 `co-op_company` ON contract.business_number = `co-op_company`.business_number
-                ]]><include refid="contract_Criteria"></include>
-        limit #{amount} offset #{pageNum}
+                ]]><include refid="contract_Criteria" />
+        limit #{amount} offset #{offset}
     </select>
 
     <select id="searchListContractWithPaging" resultType="edu.mit.annotation.testdto.ContractListDTO">
@@ -257,18 +258,27 @@
             LEFT JOIN
                 `co-op_company` ON contract.business_number = `co-op_company`.business_number
                 ]]><include refid="contract_Criteria"></include>
+        limit #{amount} offset #{offset}
     </select>
 
     <select id="getTotalContractCount" resultType="int">
-        select count(*) from contract
+        SELECT COUNT(item.item_code) AS item_count
+        FROM item
+        LEFT JOIN contract_item ON item.item_code = contract_item.item_code
+        LEFT JOIN contract ON contract.contract_number = contract_item.contract_number
+        LEFT JOIN `co-op_company` ON contract.business_number = `co-op_company`.business_number
     </select>
 
     <delete id="removeContract">
         delete from contract where contract_number=#{contract_number}
     </delete>
 
-    <select id="checkDuplicateContractNumber" resultType="int">
+    <select id="checkDuplicateContractNumber1" resultType="int">
         SELECT COUNT(*) FROM contract WHERE contract_number = #{contract_number}
+    </select>
+
+    <select id="checkDuplicateContractNumber2" resultType="int">
+        SELECT COUNT(*) FROM contract_item WHERE contract_number = #{contract_number}
     </select>
 
     <select id="getListforTable1" resultType="edu.mit.annotation.testdto.PlanTable1">
@@ -302,8 +312,7 @@
         JOIN composition_item AS ci ON ci.product_code = p.product_code
         JOIN item AS i ON i.item_code = ci.item_code
         JOIN production_plan AS pp ON pp.product_code = ci.product_code
-        ORDER BY pp.prod_start_date ASC;
-
+        ORDER BY pp.prod_start_date ASC
     </select>
 
     <insert id="registerPlan">
@@ -323,7 +332,7 @@
         JOIN item AS i ON i.item_code = ci.item_code
         JOIN production_plan AS pp ON pp.product_code = ci.product_code
         ]]><include refid="prodplan_Criteria"></include>
-        limit #{amount} offset #{pageNum}
+        limit #{amount} offset #{offset}
     </select>
 
     <select id="searchListProdPlanWithPaging" resultType="edu.mit.annotation.testdto.ProductionPlanDTO">
@@ -334,6 +343,7 @@
         JOIN item AS i ON i.item_code = ci.item_code
         JOIN production_plan AS pp ON pp.product_code = ci.product_code
         ]]><include refid="prodplan_Criteria"></include>
+        limit #{amount} offset #{offset}
     </select>
 
     <select id="getTotalProdPlanCount" resultType="int">

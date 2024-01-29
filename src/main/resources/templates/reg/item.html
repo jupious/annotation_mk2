@@ -87,7 +87,7 @@
                             <input type="text" class="form-control-sm" id="keyword" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;">
                             <button class="btn btn-primary btn-sm" type="button" style="float:left;" id="search">검색</button>
                             <button type="button" onclick="showallList()" class="btn btn-primary btn-sm" style="float:right;">전체보기</button>
-                            <button type="button" class="btn btn-danger btn-sm" style="float:right;" id="removeSelectedRows" onclick="removeSelectedItems()">삭제</button>
+                            <button type="button" class="btn btn-danger btn-sm" style="float:right;" id="removeSelectedRows">삭제</button>
                             <table id="table2" class="table table-bordered table-sm text-center" width="100%;">
                                 <thead>
                                     <tr>
@@ -107,7 +107,7 @@
                                         <td th:text="${itemList.width} + 'x' + ${itemList.length} + 'x' + ${itemList.height}"></td>
                                         <td th:text="${itemList.material}"></td>
                                         <td>
-                                            <a th:href="@{'/upload/' + ${itemList.blueprint_save_name}}" class="image-link" th:data-filename="${itemList.blueprint_save_name}">
+                                            <a th:href="@{'/upload/blueprint/' + ${itemList.blueprint_save_name}}" class="image-link" th:data-filename="${itemList.blueprint_save_name}">
                                                 <span th:text="${itemList.blueprint_origin_name}"></span>
                                             </a>
                                         </td>
@@ -116,82 +116,41 @@
                             </table>
                         </div>
                         <nav th:if="${pageMaker.total}">
-                            <th:if test="${pageMaker.prev}">
-                                <th:block th:if="${pageMaker.startPage > 1}">
-                                    <a th:href="@{'/reg/item?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount}}">prev</a>
-                                </th:block>
-                            </th:if>
+                            <ul class="pagination">
+                                <th:if test="${pageMaker.prev}">
+                                    <th:block th:if="${pageMaker.startPage > 1}">
+                                        <a class = "page-link" th:href="@{'/reg/item?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount}}">이전</a>
+                                    </th:block>
+                                </th:if>
                             
-                            <span th:each="num : ${#numbers.sequence(pageMaker.startPage, pageMaker.endPage)}">
-                                <th:block th:if="${num == pageMaker.cri.pageNum}">
-                                    <b th:text="${num}"></b>
-                                </th:block>
-                                <th:block th:unless="${num == pageMaker.cri.pageNum}">
-                                    <a th:href="@{'/reg/item?pageNum=' + ${num} + '&amount=' + ${pageMaker.cri.amount}}" th:text="${num}"></a>
-                                </th:block>
-                            </span>
+                                <span th:each="num : ${#numbers.sequence(pageMaker.startPage, pageMaker.endPage)}">
+                                    <th:block th:if="${num == pageMaker.cri.pageNum}">
+                                        <li class="page-item active">
+                                            <span class="page-link">
+                                                <b th:text="${num}"></b>
+                                            </span>
+                                        </li>    
+                                    </th:block>
+                                    <th:block th:unless="${num == pageMaker.cri.pageNum}">
+                                        <li class = "page-item">
+                                            <span class="page-link">
+                                                <a th:href="@{'/reg/item?pageNum=' + ${num} + '&amount=' + ${pageMaker.cri.amount}}" th:text="${num}"></a>
+                                            </span>
+                                        </li>
+                                    </th:block>
+                                </span>
                             
-                            <th:if test="${pageMaker.next}">
-                                <th:block th:if="${pageMaker.endPage*pageMaker.cri.amount < pageMaker.total}">
-                                    <a th:href="@{'/reg/item?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount}}">next</a>
-                                </th:block>
-                            </th:if>
+                                <th:if test="${pageMaker.next}">
+                                    <th:block th:if="${pageMaker.endPage*pageMaker.cri.amount < pageMaker.total}">
+                                        <a class="page-link" th:href="@{'/reg/item?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount}}">다음</a>
+                                    </th:block>
+                                </th:if>
+                            </ul>
                         </nav>
                     </div>
                 </div>
                 <!-- 모달창 -->
                 <div class="card-body">
-                    <div id="registerModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="registerModal" style="display: none;" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="registerSuccess">등록완료</h5>
-                                </div>
-                                <div class="modal-body">
-                                    <div id="registerResult">
-
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn  btn-secondary" id="closeModal1">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="modifyModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="registerModal" style="display: none;" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="modifySuccess">수정완료</h5>
-                                </div>
-                                <div class="modal-body">
-                                    <p class="mb-0">
-                                        수정된 품목 :
-                                    </p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn  btn-secondary" id="closeModal2">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="deleteModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="registerModal" style="display: none;" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="deleteSuccess">삭제완료</h5>
-                                </div>
-                                <div class="modal-body">
-                                    <p class="mb-0">
-                                        삭제된 품목 :
-                                    </p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn  btn-secondary" id="closeModal3">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <div id="imageModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="imageModal" style="display: none; width: 100%; height: 100%; max-width: none; max-height: none;" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
@@ -215,233 +174,188 @@
 
 <!-- 메인 종료 -->
 
-        <!-- 모달창 스크립트 -->
-        <script>
-            var header = $('meta[name="_csrf_header"]').attr("content");
-            var _csrfToken = $('#_csrf_token').val();
-            $('#registerModal').on('click', function() {
-                $('#registerModal').modal('show');
-            });
-            $('#closeModal1').on('click', function() {
-                // 모달 창 닫기
-                $('#registerModal').modal('hide');
-            });
-            $('#modifyModal').on('click', function() {
-                $('#modifyModal').modal('show');
-            });
+<script th:inline="javascript">
+    var header = $('meta[name="_csrf_header"]').attr("content");
+    var _csrfToken = $('#_csrf_token').val();
+    var itemList=/*[[${itemList}]]*/ [];
+    console.log(itemList);
+</script>
+<script>
+    function search() {
+        var type = $("#type").val();
+        var keyword = $("#keyword").val();
+        var pageNum = $("#table2_paginate .active a").text(); // 현재 선택된 페이지 번호 가져오기
 
-            $('#closeModal2').on('click', function() {
-                $('#modifyModal').modal('hide');
-            });
-
-            $('#deleteModal').on('click', function() {
-                $('#deleteModal').modal('show');
-            });
-
-            $('#closeModal3').on('click', function() {
-                    $('#deleteModal').modal('hide');
-            });
-        </script>
-        <script>
-            function search() {
-                var type = $("#type").val();
-                var keyword = $("#keyword").val();
-                var pageNum = $("#table2_paginate .active a").text(); // 현재 선택된 페이지 번호 가져오기
-
-                console.log(type);
-                console.log(keyword);
-                console.log(pageNum);
-                $.ajax({
-                    type: "GET",
-                    url: "/reg/itemSearch",
-                    data: { "type": type, "keyword": keyword },
-                    success: function (response) {
-                        updateTable(response);
-                    },
-                    error: function (error) {
-                        console.error("검색 실패");
-                        console.error(error);
-                    }
-                });
+        console.log(type);
+        console.log(keyword);
+        console.log(pageNum);
+        $.ajax({
+            type: "GET",
+            url: "/reg/itemSearch",
+            data: { "type": type, "keyword": keyword },
+            success: function (response) {
+                updateTable(response);
+            },
+            error: function (error) {
+                console.error("검색 실패");
+                console.error(error);
             }
-            function updateTable(response) {
-                var tbody = $("#table2 tbody");
-                tbody.empty();
+        });
+    }
+</script>
+<script>
+    function clearInput() {
+        $('#unit_code option[value=""]').prop('selected', 'selected').change();
+        $('#assy_code option[value=""]').prop('selected', 'selected').change();
+        $('#part_code option[value=""]').prop('selected', 'selected').change();
+        $('.itemInputGroup').each(function () {
+            $(this).val('');
+        })
+    }
 
-                for (var i = 0; i < response.length; i++) {
-                    var item = response[i];
-                    var row = "<tr>" +
-                            "<td><input type='checkbox'></td>" +
-                            "<td>" + item.item_code + "</td>" +
-                            "<td>" + item.item_name + "</td>" +
-                            "<td>" + item.width + "x" + (item.length ? item.length : "") + "x" + item.height + "</td>" +
-                            "<td>" + item.material + "</td>" +
-                            "<td>" +
-                                "<a href='/upload/" + item.blueprint_save_name + "' class='image-link' data-filename='" + item.blueprint_save_name + "'>" +
-                                "<span>" + item.blueprint_origin_name + "</span>" +
-                                "</a>" +
-                            "</td>" +
-                            "</tr>";
-                    tbody.append(row);
-                }
-            }
-        </script>
-        <!-- 품목정보등록 ajax로 데이터 전송 -->
-        <script>
-            function clearInput() {
-                $('#unit_code option[value=""]').prop('selected', 'selected').change();
-                $('#assy_code option[value=""]').prop('selected', 'selected').change();
-                $('#part_code option[value=""]').prop('selected', 'selected').change();
-                $('.itemInputGroup').each(function () {
-                    $(this).val('');
-                })
-            }
-
-            // 등록버튼 클릭 시
-            function send() {
-                var unit_code = $("#unit_code").val();
-                var assy_code = $("#assy_code").val();
-                var part_code = $("#part_code").val();
-                var item_name = $("#item_name").val();
-                var width = $("#width").val();
-                var length = $("#length").val();
-                var height = $("#height").val();
-                var material = $("#material").val();
-                var blueprint = $("#blueprint_origin_name")[0];
-                var blueprint_origin_name = blueprint.value.split("\\").pop();
-                var unit_code_flag="0";
-                var assy_code_flag="0";
-                var part_code_flag="0";
-                
-                if (unit_code == "Z") {
-                    unit_code = $('#unitWrite').val();
-                    unit_code_flag="1";
-                }
-                if (assy_code == "Z") {
-                    assy_code = $('#assyWrite').val();
-                    assy_code_flag="1";
-                }
-                if (part_code == "Z") {
-                    part_code = $('#partWrite').val();
-                    part_code_flag="1";
-                }
-
-                var data = {
-                    "unit_code": unit_code,
-                    "assy_code": assy_code,
-                    "part_code": part_code,
-                    "item_name": item_name,
-                    "width": width,
-                    "length": length,
-                    "height": height,
-                    "material": material,
-                    "blueprint_origin_name": blueprint_origin_name,
-                    "blueprint" : blueprint,
-                    "unit_code_flag" : unit_code_flag,
-                    "assy_code_flag" : assy_code_flag,
-                    "part_code_flag" : part_code_flag,
-                };
-
-                var formData = new FormData();
-                formData.append('unit_code', unit_code);
-                formData.append('assy_code', assy_code);
-                formData.append('part_code', part_code);
-                formData.append('item_name', item_name);
-                formData.append('width', width);
-                formData.append('length', length);
-                formData.append('height', height);
-                formData.append('material', material);
-                formData.append('blueprint_origin_name', blueprint_origin_name);
-                formData.append('blueprint', blueprint.files[0]);
-                formData.append('unit_code_flag', unit_code_flag);
-                formData.append('assy_code_flag', assy_code_flag);
-                formData.append('part_code_flag', part_code_flag);
-
-                $.ajax({
-                    type: "POST",
-                    url: "/reg/itemInput",
-                    processData: false,
-                    contentType: false,
-                    data: formData,
-                    beforeSend:function(xhr){
-                                xhr.setRequestHeader(header,_csrfToken)
-                            },
-                    success: function (response) {
-                        console.log("전송 성공");
-                        //displayRegisterResult(response);
-                        clearInput();
-                    },
-                    error: function (error) {
-                        console.error("전송 실패");
-                        console.error(error);
-                    }
-                });
-            $(document).on("click", ".image-link", function (e) {
-                e.preventDefault();
-                var filename = $(this).data("filename");
-                var imagePath = "/upload/" + filename;
-                $("#modalImage").attr("src", imagePath);
-                $("#imageModal").modal("show");
-            });
+    // 등록버튼 클릭 시
+    function send() {
+        var unit_code = $("#unit_code").val();
+        var assy_code = $("#assy_code").val();
+        var part_code = $("#part_code").val();
+        var item_name = $("#item_name").val();
+        var width = $("#width").val();
+        var length = $("#length").val();
+        var height = $("#height").val();
+        var material = $("#material").val();
+        var blueprint = $("#blueprint_origin_name")[0];
+        var blueprint_origin_name = blueprint.value.split("\\").pop();
+        var unit_code_flag="0";
+        var assy_code_flag="0";
+        var part_code_flag="0";
+        
+        if (unit_code == "Z") {
+            unit_code = $('#unitWrite').val();
+            unit_code_flag="1";
         }
-        </script>
-        <script>
-            $('th').addClass('text-center');
-            $('td').addClass('text-center');
-            $('th').addClass('align-middle');
-            $('td').addClass('align-middle');
-            function displayFileName() {
-                var input = document.getElementById('blueprint_origin_name');
-                var label = input.nextElementSibling;
-                var fileName = input.files[0].name;
-                label.innerHTML = fileName;
-            }
-        </script>
-        <script>
-            $(document).ready(function () {
-                $("#search").on("click", function () {
-                    search();
-                });
-                $('#removeSelectedRows').on('click', function () {
-                    $('#table2 input[type="checkbox"]:checked').each(function () {
-                        $(this).closest('tr').remove();
-                    });
-                });
-            });
-        </script>
-        <script>
-            // 전체보기 버튼
-            function showallList() {
-                var table = document.getElementById('table2');
-                var rows = table.getElementsByTagName('tr');
+        if (assy_code == "Z") {
+            assy_code = $('#assyWrite').val();
+            assy_code_flag="1";
+        }
+        if (part_code == "Z") {
+            part_code = $('#partWrite').val();
+            part_code_flag="1";
+        }
 
-                for (var i = 1; i < rows.length; i++) {
-                    rows[i].style.display = '';
-                }
+        var data = {
+            "unit_code": unit_code,
+            "assy_code": assy_code,
+            "part_code": part_code,
+            "item_name": item_name,
+            "width": width,
+            "length": length,
+            "height": height,
+            "material": material,
+            "blueprint_origin_name": blueprint_origin_name,
+            "blueprint" : blueprint,
+            "unit_code_flag" : unit_code_flag,
+            "assy_code_flag" : assy_code_flag,
+            "part_code_flag" : part_code_flag,
+        };
+
+        var formData = new FormData();
+        formData.append('unit_code', unit_code);
+        formData.append('assy_code', assy_code);
+        formData.append('part_code', part_code);
+        formData.append('item_name', item_name);
+        formData.append('width', width);
+        formData.append('length', length);
+        formData.append('height', height);
+        formData.append('material', material);
+        formData.append('blueprint_origin_name', blueprint_origin_name);
+        formData.append('blueprint', blueprint.files[0]);
+        formData.append('unit_code_flag', unit_code_flag);
+        formData.append('assy_code_flag', assy_code_flag);
+        formData.append('part_code_flag', part_code_flag);
+
+        $.ajax({
+            type: "POST",
+            url: "/reg/itemInput",
+            processData: false,
+            contentType: false,
+            data: formData,
+            beforeSend:function(xhr){
+                xhr.setRequestHeader(header,_csrfToken)
+            },
+            success: function (response) {
+                console.log("전송 성공");
+                window.location.reload();
+                clearInput();
+            },
+            error: function (error) {
+                console.error("전송 실패");
+                console.error(error);
             }
-        </script>
-        <script>
-            function removeSelectedItems() {
+        });
+    }
+    $(document).on("click", ".image-link", function (e) {
+        e.preventDefault();
+        var filename = $(this).data("filename");
+        var imagePath = "/upload/blueprint/" + filename;
+        $("#modalImage").attr("src", imagePath);
+        $("#imageModal").modal("show");
+    });
+</script>
+<script>
+    $('th').addClass('text-center');
+    $('td').addClass('text-center');
+    $('th').addClass('align-middle');
+    $('td').addClass('align-middle');
+
+    function displayFileName() {
+        var input = document.getElementById('blueprint_origin_name');
+        var label = input.nextElementSibling;
+        var fileName = input.files[0].name;
+        label.innerHTML = fileName;
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $('#removeSelectedRows').on('click', function () {
             var selectedRows = $('#table2 tbody tr:has(:checkbox:checked)');
 
             selectedRows.each(function () {
                 var currentItemCode = $(this).find('td:eq(1)').text();
-                $.ajax({
-                    type: "POST",
-                    url: "/reg/removeItem",
-                    data: { "item_code": currentItemCode },
-                    success: function (response) {
-                        console.log("삭제 성공: " + currentItemCode);
-                        $(this).remove();
-                    },
-                    error: function (error) {
-                        console.error("삭제 실패");
-                        console.error(error);
-                    }
-                });
+                removeSelectedItem(currentItemCode, $(this));
+            });
+        });
+
+        function removeSelectedItem(itemCode, rowElement) {
+            $.ajax({
+                type: "POST",
+                url: "/reg/removeItem",
+                data: { "item_code": itemCode },
+                beforeSend:function(xhr){
+                    xhr.setRequestHeader(header,_csrfToken)
+                },
+                success: function (response) {
+                    console.log("삭제 성공: " + itemCode);
+                    rowElement.remove();
+                },
+                error: function (error) {
+                    console.error("삭제 실패");
+                    console.error(error);
+                }
             });
         }
-        </script>
-    </th:block>
+        $("#search").on("click", function () {
+            search();
+        });
+        function showallList() {
+            var table = document.getElementById('table2');
+            var rows = table.getElementsByTagName('tr');
+
+            for (var i = 1; i < rows.length; i++) {
+                rows[i].style.display = '';
+            }
+        }
+    })
+</script>
+</th:block>
 </th:block>
 </html>

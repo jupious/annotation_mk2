@@ -9,7 +9,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class TestCoopDTO {
+public class CoopDTO {
     private  String business_number;
     private String company_name;
     private String company_address;

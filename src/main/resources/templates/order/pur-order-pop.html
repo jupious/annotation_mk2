@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{/layout/layout-pop::setContent(~{::content})}">
+<th:block th:replace="~{./layout/layout-pop::setContent(~{::content})}">
     <th:block th:fragment="content">
         <!-- [ basic-table ] start -->
         <div class="card-body table-border-style">
@@ -33,8 +33,7 @@
                                 <tr>
                                     <th>발주일</th>
                                     <td th:text="${today}"></td>
-                                    <th>입고예정일</th>
-                                    <td><input type="date" id="receive_duedate" th:value="${dueDate}"></td>
+                                    
                                 </tr>
                                 <tr>
                                     <th>업체명</th>
@@ -60,7 +59,7 @@
                             <table class="table table-bordered table-hover table-sm" id="item">
                                 <thead>
                                 <tr>
-                                    <th colspan="9">품목정보</th>
+                                    <th colspan="10">품목정보</th>
                                     <th>
                                         <button type="button" class="btn btn-danger btn-sm" id="removeBtn">삭제</button>
                                     </th>
@@ -69,20 +68,21 @@
                                 <tbody>
                                 <tr>
                                     <th></th>
-                                    <th>순번</th>
+                                    <th width="15px">순번</th>
                                     <th>품목코드</th>
                                     <th>품목명</th>
                                     <th>규격</th>
                                     <th>재질</th>
-                                    <th>수량</th>
+                                    <th >수량</th>
                                     <th>단가</th>
                                     <th>공급가격</th>
+                                    <th>입고예정일</th>
                                     <th>비고</th>
                                 </tr>
                                 <tr th:each="item, itemStat :${itemList}" th:data-prcp="${item.proc_plan_number}" class="prcp">
                                     <td>
                                         <label class="check-task custom-control custom-checkbox d-flex justify-content-center done-task">
-                                            <input type="checkbox" class="custom-control-input">
+                                            <input  type="checkbox" class="custom-control-input">
                                             <span class="custom-control-label"></span>
                                         </label>
                                     </td>
@@ -94,6 +94,7 @@
                                     <td class="orderCount"><input type="number" th:value="${item.proc_quantity}"></td>
                                     <td th:text="${item.item_price}"></td>
                                     <td class="orderPrice"></td>
+                                    <td class="receive_duedate"><input type="date" th:value="${#dates.format(item.proc_duedate, 'yyyy-MM-dd')}"></td>
                                     <td class="note"><input type="text"></td>
                                 </tr>
 
@@ -101,11 +102,11 @@
                                     <td colspan="7"></td>
                                     <td>합계</td>
                                     <td></td>
-                                    <td></td>
+                                    <td colspan="2"></td>
                                 </tr>
                                 <tr>
                                     <td class="align-middle text-center">특이사항</td>
-                                    <td colspan="9"><textarea rows="5" style="resize:none; width:100%; border:none;" id="detail"></textarea></td>
+                                    <td colspan="10"><textarea rows="5" style="resize:none; width:100%; border:none;" id="detail"></textarea></td>
                                 </tr>
 
                                 </tbody>
@@ -186,10 +187,11 @@
                     let purch_order_quantity = $(this).children('.orderCount').children().val();
                     let note = $(this).children('.note').children().val();
                     let proc_plan_number = $(this).data('prcp');
-                    data = {purch_order_quantity:purch_order_quantity, note:note, proc_plan_number:proc_plan_number};
+                    let receive_duedate = $(this).children('.receive_duedate').children().val();
+                    receive_duedate = new Date(receive_duedate);
+                    data = {purch_order_quantity:purch_order_quantity, note:note, proc_plan_number:proc_plan_number, receive_duedate:receive_duedate};
                     dataArr.push(data);
                 })
-                let receive_duedate = $('#receive_duedate').val();
                 let purch_order_detail = $('#detail').val();
                 if(purch_order_detail == ""){
                     purch_order_detail = "-";
@@ -197,7 +199,7 @@
                 console.log(purch_order_detail)
                 $.ajax({
                     type:"post",
-                    url:"/orderapi/po-new-order/"+receive_duedate+"/"+purch_order_detail,
+                    url:"/orderapi/po-new-order/"+purch_order_detail,
                     beforeSend:function(xhr){
                                 xhr.setRequestHeader(header,_csrfToken);
                     },

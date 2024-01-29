@@ -9,11 +9,11 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class StatementItemsDTO {
-    private Long received_quantity;
-    private String note;
+public class StatementItemDTO {
     private String item_code;
     private String item_name;
+    private Integer receive_quantity;
     private Integer item_price;
     private Integer prod_price;
+    private String note;
 }

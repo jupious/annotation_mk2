@@ -13,5 +13,7 @@ public class CompanyInfoDTO {
     private String company_name;
     private String business_number;
     private String manager;
+    private String manager_tel;
     private String company_address;
+    private String manager_email;
 }

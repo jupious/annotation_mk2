@@ -16,6 +16,7 @@ public class Criteria {
     private String keyword;
     private Date startDate;
     private Date endDate;
+    private String order;
 
     public Criteria(){
         this(0,10);

@@ -1,6 +1,6 @@
 package edu.mit.annotation.service;
 
-import edu.mit.annotation.mapper.TestMapper;
+import edu.mit.annotation.mapper.RegisterMapper;
 import edu.mit.annotation.testdto.*;
 import lombok.AllArgsConstructor;
 import org.apache.ibatis.annotations.Param;
@@ -18,30 +18,30 @@ import java.util.Map;
 @Service
 public class RegisterServiceImpl implements RegisterService {
 
-    TestMapper mapper;
+    RegisterMapper mapper;
 
     @Override
-    public List<TestItemDTO> getListItem()  {
+    public List<ItemDTO> getListItem()  {
         return mapper.getListItem();
     }
 
     @Override
-    public List<TestItemDTO> getListItemWithPaging(Criteria cri)    {
+    public List<ItemDTO> getListItemWithPaging(RegisterCriteria cri)    {
         return mapper.getListItemWithPaging(cri);
     }
 
     @Override
-    public List<TestItemDTO> searchListItemWithPaging(Criteria cri)    {
+    public List<ItemDTO> searchListItemWithPaging(RegisterCriteria cri)    {
         return mapper.searchListItemWithPaging(cri);
     }
 
     @Override
-    public int getTotalItemCount(Criteria cri)  {
+    public int getTotalItemCount(RegisterCriteria cri)  {
         return mapper.getTotalItemCount(cri);
     }
 
     @Override
-    public void registerItem(TestItemDTO dto) {
+    public void registerItem(ItemDTO dto) {
         try{
             mapper.registerItem(dto);
         }
@@ -82,12 +82,12 @@ public class RegisterServiceImpl implements RegisterService {
      */
 
     @Override
-    public List<TestCodeDTO> getListUnitCode() {
+    public List<CodeDTO> getListUnitCode() {
         return mapper.getListUnitCode();
     }
 
     @Override
-    public void inputUnitCode(TestCodeDTO codeDTO) {
+    public void inputUnitCode(CodeDTO codeDTO) {
         mapper.inputUnitCode(codeDTO);
     }
 
@@ -103,12 +103,12 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
-    public List<TestCodeDTO> getListAssyCode() {
+    public List<CodeDTO> getListAssyCode() {
         return mapper.getListAssyCode();
     }
 
     @Override
-    public void inputAssyCode(TestCodeDTO codeDTO) {
+    public void inputAssyCode(CodeDTO codeDTO) {
         mapper.inputAssyCode(codeDTO);
     }
 
@@ -122,12 +122,12 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
-    public List<TestCodeDTO> getListPartCode() {
+    public List<CodeDTO> getListPartCode() {
         return mapper.getListPartCode();
     }
 
     @Override
-    public void inputPartCode(TestCodeDTO codeDTO) {
+    public void inputPartCode(CodeDTO codeDTO) {
         mapper.inputPartCode(codeDTO);
     }
 
@@ -167,17 +167,17 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
-    public List<ContractListDTO> getListContractWithPaging(Criteria cri)    {
+    public List<ContractListDTO> getListContractWithPaging(RegisterCriteria cri)    {
         return mapper.getListContractWithPaging(cri);
     }
 
     @Override
-    public List<ContractListDTO> searchListContractWithPaging(Criteria cri)    {
+    public List<ContractListDTO> searchListContractWithPaging(RegisterCriteria cri)    {
         return mapper.searchListContractWithPaging(cri);
     }
 
     @Override
-    public int getTotalContractCount(Criteria cri)  {
+    public int getTotalContractCount(RegisterCriteria cri)  {
         return mapper.getTotalContractCount(cri);
     }
 
@@ -191,24 +191,51 @@ public class RegisterServiceImpl implements RegisterService {
     public void registerContract(ContractDTO dto) {
         try{
             mapper.registerContract(dto);
-            mapper.registerContractItem(dto);
         }
         catch (DuplicateKeyException e) {
             e.printStackTrace();
-            dto.setContract_number(getUniqueContractNumber(dto.getContract_number()));
+            dto.setContract_number(getUniqueContractNumber1(dto.getContract_number()));
             registerContract(dto);
         }
         System.out.println("결과 : " + dto.getContract_number());
     }
 
     @Override
-    public String getUniqueContractNumber(String contract_number) {
+    public void registerContractItem(ContractItemDTO dto) {
+        try{
+            mapper.registerContractItem(dto);
+        }
+        catch (DuplicateKeyException e) {
+            e.printStackTrace();
+            dto.setContract_number(getUniqueContractNumber2(dto.getContract_number()));
+            registerContractItem(dto);
+        }
+        System.out.println("결과 : " + dto.getContract_number());
+        System.out.println("결과 : " + dto.getItem_code());
+        System.out.println("결과 : " + dto.getItem_name());
+    }
+
+    @Override
+    public String getUniqueContractNumber1(String contract_number) {
         int index = Integer.parseInt(contract_number.split("-")[1]);
 
         String baseContractNumber = "co-";
         String contractNumber = baseContractNumber + (index+1);
 
-        while (mapper.checkDuplicateContractNumber(contractNumber) > 0) {
+        while (mapper.checkDuplicateContractNumber1(contractNumber) > 0) {
+            index++;
+            contractNumber = baseContractNumber + index;
+        }
+        return contractNumber;
+    }
+    @Override
+    public String getUniqueContractNumber2(String contract_number) {
+        int index = Integer.parseInt(contract_number.split("-")[1]);
+
+        String baseContractNumber = "co-";
+        String contractNumber = baseContractNumber + (index+1);
+
+        while (mapper.checkDuplicateContractNumber2(contractNumber) > 0) {
             index++;
             contractNumber = baseContractNumber + index;
         }
@@ -226,16 +253,16 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
-    public List<ProductionPlanDTO> getListProdPlanWithPaging(Criteria cri){
+    public List<ProductionPlanDTO> getListProdPlanWithPaging(RegisterCriteria cri){
         return mapper.getListProdPlanWithPaging(cri);
     }
 
     @Override
-    public List<ProductionPlanDTO> searchListProdPlanWithPaging(Criteria cri){
+    public List<ProductionPlanDTO> searchListProdPlanWithPaging(RegisterCriteria cri){
         return mapper.searchListProdPlanWithPaging(cri);
     }
     @Override
-    public int getTotalProdPlanCount(Criteria cri){
+    public int getTotalProdPlanCount(RegisterCriteria cri){
         return mapper.getTotalProdPlanCount(cri);
     }
     @Override

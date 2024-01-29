@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{/layout/layout::setContent(~{::content})}">
+<th:block th:replace="~{./layout/layout::setContent(~{::content})}">
 
 
     <th:block th:fragment="content">
@@ -83,7 +83,7 @@
                                     <h5>구매발주서리스트</h5>
                                 </div>
                                 <div class="col-md-auto">
-                                    <button type="button" class="btn  btn-danger btn-sm" id="deleteButton">삭제</button>
+                                    <button type="button" class="btn  btn-danger btn-sm" id="deleteBtn">삭제</button>
                                 </div>
                             </div>
 
@@ -91,7 +91,7 @@
                         <div class="card-body table-border-style">
                             <div class="row">
                                 <div class="col">
-                                    <input class="form-control-sm" type="date" id="lowerSDate"  th:value="${defaultStartDate}"> ~ <input class="form-control-sm" type="date" id="lowerEDate"  th:value="${defaultEndDate}">
+                                    <input class="form-control-sm" type="date" id="lowerSDate"  th:value="${defaultLowerDate}"> ~ <input class="form-control-sm" type="date" id="lowerEDate"  th:value="${defaultStartDate}">
                                     &nbsp;<button class="btn  btn-primary btn-sm" type="submit" id="lowerDateSearchBtn">조회</button>
                                 </div>
                                 <div class="col-md-auto">
@@ -114,7 +114,7 @@
                                         <th>업체명</th>
                                         <th>품목명</th>
                                         <th>발주일</th>
-                                        <th>입고예정일</th>
+                                        
                                     </tr>
                                     </thead>
                                     <tbody id="lowerTbody">
@@ -143,6 +143,7 @@
             var upperPaging = $('#upperPaging');
             var prcpNumberArr = [];
             var business_numberArr = [];
+            var poNumArr = [];
 
             $(function(){
                 loadList({"startDate":$('#upperSDate').val(),"endDate":$('#upperEDate').val(),"type":$('#upperType').val(),"keyword":"","pageNum":0,"amount":amount},upperTbody,upperPaging, 0);
@@ -150,12 +151,13 @@
             })
 
             $('#makePO').on("click", function(){
-                let popOption = "width = 1400px, height = 730px, top = 100px, left = 100px, scrollbars=yes";
+                let popOption = "width = 2000px, height = 730px, top = 100px, left = 100px, scrollbars=yes";
                 let business_number = business_numberArr[0];
                 let popUrl = '/order/pur-order-pop/'+ business_number +"/"+prcpNumberArr.join("','");
                 var poPop = window.open(popUrl,'pop',popOption);
                 poPop.onbeforeunload = function(){
                     loadList({"startDate":$('#upperSDate').val(),"endDate":$('#upperEDate').val(),"type":$('#upperType').val(),"keyword":$('#upperSearchText').val(),"pageNum":0,"amount":amount},upperTbody,upperPaging, 0);
+                    loadLowerList({"startDate":$('#lowerSDate').val(),"endDate":$('#lowerEDate').val(),"type":$('#lowerType').val(),"keyword":$('#lowerSearchText').val(),"pageNum":0,"amount":amount});
                 }
             })
 
@@ -167,21 +169,9 @@
 
             $('#lowerDateSearchBtn, #lowerSearchBtn').on("click",function(e){
                 e.preventDefault();
-                loadLowerList({"startDate":$('#lowerSDate').val(),"endDate":$('#lowerEDate').val(),"type":$('#lowerType').val(),"keyword":$('#lowerSearchText').val(),"pageNum":id-1,"amount":amount});
+                loadLowerList({"startDate":$('#lowerSDate').val(),"endDate":$('#lowerEDate').val(),"type":$('#lowerType').val(),"keyword":$('#lowerSearchText').val(),"pageNum":0,"amount":amount});
                 
             })
-
-            // $('#upperPaging').on("click","a", function(){
-            //     id = $(this).data("paging");
-            //     if(id == 'next'){
-            //         id = parseInt(crntPage/10)+1;
-            //         id = id*10+1;
-            //     }else if(id == 'prev'){
-            //         id = parseInt(crntPage/10);
-            //         id = id*10;
-            //     }
-            //     loadList({"startDate":$('#upperSDate').val(),"endDate":$('#upperEDate').val(),"type":$('#upperType').val(),"keyword":$('#upperSearchText').val(),"pageNum":id-1,"amount":amount},upperTbody,upperPaging, 0);
-            // })
 
             $('#lowerPaging').on("click","a", function(){
                 id = $(this).data("paging");
@@ -216,10 +206,51 @@
             })
 
             $('#lowerTbody').on("click","tr td",function(){
-                if($(this).children().children().children('input').is(':checked') == true){
-                    $(this).children().children().children('input').prop('checked',false);
+                let isInput = $(this).find("input[type='checkbox']").length;
+                if(!isInput){
+                    let popOption = "width = 800px, height = 730px, top = 100px, left = 100px, scrollbars=yes";
+                    let business_number = $(this).parent().children('.bsno').data('bsno');
+                    let purch_order_number = $(this).parent().children('.poNum').text();
+                    console.log(business_number, purch_order_number);
+                    let popUrl = '/order/pur-order-content/'+business_number+'/'+purch_order_number;
+                    var poPop = window.open(popUrl,'pop',popOption);
+                    poPop.onbeforeunload = function(){
+                        loadList({"startDate":$('#upperSDate').val(),"endDate":$('#upperEDate').val(),"type":$('#upperType').val(),"keyword":$('#upperSearchText').val(),"pageNum":0,"amount":amount},upperTbody,upperPaging, 0);
+                        loadLowerList({"startDate":$('#lowerSDate').val(),"endDate":$('#lowerEDate').val(),"type":$('#lowerType').val(),"keyword":$('#lowerSearchText').val(),"pageNum":0,"amount":amount});
+                }
                 }else{
-                    $(this).children().children().children('input').prop('checked',true);
+                    let poNumber = $(this).siblings('.poNum').text();
+                    if($(this).children().children('input').is(':checked') == true){
+                        $(this).children().children('input').prop('checked',false);
+                        poNumArr = poNumArr.filter(e => e != poNumber);
+                    }else{
+                        $(this).children().children('input').prop('checked',true);
+                        poNumArr.push(poNumber);
+                    }
+                }
+            })
+
+            $('#deleteBtn').on('click',function(){
+                console.log(poNumArr);
+                let del = confirm('정말 삭제하시겠습니까?');
+                if(del){
+                    $.ajax({
+                        type:"delete",
+                        url:"/orderapi/po-delete",
+                        data:{purch_order_numbers:poNumArr},
+                        beforeSend:function(xhr){
+                                xhr.setRequestHeader(header,_csrfToken)
+                        },
+                        success:function(res){
+                            console.log(res);
+                        },
+                        error:function(a,b,c){
+                        console.log("에러");
+                        console.log("a",a);
+                        console.log("b",b);
+                        console.log("c",c);
+                    }
+                    })
                 }
             })
 
@@ -239,23 +270,6 @@
                         $('#upperTbody').html(rsStr);
                         makeCenter();
                         console.log("전체페이지 수",res.page_count);
-                        // var pageList = res.pageList;
-                        // var pageStr ="";
-                        // for(let j = 0; j < pageList.length; j++){
-                        //     pageStr +="<li class='page-item'>";
-                        //     if(pageList[j] == "prev"){
-                        //         pageStr += "<a class='page-link' data-type='"+flag+"' data-paging='prev' aria-label='Previous'><span aria-hidden='true'>&laquo;</span><span class='sr-only'>Previous</span></a>";
-                        //     }else if(pageList[j]=="next"){
-                        //         pageStr += "<a class='page-link' data-type='"+flag+"' data-paging='next' aria-label='Next'><span aria-hidden='true'>&raquo;</span><span class='sr-only'>Next</span></a>";
-                        //     }else{
-                        //         pageStr += "<a class='page-link' data-type='"+flag+"' data-paging='"+pageList[j]+"'>"+pageList[j]+"</a>";
-                        //     }
-                        //     pageStr +="</li>"
-                        // }
-                        
-                        // pagingTag.html(pageStr);
-                        // $('[data-type='+flag+'][data-paging ='+res.currentPage+']').parent().addClass("active");
-                        // crntPage = criteria.pageNum + 1;
                         makeCenter();
                     },
                     error:function(a,b,c){
@@ -270,7 +284,7 @@
             function loadLowerList(criteria){
                 $.ajax({
                     type:"get",
-                    url:"/invapi/statement-get-data",
+                    url:"/orderapi/po-get-published",
                     data:criteria,
                     success:function(res){
                         console.log("성공, 데이터확인",res);
@@ -278,7 +292,7 @@
                         let result = res.dataList;
                         var rsStr = "";
                         for(let i = 0; i < result.length; i++){
-                            rsStr += "<tr id ='"+i+"result' class='result'><td><div class='custom-control custom-checkbox'><input type='checkbox' data-lowerCheckbox ='"+i+"' class='custom-control-input' > <label class='custom-control-label' for='"+i+"checkbox'></label></div></td><td class='poNum'>"+result[i].purch_order_number+"</td><td>"+result[i].company_name+"</td><td>"+result[i].item_name_string+"</td><td>"+dateFormatter(result[i].purch_order_date)+"</td><td>"+dateFormatter(result[i].receive_duedate)+"</td>\</tr>";
+                            rsStr += "<tr id ='"+i+"result' class='result'><td><div class='custom-control custom-checkbox'><input type='checkbox' data-lowerCheckbox ='"+i+"' class='custom-control-input' > <label class='custom-control-label' for='"+i+"checkbox'></label></div></td><td class='poNum'>"+result[i].purch_order_number+"</td><td class='bsno' data-bsno='"+result[i].business_number+"'>"+result[i].company_name+"</td><td>"+result[i].item_names+"</td><td>"+dateFormatter(result[i].purch_order_date)+"</td></tr>";
                         }
                         $('#lowerTbody').html(rsStr);
                         var pageList = res.pageList;

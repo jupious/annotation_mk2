@@ -8,13 +8,11 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class ContractItemDTO {
-    private String cCode;
-    private String itemCode;
-    private String itemName;
-    private String compName;
-    private String compNum;
-    private Integer price;
-    private Integer leadTime;
-    private boolean contDone;
+    private String item_code;
+    private String item_name;
+    private Integer item_price;
+    private Integer lead_time;
+    private String details;
+    private String contract_number;
 
 }

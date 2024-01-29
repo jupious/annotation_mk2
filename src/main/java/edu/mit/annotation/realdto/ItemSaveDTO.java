@@ -8,6 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class ItemSaveDTO {
-    private String item_code;
+    private String proc_plan_number;
     private Integer received_quantity;
 }

@@ -1,31 +1,26 @@
 package edu.mit.annotation.testdto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
-@AllArgsConstructor
+@ToString
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class ItemDTO {
-    //순번
-    private Integer num;
 
-    //품목코드
-    private String iCode;
-
-    //품목이름
-    private String iName;
-
-    //수량
-    private Integer count;
-
-    //단가
-    private Integer unitPrice;
-
-    //공급가격
-    private  Integer supPrice;
+    private String item_code;
+    private String item_name;
+    private String unit_code;
+    private String assy_code;
+    private String part_code;
+    private Float width;
+    private Float length;
+    private Float height;
+    private String material;
+    private String blueprint_origin_name;
+    private String blueprint_save_name;
+    private MultipartFile blueprint;
 
 }

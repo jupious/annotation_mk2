@@ -26,4 +26,18 @@ public class OrderServiceImplTests {
                 .build();
         System.out.println(orderService.getProcPlanListWithNoPO(cri));
     }
+
+    @Test
+    public void testGetPublishedPOList() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Criteria cri = Criteria.builder()
+                .pageNum(0)
+                .amount(10)
+                .type("CN")
+                .keyword("%%")
+                .startDate(sdf.parse("20240122"))
+                .endDate(sdf.parse("20240222"))
+                .build();
+        System.out.println(orderService.getPublishedPOList(cri));
+    }
 }

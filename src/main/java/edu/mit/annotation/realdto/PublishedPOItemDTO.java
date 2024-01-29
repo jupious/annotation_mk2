@@ -7,16 +7,15 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class InventoryCalcDTO {
+public class PublishedPOItemDTO {
     private String item_code;
     private String item_name;
     private Integer width;
-    private Integer length;
     private Integer height;
+    private Integer length;
     private String material;
-    private Long prime_quantity;
-    private Long received_in_date;
-    private Long released_in_date;
-    private Long final_quantity;
-    private Long inv_amount;
+    private Integer purch_order_quantity;
+    private Integer item_price;
+    private String note;
+
 }

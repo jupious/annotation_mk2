@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{/layout/layout::setContent(~{::content})}">
+<th:block th:replace="~{./layout/layout::setContent(~{::content})}">
     <th:block th:fragment="content">
         <div class="pcoded-content">
             <div class="page-header">
@@ -47,17 +47,17 @@
                         </div>
                         <div class="table-responsive">
                             <table class="table table-bordered table-sm">
-                                <thead>
+                                <thead id="monthlyThead">
                                 <tr>
-                                    <th>품목코드</th>
-                                    <th>품목명</th>
-                                    <th>규격</th>
-                                    <th>재질</th>
-                                    <th>기초 재고</th>
-                                    <th>입고수량</th>
-                                    <th>출고수량</th>
-                                    <th>기말 재고</th>
-                                    <th>재고 금액</th>
+                                    <th data-order="IC" data-desc="1">품목코드 ▼</th>
+                                    <th data-order="IN" data-desc="1">품목명 ▼</th>
+                                    <th data-order="none">규격</th>
+                                    <th data-order="none">재질</th>
+                                    <th data-order="PQ" data-desc="1">기초 재고 ▼</th>
+                                    <th data-order="RC" data-desc="1">입고수량 ▼</th>
+                                    <th data-order="RL" data-desc="1">출고수량 ▼</th>
+                                    <th data-order="FQ" data-desc="1">기말 재고 ▼</th>
+                                    <th data-order="IA" data-desc="1">재고 금액 ▼</th>
                                 </tr>
                                 </thead>
                                 <tbody id="termCalcTbody">
@@ -105,17 +105,17 @@
                         </div>
                         <div class="table-responsive">
                             <table class="table table-bordered table-sm">
-                                <thead>
+                                <thead id="dailyThead">
                                 <tr>
-                                    <th>품목코드</th>
-                                    <th>품목명</th>
-                                    <th>규격</th>
-                                    <th>재질</th>
-                                    <th>기초 재고</th>
-                                    <th>입고수량</th>
-                                    <th>출고수량</th>
-                                    <th>기말 재고</th>
-                                    <th>재고 금액</th>
+                                    <th data-order="IC" data-desc="1">품목코드 ▼</th>
+                                    <th data-order="IN" data-desc="1">품목명 ▼</th>
+                                    <th data-order="none">규격</th>
+                                    <th data-order="none">재질</th>
+                                    <th data-order="PQ" data-desc="1">기초 재고 ▼</th>
+                                    <th data-order="RC" data-desc="1">입고수량 ▼</th>
+                                    <th data-order="RL" data-desc="1">출고수량 ▼</th>
+                                    <th data-order="FQ" data-desc="1">기말 재고 ▼</th>
+                                    <th data-order="IA" data-desc="1">재고 금액 ▼</th>
                                 </tr>
                                 </thead>
                                 <tbody id="calcTbody">
@@ -140,20 +140,60 @@
             var termTbody = $('#termCalcTbody');
             var calcTbody = $('#calcTbody');
             var termPaging = $('#termSearchPageList');
-            var paging = $('#searchPageList')
+            var paging = $('#searchPageList');
+            var crntTermOrder = "IAD";
+            var crntOrder = "IAD";
             $(function(){
-                loadList({"startDate":$('#sDate').val(),"endDate":datePlusOne($('#eDate').val()),"type":$('#termType').val(),"keyword":$('#termSearchText').val(),"pageNum":0,"amount":amount},termTbody, termPaging, 1);
-                loadList({"startDate":$('#date').val(),"endDate":datePlusOne($('#date').val()),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount},calcTbody, paging, 0)
+                loadList({"startDate":$('#sDate').val(),"endDate":datePlusOne($('#eDate').val()),"type":$('#termType').val(),"keyword":$('#termSearchText').val(),"pageNum":0,"amount":amount, "order":"IAD"},termTbody, termPaging, 1);
+                loadList({"startDate":$('#date').val(),"endDate":datePlusOne($('#date').val()),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount,"order":"IAD"},calcTbody, paging, 0)
             })
 
             $('#dateTermSearchBtn, #termSearchBtn').on('click', function(e){
                 e.preventDefault();
-                loadList({"startDate":$('#sDate').val(),"endDate":datePlusOne($('#eDate').val()),"type":$('#termType').val(),"keyword":$('#termSearchText').val(),"pageNum":0,"amount":amount},termTbody, termPaging, 1);
+                loadList({"startDate":$('#sDate').val(),"endDate":datePlusOne($('#eDate').val()),"type":$('#termType').val(),"keyword":$('#termSearchText').val(),"pageNum":0,"amount":amount, "order":crntTermOrder},termTbody, termPaging, 1);
             })
 
             $('#dateSearchBtn, #searchBtn').on('click',function(e){
                 e.preventDefault();
-                loadList({"startDate":$('#date').val(),"endDate":datePlusOne($('#date').val()),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount},calcTbody, paging, 0)
+                loadList({"startDate":$('#date').val(),"endDate":datePlusOne($('#date').val()),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount, "order":crntOrder},calcTbody, paging, 0)
+            })
+
+            $('#monthlyThead').on('click','tr th', function(){
+                console.log("정렬 구현할거임", $(this).data('order'));
+                let order;
+                if($(this).data('order') != "none"){
+                    if($(this).data("desc") == 1){
+                        order = $(this).data('order') + "A";
+                        $(this).data("desc", 0);
+                        $(this).text($(this).text().replace("▼","▲"));
+                        crntTermOrder = order;
+                    }else{
+                        order = $(this).data('order') + "D";
+                        $(this).data("desc", 1);
+                        $(this).text($(this).text().replace("▲", "▼"));
+                        crntTermOrder = order;
+                    }
+                }
+                loadList({"startDate":$('#sDate').val(),"endDate":datePlusOne($('#eDate').val()),"type":$('#termType').val(),"keyword":$('#termSearchText').val(),"pageNum":0,"amount":amount, "order":order},termTbody, termPaging, 1);
+            })
+
+            $('#dailyThead').on('click','tr th', function(){
+                console.log("정렬 구현할거임", $(this).data('order'));
+                let order;
+                if($(this).data('order') != "none"){
+                    if($(this).data("desc") == 1){
+                        order = $(this).data('order') + "A";
+                        $(this).data("desc", 0);
+                        $(this).text($(this).text().replace("▼","▲"));
+                        crntOrder = order;
+                    }else{
+                        order = $(this).data('order') + "D";
+                        $(this).data("desc", 1);
+                        $(this).text($(this).text().replace("▲", "▼"));
+                        crntOrder = order;
+                    }
+                }
+                loadList({"startDate":$('#date').val(),"endDate":datePlusOne($('#date').val()),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount,"order":order},calcTbody, paging, 0);
             })
 
             $('.termPage').on("click","a", function(){
@@ -165,7 +205,7 @@
                     id = parseInt(crntPage/10);
                     id = id*10;
                 }
-                loadList({"startDate":$('#sDate').val(),"endDate":datePlusOne($('#eDate').val()),"type":$('#termType').val(),"keyword":$('#termSearchText').val(),"pageNum":id-1,"amount":amount},termTbody,termPaging, 1);
+                loadList({"startDate":$('#sDate').val(),"endDate":datePlusOne($('#eDate').val()),"type":$('#termType').val(),"keyword":$('#termSearchText').val(),"pageNum":id-1,"amount":amount, "order":crntTermOrder},termTbody,termPaging, 1);
             })
 
             $('.oneDayPage').on("click","a", function(){
@@ -177,7 +217,7 @@
                     id = parseInt(crntPage/10);
                     id = id*10;
                 }
-                loadList({"startDate":$('#date').val(),"endDate":datePlusOne($('#date').val()),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":id-1,"amount":amount},calcTbody,paging, 0)
+                loadList({"startDate":$('#date').val(),"endDate":datePlusOne($('#date').val()),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":id-1,"amount":amount, "order":crntOrder},calcTbody,paging, 0)
             })
 
             function loadList(criteria, tbody, pagingTag, flag){
@@ -191,15 +231,11 @@
                         result = res.dataList;
                         var rsStr = "";
                         for(let i = 0; i < result.length; i++){
-                            let item_price_nonull = result[i].item_price_nonull;
-                            let finalQuantity = result[i].prime_quantity + result[i].received_in_date - result[i].released_in_date;
-                            let invAmount = 0;
-                            if(item_price_nonull == -1){
-                                invAmount = "-"
-                            }else{
-                                invAmount = item_price_nonull * finalQuantity;
+                            let inv_amount = result[i].inv_amount;
+                            if(inv_amount == -5000){
+                                inv_amount = "-"
                             }
-                            rsStr += "<tr id ='"+i+"result'><td>"+result[i].item_code+"</td><td>"+result[i].item_name+"</td><td>"+result[i].width+"×"+result[i].length+"×"+result[i].height+"</td><td>"+result[i].material+"</td><td>"+result[i].prime_quantity+"</td><td>"+result[i].received_in_date+"</td><td>"+result[i].released_in_date+"</td><td>"+finalQuantity+"</td><td>"+invAmount+"</td></tr>";
+                            rsStr += "<tr id ='"+i+"result'><td>"+result[i].item_code+"</td><td>"+result[i].item_name+"</td><td>"+result[i].width+"×"+result[i].length+"×"+result[i].height+"</td><td>"+result[i].material+"</td><td>"+result[i].prime_quantity+"</td><td>"+result[i].received_in_date+"</td><td>"+result[i].released_in_date+"</td><td>"+result[i].final_quantity+"</td><td>"+inv_amount+"</td></tr>";
                         }
                         tbody.html(rsStr);
                         makeCenter();

@@ -11,9 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class NewPurchaseOrderDTO {
-    private Date purch_order_date;
-    private Date receive_duedate;
     private String purch_order_number;
+    private Date purch_order_date;
     private String purch_order_detail;
     private List<NewPurchOrderItem> newPurchOrderItem;
 }

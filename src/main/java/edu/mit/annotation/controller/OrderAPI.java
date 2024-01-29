@@ -1,23 +1,50 @@
 package edu.mit.annotation.controller;
 
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.BaseFont;
+import edu.mit.annotation.entity.EmailMessage;
+import edu.mit.annotation.mailfactory.MailSenderFactory;
 import edu.mit.annotation.realdto.*;
+import edu.mit.annotation.service.InventoryService;
+import edu.mit.annotation.service.MailService;
+import edu.mit.annotation.service.MemberService;
 import edu.mit.annotation.service.OrderService;
-import lombok.NonNull;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import org.apache.tomcat.util.http.fileupload.FileItem;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
+import java.io.*;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/orderapi")
 @RequiredArgsConstructor
 public class OrderAPI {
     private final OrderService orderService;
+    private final MemberService memberService;
+    private final MailService mailService;
+    private final InventoryService inventoryService;
 
     @GetMapping("/po-proc-plan")
     public ListWithPaging<ProcPlanNoPO> poProcPlan(String  startDate, String  endDate, String type, String keyword, Integer pageNum, Integer amount) throws ParseException {
@@ -26,23 +53,200 @@ public class OrderAPI {
                 .pageNum(pageNum*amount)
                 .amount(amount)
                 .startDate(sdf.parse(startDate))
-                .endDate(sdf.parse(endDate))
+                .endDate(sdf.parse(endDateValidate(endDate)))
                 .type(type)
                 .keyword("%"+keyword+"%")
                 .build();
         return orderService.getProcPlanListWithNoPO(cri);
     }
 
-    @PostMapping("/po-new-order/{receive_duedate}/{purch_order_detail}")
-    public String  poNewOrder(@RequestBody List<NewPurchOrderItem> newPurchOrderItem, @PathVariable("receive_duedate") String  receive_duedate, @PathVariable(value = "purch_order_detail", required = false) String purch_order_detail) throws ParseException {
-        System.out.println(newPurchOrderItem+purch_order_detail+receive_duedate);
+    @PostMapping("/po-new-order/{purch_order_detail}")
+    public String  poNewOrder(@RequestBody List<NewPurchOrderItem> newPurchOrderItem, @PathVariable(value = "purch_order_detail", required = false) String purch_order_detail) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         orderService.savePurchaseOrder(NewPurchaseOrderDTO.builder()
                 .newPurchOrderItem(newPurchOrderItem)
-                .receive_duedate(sdf.parse(receive_duedate))
                 .purch_order_date(new Date())
                 .purch_order_detail(purch_order_detail)
                 .build());
         return "good";
+    }
+
+    @GetMapping("/po-get-published")
+    public ListWithPaging<PublishedPurchaseOrderDTO> poGetPublished(String  startDate, String  endDate, String type, String keyword, Integer pageNum, Integer amount) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Criteria cri = Criteria.builder()
+                .pageNum(pageNum*amount)
+                .amount(amount)
+                .startDate(sdf.parse(startDate))
+                .endDate(sdf.parse(endDateValidate(endDate)))
+                .type(type)
+                .keyword("%"+keyword+"%")
+                .build();
+        return orderService.getPublishedPOList(cri);
+    }
+
+    @DeleteMapping("/po-delete")
+    public String deletePO(@RequestParam(value = "purch_order_numbers[]") List<String> purch_order_numbers){
+        System.out.println(purch_order_numbers);
+        for (String purch_order_number: purch_order_numbers) {
+            orderService.deletePurchaseOrder(purch_order_number);
+        }
+        return "그들은 갔습니다..";
+    }
+
+    @PostMapping("/send")
+    public String getCurrentUserName(@AuthenticationPrincipal UserDetails userDetails, MultipartFile file, String email, String subject, String message){
+        String username = userDetails.getUsername();
+        System.out.println(file);
+        MemberDTO dto = memberService.getMemberData(username);
+        EmailMessage emailMessage = EmailMessage.builder()
+                .to(email)
+                .subject(subject)
+                .message(message)
+                .multipartFile(file)
+                .build();
+        mailService.sendMail(emailMessage,"email",dto.getEmail(),dto.getGoogle_app_password());
+        return "뭐요";
+    }
+
+    @GetMapping("/search-with-mail")
+    public List<CompanyInfoDTO> searchWithMail(String email){
+        return orderService.getCompWithEmail("%"+email+"%");
+    }
+
+    @GetMapping("/save-pdf")
+    public void savePdf(String htmlPath, String sendType, String business_number, String param, String etc, @AuthenticationPrincipal UserDetails userDetails, String email) throws DocumentException, IOException {
+        LocalDate nowDate = LocalDate.now();
+        DateTimeFormatter dtm = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String nowStr = dtm.format(nowDate);
+        String name = "";
+        System.out.println(htmlPath + sendType + business_number + param);
+        if(sendType.equals("poContent")){
+            name = "발주서";
+        }else if(sendType.equals("statement")){
+            name = "거래명세서";
+        }
+        String filePath = generatePdfFromHtml(parseThymeleafTemplate(htmlPath,sendType,business_number,param, etc),
+                                                                                        business_number+nowStr+name);
+        String username = userDetails.getUsername();
+
+        MemberDTO dto = memberService.getMemberData(username);
+        EmailMessage emailMessage = EmailMessage.builder()
+                .to(email)
+                .subject(sendType.equals("poContent") ? nowStr +"발주서" : nowStr + "거래명세서")
+                .message("첨부파일 참고 바랍니다.")
+                .filePath(filePath)
+                .build();
+        mailService.sendMail(emailMessage,"email",dto.getEmail(),dto.getGoogle_app_password());
+    }
+
+    private String parseThymeleafTemplate(String htmlPath, String sendType, String business_number, String param, String etc){
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+
+        TemplateEngine templateEngine = new TemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver);
+
+        Context context = new Context();
+        if(sendType.equals("poContent")){
+            context.setVariable("company_info", orderService.getCompInfo(business_number));
+            context.setVariable("po_info",orderService.getPOinfo(param));
+            context.setVariable("po_items",orderService.getPublishedPOItems(param));
+        }else if(sendType.equals("statement")){
+            LocalDate nowDate = LocalDate.now();
+            DateTimeFormatter dtm = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            StatementPreviewDTO dto = inventoryService.getStatement("'"+param+"'", business_number);
+            int totalPrice = 0;
+            for (StatementItemDTO d: dto.getItemList()) {
+                d.setProd_price((d.getItem_price() * d.getReceive_quantity()));
+                totalPrice += d.getProd_price();
+            }
+            context.setVariable("today",dtm.format(nowDate));
+            context.setVariable("data",dto);
+            context.setVariable("totalPrice",totalPrice);
+            context.setVariable("etc", etc);
+        }
+
+        return templateEngine.process(htmlPath, context);
+    }
+
+    public String generatePdfFromHtml(String html, String name) throws IOException, DocumentException {
+        UUID uuid = UUID.randomUUID();
+        String outputFolder = System.getProperty("user.home") + File.separator +"pdfs"+File.separator +uuid+name+".pdf";
+        OutputStream outputStream = new FileOutputStream(outputFolder);
+
+        ITextRenderer renderer = new ITextRenderer();
+        renderer.getFontResolver().addFont(
+                new ClassPathResource("/static/fonts/D2Coding.ttc")
+                        .getURL()
+                        .toString(),
+                BaseFont.IDENTITY_H,
+                BaseFont.EMBEDDED
+
+        );
+        renderer.setDocumentFromString(html);
+        renderer.layout();
+        renderer.createPDF(outputStream);
+
+        outputStream.close();
+        return outputFolder;
+    }
+
+
+
+    private String  endDateValidate(String endDate){
+        Integer date = Integer.valueOf(endDate.split("-")[2]);
+        Integer month = Integer.valueOf(endDate.split("-")[1]);
+        Integer year = Integer.valueOf(endDate.split("-")[0]);
+        if(month < 8){
+            if(month%2 == 1){
+                if(date == 31){
+                    month+=1;
+                    date = 1;
+                }else{
+                    date += 1;
+                }
+            }else{
+                if(month == 2){
+                    if(date==28 || date==29){
+                        month += 1;
+                        date = 1;
+                    }else{
+                        date+=1;
+                    }
+                }else{
+                    if(date ==30){
+                        month+=1;
+                        date = 1;
+                    }else{
+                        date+=1;
+                    }
+                }
+            }
+        }else{
+            if(month%2==0){
+                if(date==31){
+                    date = 1;
+                    if(month == 12){
+                        year+=1;
+                        month = 1;
+                    }
+                    else{
+                        month+=1;
+                    }
+                }else{
+                    date+=1;
+                }
+            }else{
+                if(date==30){
+                    month+=1;
+                    date = 1;
+                }else{
+                    date+=1;
+                }
+            }
+        }
+        return year+"-"+ (month < 10 ? "0"+month : month) +"-"+ (date < 10? "0"+date : date);
     }
 }

@@ -2,7 +2,6 @@ package edu.mit.annotation.mapper;
 
 import edu.mit.annotation.realdto.*;
 
-import java.util.Date;
 import java.util.List;
 
 public interface InventoryMapper {
@@ -18,38 +17,24 @@ public interface InventoryMapper {
 
     //입고항목 마감
     Integer closingProcPlan(String proc_plan_number);
-    //조달계획 번호로 발주번호 조회
-    String findPurchaseOrder(String proc_plan_number);
-    //발주번호로 해당 발주서에 등록된 조달계획들의 마감여부확인
-    List<Integer> getProcPlanCloingStatus(String purch_order_number);
 
-    //발주서 마감
-    Integer closePurchaseOrder(String purch_order_number);
 
     //해당품목의 기존 입고내역가져오기(해당품목 발주일~ 조달납기)까지 입고된 수량
-    List<Long> getReceiveHistoryBefore(SearchDTO dto);
+    List<Long> getReceiveHistoryBefore(ReceiveHistorySearchDTO dto);
     //입고여기까지=============================================================
 
 
 
     //거래명세서===============================================================
-    //마감된 발주서번호 조회
-    List<ClosedPurchaseOrderDTO> searchWithPONumber(Criteria cri);
-
-    //발주번호로 품목명, 업체명 추가조회
-    List<PurchOrderItemWithCompanyName> getItemCompanyName(String purch_order_number);
-
-    //업체명으로 발주번호 조회
-    List<ClosedPurchaseOrderDTO> searchWithCompanyName(Criteria cri);
-    //품목명으로 발주번호 조회
-    List<ClosedPurchaseOrderDTO> searchWithItemName(Criteria cri);
-
-
+    //마감된 발주서번호 조회 -> 마감된 조달계획 조회
+    List<ClosedProcPlanDTO> getClosedProcPlan(Criteria cri);
     //거래명세서여기까지========================================================
 
     //거래명세서 미리보기=======================================================
-    List<StatementPrintDTO> getStatementInfo(String purch_order_number);
-    void statementPbCntUp(String purch_order_number);
+
+    //사업자번호로 회사정보조회
+    CompanyInfoDTO getCompanyInfo(String business_number);
+    List<StatementItemDTO> getStatementItems(String proc_plan_number);
 
     //거래명세서 미리보기 여기까지================================================
 

@@ -22,36 +22,34 @@ public class RegisterController {
     @Autowired
     RegisterService service;
 
+    private final String blueprintuploadPath = "C:\\upload\\blueprint";
+    private final String contractuploadPath = "C:\\upload\\contract";
+
     @GetMapping("/item")
-    public void item(Criteria cri,Model model) {
+    public void item(RegisterCriteria cri, Model model) {
+        cri.setOffset((cri.getPageNum() - 1) * cri.getAmount());
         int total = service.getTotalItemCount(cri);
         model.addAttribute("itemList", service.getListItemWithPaging(cri));
         model.addAttribute("pageMaker", new PageDTO(cri, total));
         model.addAttribute("unitCodeList", service.getListUnitCode());
         model.addAttribute("assyCodeList", service.getListAssyCode());
         model.addAttribute("partCodeList", service.getListPartCode());
-
     }
 
     @ResponseBody
     @GetMapping("/itemSearch")
-    public List<TestItemDTO> itemSearch(@RequestParam(name="type", defaultValue = "") String type,
-                             @RequestParam(name="keyword", defaultValue = "") String keyword,
-                                        @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
-                             Model model)  {
+    public List<ItemDTO> itemSearch(@RequestParam(name="type", defaultValue = "") String type,
+                                    @RequestParam(name="keyword", defaultValue = "") String keyword,
+                                    @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
+                                    Model model, RegisterCriteria cri)  {
+        cri.setOffset((cri.getPageNum()-1)*cri.getAmount());
         System.out.println(type);
         System.out.println(keyword);
         System.out.println(pageNum);
-        Criteria cri = new Criteria();
         cri.setType(type);
         cri.setKeyword(keyword);
-        cri.setPageNum(pageNum);
         return service.searchListItemWithPaging(cri);
     }
-
-    private final String blueprintuploadPath = "C:\\upload\\blueprint";
-    private final String contractuploadPath = "C:\\upload\\contract";
-
 
     @PostMapping("/itemInput")
     public String itemInput(@RequestParam("unit_code") String unit_code,
@@ -66,10 +64,11 @@ public class RegisterController {
                             @RequestParam("blueprint") MultipartFile blueprint,
                             @RequestParam("unit_code_flag") boolean unit_code_flag,
                             @RequestParam("assy_code_flag") boolean assy_code_flag,
-                            @RequestParam("part_code_flag") boolean part_code_flag) {
+                            @RequestParam("part_code_flag") boolean part_code_flag,
+                            Model model, RegisterCriteria cri) {
 
-        TestItemDTO dto = new TestItemDTO();
-        TestCodeDTO codeDTO = new TestCodeDTO();
+        ItemDTO dto = new ItemDTO();
+        CodeDTO codeDTO = new CodeDTO();
         UUID uuid = UUID.randomUUID();
         String blueprint_save_name = uuid.toString() + "_" + blueprint_origin_name;
 
@@ -182,6 +181,9 @@ public class RegisterController {
         }
         System.out.println("품목코드 : " + dto.getItem_code() + " 품목명 : " + item_name +  " 규격 : " + width + " x " + length+  " x " + height+ " 재질 : " + material +  " 도면 : " + blueprint_origin_name);
 
+        List<ItemDTO> updateList = service.getListItemWithPaging(cri);
+        model.addAttribute("updateList", updateList);
+        System.out.println(updateList);
         return "redirect:/reg/item";
     }
 
@@ -192,7 +194,8 @@ public class RegisterController {
     }
 
     @GetMapping("/contract")
-    public void contract(Criteria cri, Model model)   {
+    public void contract(RegisterCriteria cri, Model model)   {
+        cri.setOffset((cri.getPageNum()-1)*cri.getAmount());
         int total = service.getTotalContractCount(cri);
         model.addAttribute("contractList", service.getListContractWithPaging(cri));
         model.addAttribute("pageMaker", new PageDTO(cri, total));
@@ -203,14 +206,13 @@ public class RegisterController {
     public List<ContractListDTO> contractSearch(@RequestParam(name="type", defaultValue = "") String type,
                                         @RequestParam(name="keyword", defaultValue = "") String keyword,
                                         @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
-                                        Model model)  {
+                                        Model model, RegisterCriteria cri)  {
+        cri.setOffset((cri.getPageNum()-1)*cri.getAmount());
         System.out.println(type);
         System.out.println(keyword);
         System.out.println(pageNum);
-        Criteria cri = new Criteria();
         cri.setType(type);
         cri.setKeyword(keyword);
-        cri.setPageNum(pageNum);
         return service.searchListContractWithPaging(cri);
     }
     @GetMapping("/updateContractList")
@@ -223,58 +225,51 @@ public class RegisterController {
     @PostMapping("/contractInput")
     public String contractInput(@RequestParam("contract_origin_name") String contract_origin_name,
                                 @RequestParam("business_number") String business_number,
-                                @RequestParam("company_name") String company_name,
-                                @RequestParam("company_account") String company_account,
                                 @RequestParam("note") String note,
-                                @RequestParam("item_code") String item_code,
-                                @RequestParam("item_name") String item_name,
-                                @RequestParam("item_price") int item_price,
-                                @RequestParam("lead_time") int lead_time,
-                                @RequestParam("details") String details,
-                                @RequestParam("contract") MultipartFile contract)    {
+                                @RequestParam("item_code[]") List<String> item_code,
+                                @RequestParam("item_name[]") List<String> item_name,
+                                @RequestParam("item_price[]") List<Integer>item_price,
+                                @RequestParam("lead_time[]") List<Integer> lead_time,
+                                @RequestParam("details[]") List<String> details,
+                                @RequestParam("contract") MultipartFile contract,
+                                @ModelAttribute formDTO formData)    {
 
-        ContractDTO dto = new ContractDTO();
         UUID uuid = UUID.randomUUID();
-        String contract_save_name = uuid.toString() + "_" + contract_origin_name;
-        System.out.println("contract_origin_name : "+contract_origin_name);
-        System.out.println("business_number : "+business_number);
-        System.out.println("company_name : "+company_name);
-        System.out.println("company_account : "+company_account);
-        System.out.println("contract_number : "+service.getUniqueContractNumber("co-1"));
-        System.out.println("note : "+note);
-        System.out.println("item_code : "+item_code);
-        System.out.println("item_name : "+item_name);
-        System.out.println("item_price : "+item_price);
-        System.out.println("lead_time : "+lead_time);
-        System.out.println("details : "+details);
+        ContractDTO contractDTO = new ContractDTO();
+        ContractItemDTO contractItemDTO = new ContractItemDTO();
 
-        dto.setContract_origin_name(contract_origin_name);
-        dto.setContract_save_name(contract_save_name);
-        dto.setBusiness_number(business_number);
-        dto.setCompany_name(company_name);
-        dto.setCompany_account(company_account);
-        dto.setContract_number("co-1");
-        dto.setNote(note);
-        dto.setItem_code(item_code);
-        dto.setItem_name(item_name);
-        dto.setItem_price(item_price);
-        dto.setLead_time(lead_time);
-        dto.setDetails(details);
+        String contract_save_name=uuid.toString()+"-"+contract_origin_name;
+        System.out.println(formData);
+        contractDTO.setContract_number("co-1");
+        contractDTO.setContract_origin_name(contract_origin_name);
+        contractDTO.setBusiness_number(business_number);
+        contractDTO.setNote(note);
+        contractDTO.setContract_save_name(contract_save_name);
+        service.registerContract(contractDTO);
 
-        service.registerContract(dto);
+        for (int i = 0; i < item_code.size(); i++) {
 
-        File uploadDir = new File(contractuploadPath);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
+            contractItemDTO.setItem_code(item_code.get(i));
+            contractItemDTO.setItem_name(item_name.get(i));
+            contractItemDTO.setItem_price(item_price.get(i));
+            contractItemDTO.setLead_time(lead_time.get(i));
+            contractItemDTO.setDetails(details.get(i));
+            contractItemDTO.setContract_number(contractDTO.getContract_number());
+            service.registerContractItem(contractItemDTO);
         }
 
-        String filePath = contractuploadPath + File.separator + contract_save_name;
-        try {
-            contract.transferTo(new File(filePath));
-            System.out.println("파일 업로드 성공: " + filePath);
-        } catch (IOException e) {
-            System.out.println("파일 업로드 실패: " + e.getMessage());
-        }
+            File uploadDir = new File(contractuploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+
+            String filePath = contractuploadPath + File.separator + contract_save_name;
+            try {
+                contract.transferTo(new File(filePath));
+                System.out.println("파일 업로드 성공: " + filePath);
+            } catch (IOException e) {
+                System.out.println("파일 업로드 실패: " + e.getMessage());
+            }
         return "redirect:/reg/contract";
     }
 
@@ -285,8 +280,16 @@ public class RegisterController {
         return "redirect:/reg/contract";
     }
 
+    @GetMapping("/contractView/{contract_save_name}")
+    public String contractView(@PathVariable String contract_save_name, Model model) {
+        contract_save_name = contractuploadPath+File.separator+ contract_save_name;
+        model.addAttribute("img_path", contract_save_name);
+        return "/reg/contractView";
+    }
+
     @GetMapping("/plan")
-    public void plan(Criteria cri, Model model)   {
+    public void plan(RegisterCriteria cri, Model model)   {
+        cri.setOffset((cri.getPageNum()-1)*cri.getAmount());
         int total = service.getTotalProdPlanCount(cri);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calendar = Calendar.getInstance();
@@ -308,14 +311,13 @@ public class RegisterController {
     public List<ProductionPlanDTO> prodplanSearch(@RequestParam(name="type", defaultValue = "") String type,
                                                 @RequestParam(name="keyword", defaultValue = "") String keyword,
                                                 @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
-                                                Model model)  {
+                                                Model model, RegisterCriteria cri)  {
+        cri.setOffset((cri.getPageNum()-1)*cri.getAmount());
         System.out.println(type);
         System.out.println(keyword);
         System.out.println(pageNum);
-        Criteria cri = new Criteria();
         cri.setType(type);
         cri.setKeyword(keyword);
-        cri.setPageNum(pageNum);
         return service.searchListProdPlanWithPaging(cri);
     }
 
@@ -359,8 +361,4 @@ public class RegisterController {
         return "redirect:/reg/plan";
     }
 
-    @GetMapping("/pur-order-report")
-    public void purorderreport()  {
-
-    }
 }

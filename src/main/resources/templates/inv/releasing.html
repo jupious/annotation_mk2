@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{/layout/layout::setContent(~{::content})}">
+<th:block th:replace="~{./layout/layout::setContent(~{::content})}">
     <th:block th:fragment="content">
         <div class="pcoded-content">
             <div class="page-header">
@@ -117,9 +117,6 @@
 
             $('#itemsTbody').on("click","tr td",function(){
                 console.log("테이블 클릭됨");
-                let isInput = $(this).find("input[type='number']").length;
-                let reqQuantity = $(this).parent().children('.reqQuantity').text();
-                if(!isInput){
                     if($(this).parent().hasClass('inputOff')){
                         $(this).parent().addClass('inputOn');
                         $(this).parent().removeClass('inputOff');
@@ -130,7 +127,7 @@
                         $(this).parent().removeClass('inputOn');
                         $(this).siblings('.releaseCount').html("-");
                     }
-                }
+                
             })
 
             $('#saveBtn').on("click",function(){

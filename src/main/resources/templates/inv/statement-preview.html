@@ -3,32 +3,66 @@
 <head>
     <title>거래명세서 발행</title>
     <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="description" content="" />
-    <meta name="keywords" content=""/>
-    <meta name="author" content="Phoenixcoded" />
-    <meta name="_csrf_header" th:content="${_csrf.headerName}">
-    <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon"/>
-
-    <link rel="stylesheet" href="/assets/css/style.css" media="all" id="css"/>
+   
     <style>
         *{
             font-family:'D2Coding';
         }
+        html,body{
+                width: 210mm;
+                height: 297mm;
+                margin: 0mm 1mm 1mm 1mm; 
+        }
+     
+        .table{
+            border-collapse: collapse;
+            width: 200mm;
+        }
+        .table tr{
+            height: 40px;
+        }
+        .table th{
+            text-align: center;
+            background-color: rgb(206, 250, 226);
+        }
+        .table tr td{
+            text-align: center;
+        }
+        .button-container{
+            margin-top: 30px;
+            text-align: center;
+        }
+        .cnt{
+            width: 10mm;
+        }
+        textarea{
+            resize:none; 
+            width:90%; 
+            border:none; 
+            height: 90%;
+        }
+        .ta{
+            text-align: center;
+            height: 20mm;
+        }
+        @page{
+            size: 210mm;
+            margin: 5mm;
+        }
         @media print{
-            #print{
+            .buttons{
                 display:none;
             }
             
             html,body{
                 width: 320mm;
-                margin: 10mm 0mm 0mm 0mm; 
+                margin: 0mm 0mm 0mm 0mm; 
             }
             table { page-break-inside:auto; }
             tr    { page-break-inside:avoid; page-break-after:auto; }
             thead { display:table-header-group; }
             tfoot { display:table-footer-group; } 
+      
         }
         #card{
             align-self: center;
@@ -37,58 +71,57 @@
         }
     </style>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.slim.js" integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="card" id="card">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered table-sm border-dark">
+                <table border="1" class="table table-bordered table-sm border-dark">
                     <tr>
                         <th colspan="8" class="align-middle h2"> 거래명세서 </th>
                     </tr>
                     <tr>
-                        <th rowspan="2" class="align-middle table-success">거래일자</th>
-                        <td rowspan="2" class="align-middle" th:text="${#dates.format(data.stmtDate,'yyyy-MM-dd')}"></td>
+                        <th rowspan="2" class="align-middle table-success">발행일자</th>
+                        <td rowspan="2" class="align-middle" th:text="${today}"></td>
                         <th rowspan="5" class="align-middle table-success">공<br/>급<br/>받<br/>는<br/>자<br/></th>
                         <td>사업자번호</td>
-                        <td th:text="${data.business_number}">사업자번호 형식이 정해져있었다니</td>
+                        <td th:text="${data.companyInfo.business_number}">사업자번호 형식이 정해져있었다니</td>
                         <th rowspan="5" class="align-middle table-success">공<br/>급<br/>자</th>
                         <td>사업자번호</td>
                         <td>092-102-9102-13</td>
                     </tr>
                     <tr>
                         <td>회사명</td>
-                        <td th:text="${data.company_name}"></td>
+                        <td th:text="${data.companyInfo.company_name}"></td>
                         <td>회사명</td>
                         <td>(주)어노테이션</td>
                     </tr>
                     <tr>
                         <th rowspan="2" class="align-middle table-success">담당자</th>
-                        <td rowspan="2" class="align-middle" th:text="${data.manager}"></td>
+                        <td rowspan="2" class="align-middle" th:text="${data.companyInfo.manager}"></td>
                         <td>주소</td>
-                        <td th:text="${data.company_address}"></td>
+                        <td th:text="${data.companyInfo.company_address}"></td>
                         <td>주소</td>
                         <td>수원시 어쩌구 저쩌동</td>
                     </tr>
                     <tr>
                         <td>전화번호</td>
-                        <td th:text="${data.manager_tel}"></td>
+                        <td th:text="${data.companyInfo.manager_tel}"></td>
                         <td rowspan="2" class="align-middle">전화번호</td>
                         <td rowspan="2" class="align-middle">010-1234-5678</td>
                     </tr>
                     <tr>
-                        <th class="table-success">발주번호</th>
-                        <td th:text="${poNum}"></td>
+                        <th colspan="2" class="table-success"></th>
                         <td>합계금액</td>
                         <td th:text="${totalPrice} + '원'"></td>
                     </tr>
                 </table>
             </div>
             <div class="table-responsive">
-                <table class="table table-bordered table-sm border-dark">
+                <table border="1" class="table table-bordered table-sm border-dark">
                     <tr class="table-success">
-                        <th class="align-middle">NO.</th>
+                        <th class="cnt">NO.</th>
                         <th class="align-middle">품목코드</th>
                         <th class="align-middle">품목명</th>
                         <th class="align-middle">단가</th>
@@ -101,36 +134,32 @@
                         <td th:text="${item.item_code}">나는품목코드다 하하</td>
                         <td th:text="${item.item_name}">품목이름은 이거임</td>
                         <td th:text="${item.item_price}">3000</td>
-                        <td th:text="${item.received_quantity}">200</td>
+                        <td th:text="${item.receive_quantity}">200</td>
                         <td th:text="${item.prod_price}">600000</td>
                         <td th:text="${item.note}"></td>
                     </tr>
-                    <tr>
-                        <th rowspan="5" class="align-middle table-success">특이사항</th>
-                        <td rowspan="5" colspan="7" class="align-middle"><textarea rows="5" style="resize:none; width:100%; border:none;" th:text="${data.purch_order_detail}" ></textarea></td>
+                    <tr class="ta">
+                        <th rowspan="5" class="ta" >특이사항</th>
+                        <td rowspan="5" colspan="7" class="ta"><textarea rows="5" id="etc"  th:text="${etc} == null? '' : ${etc} " ></textarea></td>
                     </tr>
                 </table>
             </div>
             <div class="row">
                 <div class="col"></div>
-                <div class="col-md-auto">
-                    <input type="hidden" id="_csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                    <button class="btn btn-primary justify-content-end" id="print">발행</button>
+                <div class="button-container" id="btc" aria-hidden="true">
+                    <button class="buttons" id="save">저장</button>
+                    <button class="btn btn-primary justify-content-end buttons" id="print">인쇄</button>
                 </div>
             </div>
         </div>
-</div>
+    </div>
 
-<script src="/assets/js/vendor-all.min.js"></script>
-<script src="/assets/js/plugins/bootstrap.min.js"></script>
-<script src="/assets/js/pcoded.min.js"></script>
+
 <script>
-    var header = $('meta[name="_csrf_header"]').attr("content");
-    var _csrfToken = $('#_csrf_token').val();
     $(function(){
         $('th').addClass('text-center');
         $('td').addClass('text-center');
-       
+        $('#btc').attr('aria-hidden', false);
     })
 
 </script>
@@ -139,20 +168,29 @@
         var result = confirm("명세서를 발행하시겠습니까?");
         if(result){
             window.print();
-            $.ajax({
-                type:"get",
-                url:"/invapi/statement-published",
-                data:{
-                    purch_order_number:[[${poNum}]]
-                },
-                success:function(){
-                    console.log("발행횟수증가");
-                }
-                
-            })
-        }else{
-            $('#css').attr('href') = cssSrc;
+          
         }
+    })
+    $('#save').on('click',function(){
+        let business_number = [[${bsno}]];
+        let param = [[${ppno}]];
+        let etc = $('#etc').val();
+        let email = [[${data.companyInfo.manager_email}]];
+        console.log(email);
+        $.ajax({
+            type:"get",
+            url:"/orderapi/save-pdf",
+            data:{"htmlPath":"/templates/inv/statement-preview","sendType":"statement", "business_number":business_number, "param": param, "etc":etc, "email":"jupious@naver.com"},
+            success:function(){
+                console.log("성공");
+            },
+            error:function(a,b,c){
+                console.log("에러");
+                console.log("a",a);
+                console.log("b",b);
+                console.log("c",c);
+            }
+        })
     })
 </script>
 </body>

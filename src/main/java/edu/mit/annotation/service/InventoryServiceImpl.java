@@ -22,7 +22,7 @@ public class InventoryServiceImpl implements InventoryService{
     }
 
     @Override
-    public Long getReceiveHistory(SearchDTO dto) {
+    public Long getReceiveHistory(ReceiveHistorySearchDTO dto) {
         Long sum = 0L;
         for (Long x : inventoryMapper.getReceiveHistoryBefore(dto)) {
             sum += x;
@@ -42,69 +42,19 @@ public class InventoryServiceImpl implements InventoryService{
     }
 
     @Override
-    public void closingPO(String proc_plan_number) {
-        String poNum = inventoryMapper.findPurchaseOrder(proc_plan_number);
-        boolean isOne = true;
-        for (Integer x : inventoryMapper.getProcPlanCloingStatus(poNum)) {
-            if (x != 1)
-                isOne = false;
-        }
-        if(isOne){
-            inventoryMapper.closePurchaseOrder(poNum);
-            System.out.println(poNum+"발주서가 마감되었습니다.");
-        }
+    public ListWithPaging<ClosedProcPlanDTO> getClosedPrc(Criteria cri) {
+        return pagingSupport(inventoryMapper.getClosedProcPlan(cri),cri);
     }
 
     @Override
-    public ListWithPaging<ClosedPurchaseOrderDTO> getClosedPO(Criteria cri) {
-        String type = cri.getType();
-        List<ClosedPurchaseOrderDTO> list = new ArrayList<>();
-        if(type.equals("OC")){
-            list = inventoryMapper.searchWithPONumber(cri);
-        }else if(type.equals("IN")){
-            list = inventoryMapper.searchWithItemName(cri);
-        }else if(type.equals("CN")){
-            list = inventoryMapper.searchWithCompanyName(cri);
-        }
-
-        return pagingSupport(search(list),cri);
-    }
-
-    @Override
-    public StatementPreviewDTO getStatement(String purch_order_number) {
-        List<StatementItemsDTO> itemsList = new ArrayList<>();
-        List<StatementPrintDTO> list = inventoryMapper.getStatementInfo(purch_order_number);
-        list.forEach(x -> {
-            long received_quantity = getReceiveHistory(SearchDTO.builder()
-                    .item_code(x.getItem_code())
-                    .startDate(x.getPurch_order_date())
-                    .endDate(x.getProc_duedate()).build());
-
-            itemsList.add(StatementItemsDTO.builder()
-                            .item_code(x.getItem_code())
-                            .item_name(x.getItem_name())
-                            .item_price(x.getItem_price())
-                            .note(x.getNote())
-                            .received_quantity(received_quantity)
-                            .build());
-        });
-        StatementPrintDTO dto = list.get(0);
+    public StatementPreviewDTO getStatement(String proc_plan_number, String business_number) {
 
         return StatementPreviewDTO.builder()
-                .stmtDate(new Date())
-                .purch_order_detail(dto.getPurch_order_detail())
-                .business_number(dto.getBusiness_number())
-                .company_name(dto.getCompany_name())
-                .company_address(dto.getCompany_address())
-                .manager(dto.getManager())
-                .manager_tel(dto.getManager_tel())
-                .itemList(itemsList).build();
+                .companyInfo(inventoryMapper.getCompanyInfo(business_number))
+                .itemList(inventoryMapper.getStatementItems(proc_plan_number))
+                .build();
     }
 
-    @Override
-    public void stmtPbCntUp(String purch_order_number) {
-        inventoryMapper.statementPbCntUp(purch_order_number);
-    }
 
     @Override
     public ListWithPaging<ReleasingDTO> getReleaseData(Criteria cri) {
@@ -130,30 +80,7 @@ public class InventoryServiceImpl implements InventoryService{
         return inventoryMapper.getInvReport(cri);
     }
 
-    private List<ClosedPurchaseOrderDTO> search(List<ClosedPurchaseOrderDTO> list){
 
-        for (ClosedPurchaseOrderDTO x : list) {
-            List<PurchOrderItemWithCompanyName> incnList = inventoryMapper.getItemCompanyName(x.getPurch_order_number());
-            x.setCompany_name(incnList.get(0).getCompany_name());
-            int i = 0;
-            String itemNameString = "";
-            for (PurchOrderItemWithCompanyName y : incnList) {
-                if(i < 3){
-                    itemNameString += y.getItem_name() +", ";
-                }else {
-                    itemNameString = itemNameString.substring(0, itemNameString.length()-2);
-                    itemNameString += "...";
-                    break;
-                }
-                i++;
-            }
-            if(itemNameString.charAt(itemNameString.length()-1) == ' '){
-                itemNameString = itemNameString.substring(0, itemNameString.length()-2);
-            }
-            x.setItem_name_string(itemNameString);
-        }
-        return list;
-    }
 
     private <T> ListWithPaging<T> pagingSupport(List<T> list, Criteria cri){
         Long dataCount = inventoryMapper.getSearchDataCount();

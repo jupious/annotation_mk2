@@ -1,25 +1,31 @@
 package edu.mit.annotation.controller;
 
 
+import edu.mit.annotation.realdto.MemberDTO;
 import edu.mit.annotation.realdto.PurchOrderItemsDTO;
-import edu.mit.annotation.service.CheckService;
 import edu.mit.annotation.service.OrderService;
 import edu.mit.annotation.test2dto.CheckInfo;
 import edu.mit.annotation.test2dto.CheckList;
 import edu.mit.annotation.test2dto.OrderInfo;
 import edu.mit.annotation.test2dto.OrderList;
+import edu.mit.annotation.testdto.PageDTO;
+import edu.mit.annotation.testdto.ProgressCheckDTO;
+import edu.mit.annotation.testdto.RegisterCriteria;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +35,6 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
-    private final CheckService service;
 
     @GetMapping("/order/pur-order") //구매발주서 페이지
     public void purOrder(Model model){
@@ -38,9 +43,10 @@ public class OrderController {
 
         String nowStr = dtm.format(nowDate);
         String monthAfter= dtm.format(nowDate.plusMonths(1L));
-
+        String monthBefore= dtm.format(nowDate.minusMonths(1L));
 
         model.addAttribute("defaultStartDate",nowStr);
+        model.addAttribute("defaultLowerDate",monthBefore);
         model.addAttribute("defaultEndDate",monthAfter);
 
     }
@@ -56,7 +62,6 @@ public class OrderController {
 
 
         List<PurchOrderItemsDTO> list = orderService.getPOItems("'"+prcpNumbers+"'");
-        model.addAttribute("dueDate",sdf.format(list.get(0).getProc_duedate()));
         model.addAttribute("today",nowStr);
         model.addAttribute("companyInfo",orderService.getCompInfo(business_number));
         model.addAttribute("itemList",list);
@@ -69,76 +74,206 @@ public class OrderController {
 
     }
 
-    @GetMapping("/order/progress-check") //진척검수 페이지
-    public String CheckList(Model model){
-        List<OrderList> orderList= service.selectOrderList();
-        List<CheckList> checkList = service.selectCheckList();
-        model.addAttribute("checkList", checkList);
-        model.addAttribute("List", orderList);
-        System.out.println("CheckList" + checkList);
-        System.out.println("OrderList" + orderList);
-        return "/order/progress-check";
+//    @GetMapping("/order/progress-check") //진척검수 페이지
+//    public String CheckList(Model model){
+//        List<OrderList> orderList= service.selectOrderList();
+//        List<CheckList> checkList = service.selectCheckList();
+//        model.addAttribute("checkList", checkList);
+//        model.addAttribute("List", orderList);
+//        System.out.println("CheckList" + checkList);
+//        System.out.println("OrderList" + orderList);
+//        return "/order/progress-check";
+//
+//
+//
+//    }
+//    @PostMapping("/order/progress-check")
+//    @ResponseBody
+//    public OrderInfo detailList(@RequestParam String id, @RequestParam String code, Model model) {
+//        System.out.println("컨트롤러에서 ajax를 통해 받은 purch_order_number 값"+id+"item_code 값 :" + code);
+//        OrderInfo orderinfo = service.selectpoinfo(id,code);
+//        System.out.println("orderinfo 값@@@@ :"+orderinfo);
+//        model.addAttribute("orderinfo",orderinfo);
+//
+//        return orderinfo;
+//    }
+//
+//    @PostMapping("/order/progress-check/itemPlan") // 진척검수일정 만들기
+//    @ResponseBody
+//    public void itemPlan(@RequestParam String p1, @RequestParam String p10,
+//                         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date p10_1,
+//                         @RequestParam String p11, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date p11_1) {
+//        service.progressPlan(p1,p10,p10_1,p11,p11_1);
+//    }
+//
+//    @GetMapping("/order/progress-check/dateCheck")
+//    public String dateCheck(@RequestParam("date1") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date1,
+//                            @RequestParam("date2") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date2,
+//                            Model model) {
+//        List<OrderList> list=service.dateSelect(date1,date2);
+//        model.addAttribute("List",list);
+//
+//        return "/order/progress-check";
+//    }
+//
+//    @GetMapping("/order/progress-check/searchPlan")
+//    public String searchPlan(@RequestParam("search1") String search,@RequestParam("option") String option,Model model){
+//        List<OrderList> list = service.searchPlan(search,option);
+//        model.addAttribute("List",list);
+//        return "/order/progress-check";
+//    }
+//
+//    @PostMapping("/order/progress-check/checkItem")
+//    @ResponseBody
+//    public CheckInfo checkInfo(@RequestParam String number, @RequestParam String code, Model model) {
+//        System.out.println("컨트롤러에서 ajax를 통해 받은 purch_order_number 값"+number+"item_code 값 :" + code);
+//        CheckInfo checkInfo = service.selectCheckinfo(number,code);
+//        System.out.println("orderinfo 값@@@@ :"+checkInfo);
+//        model.addAttribute("checkinfo",checkInfo);
+//
+//        return checkInfo;
+//    }
+//
+//
+//    @GetMapping("/order/pur-order-report") //리포트 페이지
+//    public void test4(){
+//
+//    }
 
+    @GetMapping("/order/pur-order-content/{business_number}/{purch_order_number}") //발주서 내용
+    public String  purOrderContent(@PathVariable String business_number, @PathVariable String purch_order_number, Model model){
+        System.out.println(business_number+ purch_order_number);
 
-
+        model.addAttribute("company_info", orderService.getCompInfo(business_number));
+        model.addAttribute("po_info",orderService.getPOinfo(purch_order_number));
+        model.addAttribute("po_items",orderService.getPublishedPOItems(purch_order_number));
+        model.addAttribute("bsno", business_number);
+        model.addAttribute("pono",purch_order_number);
+        return "/order/pur-order-content";
     }
-    @PostMapping("/order/progress-check")
+
+    @GetMapping("/order/progress-check")
+    public void progressCheck(Model model, RegisterCriteria cri) {
+        cri.setOffset((cri.getPageNum()-1)*cri.getAmount());
+        int total = orderService.getTotalPurOrder(cri);
+
+        model.addAttribute("table1List", orderService.getListforTable1());
+        model.addAttribute("pageMaker", new PageDTO(cri, total));
+    }
+
+    @PostMapping("/order/showCheckPlanDetails")
     @ResponseBody
-    public OrderInfo detailList(@RequestParam String id, @RequestParam String code, Model model) {
-        System.out.println("컨트롤러에서 ajax를 통해 받은 purch_order_number 값"+id+"item_code 값 :" + code);
-        OrderInfo orderinfo = service.selectpoinfo(id,code);
-        System.out.println("orderinfo 값@@@@ :"+orderinfo);
-        model.addAttribute("orderinfo",orderinfo);
+    public List<ProgressCheckDTO> showCheckPlansDetail(@RequestParam("proc_plan_number") String proc_plan_number, @RequestParam("purch_order_number") String purch_order_number)   {
 
-        return orderinfo;
+        System.out.println("전송된 조달계획번호 : " + proc_plan_number);
+        System.out.println("전송된 발주번호 : " + purch_order_number);
+
+        List<ProgressCheckDTO> ProgressCheckList = orderService.getListforProgressCheck(proc_plan_number, purch_order_number);
+        System.out.println("반환된 데이터 개수: " + ProgressCheckList.size());
+        return ProgressCheckList;
     }
 
-    @PostMapping("/order/progress-check/itemPlan") // 진척검수일정 만들기
+    @PostMapping("/order/CheckProgDB")
     @ResponseBody
-    public void itemPlan(@RequestParam String p1, @RequestParam String p10,
-                         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date p10_1,
-                         @RequestParam String p11, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date p11_1) {
-        service.progressPlan(p1,p10,p10_1,p11,p11_1);
+    public int checkProgDB(@RequestParam("proc_plan_number") String proc_plan_number)   {
+
+        System.out.println("전송된 조달계획번호 : " + proc_plan_number);
+
+        int result = orderService.CheckProgDB(proc_plan_number);
+
+        return  result;
     }
 
-    @GetMapping("/order/progress-check/dateCheck")
-    public String dateCheck(@RequestParam("date1") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date1,
-                            @RequestParam("date2") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date2,
-                            Model model) {
-        List<OrderList> list=service.dateSelect(date1,date2);
-        model.addAttribute("List",list);
-
-        return "/order/progress-check";
-    }
-
-    @GetMapping("/order/progress-check/searchPlan")
-    public String searchPlan(@RequestParam("search1") String search,@RequestParam("option") String option,Model model){
-        List<OrderList> list = service.searchPlan(search,option);
-        model.addAttribute("List",list);
-        return "/order/progress-check";
-    }
-
-    @PostMapping("/order/progress-check/checkItem")
+    @PostMapping("/order/inspectCheckPlans")
     @ResponseBody
-    public CheckInfo checkInfo(@RequestParam String number, @RequestParam String code, Model model) {
-        System.out.println("컨트롤러에서 ajax를 통해 받은 purch_order_number 값"+number+"item_code 값 :" + code);
-        CheckInfo checkInfo = service.selectCheckinfo(number,code);
-        System.out.println("orderinfo 값@@@@ :"+checkInfo);
-        model.addAttribute("checkinfo",checkInfo);
+    public int inspectCheckPlans(@RequestParam("purch_order_number_for_Inspect") String purch_order_number) {
+        System.out.println("전송된 발주번호 : " + purch_order_number);
+        return orderService.inspectCheckPlans(purch_order_number);
+    }
 
-        return checkInfo;
+    @PostMapping("/order/inputCheckPlans")
+    public String inputCheckPlans(@RequestParam("Make_purch_order_number") String purch_order_number,
+                                  @RequestParam("Make_proc_check_order[]") List<Integer> proc_check_order,
+                                  @RequestParam("Make_proc_check_date[]") List<String> proc_check_date,
+                                  @RequestParam("Make_proc_plan_number") String proc_plan_number,
+                                  Model model)  {
+        System.out.println("purch_order_number : " + purch_order_number);
+        System.out.println("proc_check_order : " + proc_check_order);
+        System.out.println("proc_check_date : " + proc_check_date);
+        System.out.println("proc_plan_number : " + proc_plan_number);
+
+        ProgressCheckDTO dto = new ProgressCheckDTO();
+
+
+        for(int i = 0; i < proc_check_order.size(); i++) {
+            dto.setPurch_order_number(purch_order_number);
+            dto.setProc_plan_number(proc_plan_number);
+            dto.setProc_check_order(proc_check_order.get(i));
+            dto.setProc_check_date(proc_check_date.get(i));
+            orderService.saveProgressCheck(dto);
+            System.out.println("결과 : "+purch_order_number) ;
+        }
+
+        return "redirect:/order/progress-check";
+    }
+
+    @PostMapping("/order/updateCheckPlan")
+    public String updateCheckPlan(@RequestParam("Complete_proc_check_order") Integer proc_check_order,
+                                  @RequestParam("Complete_proc_check_date") String proc_check_date,
+                                  @RequestParam("Complete_completed_quantity[]") List<Integer> completed_quantity,
+                                  @RequestParam("Complete_supplementation[]") List<String> supplementation,
+                                  @RequestParam("Complete_prog_check_result[]") List<String> prog_check_result,
+                                  @RequestParam("Make_proc_plan_number") String proc_plan_number,
+                                  @RequestParam("Complete_purch_order_number") String purch_order_number,
+                                  Model model)  {
+
+        System.out.println("proc_check_order : " + proc_check_order);
+        System.out.println("proc_check_date  : " + proc_check_date);
+        System.out.println("completed_quantity : " + completed_quantity);
+        System.out.println("supplementation : " + supplementation);
+        System.out.println("prog_check_result : " + prog_check_result);
+        System.out.println("proc_plan_number : " + proc_plan_number);
+        System.out.println("purch_order_number : " + purch_order_number);
+
+        ProgressCheckDTO dto = new ProgressCheckDTO();
+
+        for(int i = 0; i < completed_quantity.size(); i++) {
+            dto.setProc_check_order(proc_check_order);
+            dto.setProc_check_date(proc_check_date);
+            dto.setCompleted_quantity(completed_quantity.get(i));
+            dto.setSupplementation(supplementation.get(i));
+            dto.setProg_check_result(prog_check_result.get(i));
+            dto.setProc_plan_number(proc_plan_number);
+            dto.setPurch_order_number(purch_order_number);
+            orderService.updateProgressCheck(dto);
+            System.out.println("결과 : "+proc_check_order) ;
+        }
+
+        return "redirect:/order/progress-check";
     }
 
 
-    @GetMapping("/order/pur-order-report") //리포트 페이지
-    public void test4(){
+    @GetMapping("/order/pur-order-report")
+    public void purorderreport(Model model, RegisterCriteria cri)  {
+        cri.setOffset((cri.getPageNum()-1)*cri.getAmount());
+        int total = orderService.getTotalPurOrder(cri);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        String startDate = sdf.format(calendar.getTime());
+        calendar.add(Calendar.MONTH, 1);
+        String endDate = sdf.format(calendar.getTime());
 
+        model.addAttribute("pageMaker", new PageDTO(cri, total));
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+        model.addAttribute("orderList", orderService.getListPurOrder());
+        model.addAttribute("allPurOrder", orderService.getCountListPurOrder());
+        model.addAttribute("CountProcPlan", orderService.getCountProcPlan());
+        model.addAttribute("CountPublishedPurOrder", orderService.getCountPublishedPurOrder());
+        model.addAttribute("CountProgCheckingProcPlan", orderService.getCountProgCheckingProcPlan());
+        model.addAttribute("FinishedProcPlan", orderService.getCountFinishedProcPlan());
     }
 
-    @GetMapping("/order/pur-order-content") //발주서 내용
-    public void test3(){
-
-    }
 
 
 

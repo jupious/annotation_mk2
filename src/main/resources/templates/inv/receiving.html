@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{/layout/layout::setContent(~{::content})}">
+<th:block th:replace="~{./layout/layout::setContent(~{::content})}">
     <th:block th:fragment="content">
         <div class="pcoded-content">
             <div class="page-header">
@@ -147,10 +147,10 @@
 
             $('#poTbody').on("click","tr",function(){
                 console.log(result)
-                var idx = $(this).attr("id").charAt(0);
+                var idx = $(this).data("tr");
                 let itemData = result[idx];
                 if(itemData.purch_order_date !=null){
-                    getReceiveHistory(itemData.item_code,itemData.purch_order_date,itemData.proc_duedate,itemData,idx);
+                    getReceiveHistory(itemData.proc_plan_number,itemData.purch_order_date,itemData.proc_duedate,itemData,idx);
                 }else{
                     alert('해당 품목은 미발주 상태입니다.');
                 }
@@ -158,11 +158,11 @@
 
             $('#itemsTbody').on("click","tr td",function(){
                 let isInput = $(this).find("input[type='number']").length;
-                let item_code = $(this).parent().children('.code_td').text();
+                let proc_plan_number = $(this).parent().attr("content");
                 console.log("행클릭",isInput);
                 if(!isInput){
                     console.log("여긴없다");
-                    whoIsUpper = whoIsUpper.filter(e => e != item_code);
+                    whoIsUpper = whoIsUpper.filter(e => e != proc_plan_number);
                     $(this).parent().remove();
                 }
             })
@@ -184,8 +184,8 @@
                             success:function(c){
                                 if(c == 1){
                                     console.log("마감완료");
-                                    closePO(proc_plan_number);
-                                    loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":"IC","keyword":"","pageNum":0,"amount":amount});
+                                  
+                                    loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount});
                                 }else{
                                     alert("마감 중 오류가 발생하였습니다. 관리자에게 문의해주세요");
                                 }
@@ -203,18 +203,7 @@
                 
             })
 
-            function closePO(proc_plan_number){
-                $.ajax({
-                    type:"post",
-                    url:"/invapi/close-purchase-order/"+proc_plan_number,
-                    beforeSend:function(xhr){
-                        xhr.setRequestHeader(header,_csrfToken)
-                    },
-                    success:function(){
-                        console.log("발주서마감전송성공함");
-                    }
-                })
-            }
+           
 
             function saveReceived(){
                 var inputFlag = true;
@@ -223,11 +212,11 @@
                     if(received_quantity == ""){
                         received_quantity = 0;
                     }
-                    let item_code = $(this).children('.code_td').text();
-                    console.log(item_code,"Aaaaa",received_quantity);
+                    let proc_plan_number = $(this).attr('content');
+                    console.log(proc_plan_number,"Aaaaa",received_quantity);
                     $.ajax({
                         type:"post",
-                        url:"/invapi/save-received-item/"+item_code+"/"+received_quantity,
+                        url:"/invapi/save-received-item/"+proc_plan_number+"/"+received_quantity,
                         context:this,
                         beforeSend:function(xhr){
                             xhr.setRequestHeader(header,_csrfToken)
@@ -238,7 +227,7 @@
                                 inputFlag = false;
                             }else{
                                 console.log($(this));
-                                whoIsUpper = whoIsUpper.filter(e => e != item_code);
+                                whoIsUpper = whoIsUpper.filter(e => e != proc_plan_number);
                                 $(this).remove();
                             }
                         }
@@ -257,7 +246,7 @@
                         result = res.dataList;
                         var rsStr = "";
                         for(let i = 0; i < result.length; i++){
-                            rsStr += "<tr id ='"+i+"result' class='result'><td>"+result[i].item_code+"</td><td>"+result[i].item_name+"</td><td>"+result[i].material+"</td><td>"+dateFormatter(result[i].purch_order_date)+"</td><td>"+dateFormatter(result[i].proc_duedate)+"</td></tr>";
+                            rsStr += "<tr id ='"+i+"result' data-tr='"+i+"' class='result'><td>"+result[i].item_code+"</td><td>"+result[i].item_name+"</td><td>"+result[i].material+"</td><td>"+dateFormatter(result[i].purch_order_date)+"</td><td>"+dateFormatter(result[i].proc_duedate)+"</td></tr>";
                         }
                         $('#poTbody').html(rsStr);
                         $('th').addClass('text-center');
@@ -290,22 +279,22 @@
                 })
             }
 
-            function getReceiveHistory(item_code,startDate,endDate,itemData,idx){
+            function getReceiveHistory(proc_plan_number,startDate,endDate,itemData,idx){
                 $.ajax({
                     type:"get",
                     url:"/invapi/receive-history",
                     data:{
-                        item_code:item_code,
+                        proc_plan_number:proc_plan_number,
                         startDate:startDate,
                         endDate:endDate
                     },
                     success:function(res){
                         console.log(res);
                         if(itemData.purch_order_date != null){
-                            if(!(whoIsUpper.includes(itemData.item_code))){
-                                itemStr = "<tr class='rec-item' content='"+itemData.proc_plan_number+"'><td class='code_td'>"+itemData.item_code+"</td><td>"+itemData.item_name+"</td><td>"+res+"/"+itemData.purch_order_quantity+"</td><td onclick='event.cancleBubble=true;'><input type='number' id='"+idx+"receiveCount' ></td></tr>";
+                            if(!(whoIsUpper.includes(proc_plan_number))){
+                                itemStr = "<tr class='rec-item' content='"+proc_plan_number+"'><td class='code_td'>"+itemData.item_code+"</td><td>"+itemData.item_name+"</td><td>"+res+"/"+itemData.purch_order_quantity+"</td><td onclick='event.cancleBubble=true;'><input type='number' id='"+idx+"receiveCount' ></td></tr>";
                                 $('#itemsTbody').append(itemStr);
-                                whoIsUpper.push(itemData.item_code);
+                                whoIsUpper.push(proc_plan_number);
                             }else{
                                 alert('해당 품목은 이미 추가되어있습니다.');
                             }

@@ -40,13 +40,10 @@ public class InventoryServiceImplTests {
                 .startDate(sdf.parse("20240101"))
                 .endDate(sdf.parse("20240321"))
                 .build();
-        System.out.println(inventoryService.getClosedPO(cri));
+        System.out.println(inventoryService.getClosedPrc(cri));
     }
 
-    @Test
-    public void testStatementPreview(){
-        System.out.println(inventoryService.getStatement("po-1"));
-    }
+
 
     @Test
     public void testGetReleaseData() throws ParseException {
@@ -69,9 +66,10 @@ public class InventoryServiceImplTests {
                 .pageNum(0)
                 .amount(10)
                 .type("IC")
-                .keyword("%C1%")
-                .startDate(sdf.parse("20240122"))
-                .endDate(sdf.parse("20240122"))
+                .keyword("%%")
+                .order("IAD")
+                .startDate(sdf.parse("20240101"))
+                .endDate(sdf.parse("20240125"))
                 .build();
         System.out.println(inventoryService.getInvCalcData(cri));
     }

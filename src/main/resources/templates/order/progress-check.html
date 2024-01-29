@@ -1,669 +1,564 @@
-<!DOCTYPE html>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<html lang="UTF-8" xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{/layout/layout::setContent(~{::content})}">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{./layout/layout::setContent(~{::content})}">
     <th:block th:fragment="content">
-        <head>
-            <meta name="_csrf" th:content="${_csrf.token}">
-            <meta name="_csrf_header" th:content="${_csrf.headerName}">
-        </head>
         <div class="pcoded-content">
-            <div class="page-header">
-                <div class="page-block">
-                    <div class="row align-items-center">
-                        <div class="col-md-12">
-                            <div class="page-header-title">
-                                <h4>진척검수관리</h4>
-                            </div>
-
-                            <button type="submit" class="btn  btn-primary btn-lg" id="checkPlan">검수계획</button>
-
-                            <button type="submit" class="btn  btn-primary btn-lg" id="checkResult">검수처리</button><br>
-
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-header">발주 리스트</h5>
+                    <div class="card-body table-border-style">
+                        <div class="table-responsive">
+                            <table id="table1" class="table table-bordered table-sm text-center" width="100%">
+                                <tr>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="10%;">발주번호</td>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="15%;">발주일자</td>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="15%;">입고예정일</td>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="15%;">품목코드</td>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="35%;">품목명</td>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="10%;">발주수량</td>
+                                </tr>
+                                <tr th:each="list:${table1List}">
+                                    <td th:text="${list.purch_order_number}"></td>
+                                    <td th:text="${list.purch_order_date}"></td>
+                                    <td th:text="${list.receive_duedate}"></td>
+                                    <td th:text="${list.item_code}"></td>
+                                    <td th:text="${list.item_name}"></td>
+                                    <td th:text="${list.purch_order_quantity}"></td>
+                                    <td th:text="${list.business_number}" data-business_number="${list.business_number}" style="display: none;"></td>
+                                    <td th:text="${list.company_name}" data-company_name="${list.company_name}" style="display: none;"></td>
+                                    <td th:text="${list.proc_plan_number}" data-proc_plan_number="${list.proc_plan_number}" style="display: none;"></td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
+                    <nav th:if="${pageMaker.total}">
+                        <ul class="pagination">
+                            <th:if test="${pageMaker.prev}">
+                                <th:block th:if="${pageMaker.startPage > 1}">
+                                    <a class = "page-link" th:href="@{'/order/progress-check?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount}}">이전</a>
+                                </th:block>
+                            </th:if>
+                        
+                            <span th:each="num : ${#numbers.sequence(pageMaker.startPage, pageMaker.endPage)}">
+                                <th:block th:if="${num == pageMaker.cri.pageNum}">
+                                    <li class="page-item active">
+                                        <span class="page-link">
+                                            <b th:text="${num}"></b>
+                                        </span>
+                                    </li>    
+                                </th:block>
+                                <th:block th:unless="${num == pageMaker.cri.pageNum}">
+                                    <li class = "page-item">
+                                        <span class="page-link">
+                                            <a th:href="@{'/order/progress-check?pageNum=' + ${num} + '&amount=' + ${pageMaker.cri.amount}}" th:text="${num}"></a>
+                                        </span>
+                                    </li>
+                                </th:block>
+                            </span>
+                        
+                            <th:if test="${pageMaker.next}">
+                                <th:block th:if="${pageMaker.endPage*pageMaker.cri.amount < pageMaker.total}">
+                                    <a class="page-link" th:href="@{'/order/progress-check?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount}}">다음</a>
+                                </th:block>
+                            </th:if>
+                        </ul>
+                    </nav>
                 </div>
-
-                <!-- [ basic-table ] start -->
-                <div class="col-xl-12" >
-                    <div class="card" id="card1">
-
-
-
-                        <div class="card-header">
-                            <div class="row">
-                                <div class="col">
-                                    <h5>검수계획</h5>
-                                </div>
-                                <div class="col-md-auto">
-                                    <script>
-                                        $(document).ready(function() {
-                                            $("#save").click(function() {
-                                                alert("저장되었습니다.");
-                                            });
-                                        });
-                                    </script>
-
-<!--                                    <button id="save" type="button" class="btn  btn-primary btn-sm">저장</button>-->
-
-<!--                                    <button id="removebutton" type="button" class="btn  btn-danger btn-sm">취소</button>-->
-
-                                </div>
-
-                            </div>
-                        </div>
-
-                            <div class="card-body table-border-style">
-                                <div class="table-responsive">
-                                    <table  class="table table-bordered table-hover table-sm" >
-                                        <thead>
-                                        <tr>
-                                            <th colspan="4">공급자정보</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody >
-                                        <tr >
-                                            <th>발주번호</th>
-                                            <td id="p1"></td>
-
-                                            <th>발주일</th>
-                                            <td id="p2"></td>
-                                        </tr>
-                                        <tr>
-                                            <th>입고예정일</th>
-                                            <td id="p3"></td>
-                                            <th>업체명</th>
-                                            <td id="p4"></td>
-                                        </tr>
-                                        <tr>
-                                            <th>사업자번호</th>
-                                            <td id="p5"></td>
-                                            <th>담당자</th>
-                                            <td id="p6"></td>
-                                        </tr>
-
-                                        </tbody>
-                                    </table>
-
-
-                                    <table class="table table-bordered table-hover table-sm" id="myTable">
-                                        <thead>
-                                        <tr>
-                                            <th colspan="7">품목정보/검수일정</th>
-                                        </tr>
-                                        </thead>
-
-                                        <tbody>
-
-
-                                        <tr>
-                                            <th>품목코드</th>
-                                            <td id="p7"></td>
-                                        </tr>
-                                        <tr>
-                                            <th>품목명</th>
-                                            <td id="p8"></td>
-
-                                        </tr>
-                                        <tr>
-                                            <th>발주수량</th>
-                                            <td id="p9"></td>
-                                        </tr>
-                                        </tbody>
-                                        <thead>
-                                        <tr>
-                                            <th>차수</th>
-                                            <th>일정</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td><input id="p10" type="text" value="1"></td>
-                                            <td><input class="form-control-sm" id="p10_1" type="Date" value=""></td>
-                                        </tr>
-                                        <tr>
-                                            <td><input id="p11" type="text" value="2"></td>
-                                            <td><input class="form-control-sm" id="p11_1" type="Date" value=""></td>
-                                        </tr>
-
-
-
-
-                                        </tbody>
-
-                                    </table>
-                                        <button id="orderCheckPlan"  class="btn  btn-primary btn-sm" style="float: right;">저장</button>
-                        </div>
-                                <script>
-                                    $(document).ready(function() {
-                                        $("#orderCheckPlan").click(function() {
-                                            alert("저장되었습니다.");
-                                        });
-                                    });
-                                </script>
-                                <script>
-                                    $(document).ready(function () {
-                                        $('#orderCheckPlan').on('click',function(){
-                                        var p1 = $('#p1').text();
-                                        var p10 = $('#p10').val();
-                                        var p10_1 = $('#p10_1').val();
-                                        var p11 = $('#p11').val();
-                                        var p11_1 = $('#p11_1').val();
-                                        var csrfToken = $('meta[name="_csrf"]').attr('content');
-                                        var csrfHeader = $('meta[name="_csrf_header"]').attr('content');
-                                        var url = "/order/progress-check/itemPlan"
-
-
-                                        var data = {
-                                            p1: p1,
-                                            p10: p10,
-                                            p10_1: p10_1,
-                                            p11: p11,
-                                            p11_1: p11_1
-                                        };
-
-                                            $.ajax({
-                                                url: url,
-                                                type: 'POST',
-                                                data: data,
-                                                dataType: 'json',
-                                                beforeSend: function (xhr) {
-                                                    xhr.setRequestHeader(csrfHeader, csrfToken);
-                                                },
-                                                success: function (response) {
-                                                    console.log('response 데이터 검수일정' + response);
-                                                    console.log('요청된 URL :::: ' + url);
-                                                },
-                                                error: function (error) {
-                                                    console.log(error);
-                                                }
-                                            });
-                                        });
-                                    });
-
-                                </script>
-
-                    </div>
+                <div class="button-container" style="display: flex;">
+                    <button type="button" id="MakeCheckPlan" class="btn btn-success" style="width: 100px;">검수계획</button>
+                    <button type="button" id="CompleteCheckPlan" class="btn btn-info" style="width: 100px;">검수처리</button>
                 </div>
-                <div class="col-xl-12">
-                    <div class="card" id="card1_1">
-                        <div class="card-header">
-                            <div class="row">
-                                <div class="col">
-                                    <h5>검수계획리스트</h5>
-                                </div>
-                                <div class="col-md-auto">
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="card-body table-border-style">
-                            <div class="row">
-                                <div class="col">
-                                    <form action="/order/progress-check/dateCheck" method="GET">
-                                    <input class="form-control-sm" type="date" value="" id="date1" name="date1"> ~ <input class="form-control-sm" type="date" value="" name="date2" id="date2">
-                                    <button class="btn btn-primary btn-sm" type="submit">조회</button>
-                                    </form>
-                                </div>
-
-                                <!--                                <div class="col-md-auto">-->
-                                <!--                                    &lt;!&ndash; 체크박스와 뱃지 &ndash;&gt;-->
-                                <!--                                    <div class="d-flex align-items-center">-->
-                                <!--                                        <span class="badge badge-primary">검수결과값 필요만 보기</span>-->
-                                <!--                                        <div class="custom-control custom-checkbox ml-1">-->
-                                <!--                                            <input type="checkbox" class="custom-control-input" id="customCheckaa" checked>-->
-                                <!--                                            <label class="custom-control-label" for="customCheckaa"></label>-->
-                                <!--                                        </div>-->
-                                <!--                                    </div>-->
-
-                                <!--                                    <div class="d-flex align-items-center">-->
-                                <!--                                        <span class="badge badge-primary">검수일정 미등록만 보기</span>-->
-                                <!--                                        <div class="custom-control custom-checkbox ml-1">-->
-                                <!--                                            <input type="checkbox" class="custom-control-input" id="customCheckbb" checked>-->
-                                <!--                                            <label class="custom-control-label" for="customCheckbb"></label>-->
-                                <!--                                        </div>-->
-                                <!--                                    </div>-->
-                                <!--                                </div>-->
-
-                                <div class="col-md-auto">
-                                    <form action="/order/progress-check/searchPlan" method="get">
-                                    <!-- 셀렉트 박스, 입력 필드, 검색 버튼 -->
-                                            <select name="option" id="option" class="form-control-sm" onchange="selectBoxChange(this.value)">
-                                                <option value="pocode" selected>발주번호</option>
-                                                <option value="coname">업체명</option>
-                                                <option value="itname">품목명</option>
-                                            </select>
-                                        <input name="search1" type="text" class="form-control-sm">
-                                    <button class="btn btn-primary btn-sm" id="searchPlan" type="submit">검색</button>
-                                    </form>
-                                </div>
-                            </div>
-
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover table-sm" >
-                                    <thead>
-                                    <tr>
-                                        <th>발주번호</th>
-                                        <th>업체명</th>
-                                        <th>품목코드</th>
-                                        <th>품목명</th>
-                                        <th>입고예정일</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr th:each="lists : ${List}" th:attr="data-id=${lists.purch_order_number}, data-code=${lists.item_code}" th:onclick="redirectToURL(this)">
-                                        <td th:text="${lists.purch_order_number}"></td>
-                                        <td th:text="${lists.company_name}"></td>
-                                        <td th:text="${lists.item_code}"></td>
-                                        <td th:text="${lists.item_name}"></td>
-                                        <td th:text="${lists.receive_duedate}"></td>
-
-                                    </tr>
-
-                                    </tbody>
-                                </table>
-                                <script>
-                                    var responseData = {};
-                                    function redirectToURL(row) {
-                                        var id = row.getAttribute('data-id')
-                                        var code = row.getAttribute('data-code')
-
-                                        console.log('클릭한 행의 발주번호 '+ id);
-                                        console.log('클릭한 행의 품목코드 '+ code);
-
-                                        var url = '/order/progress-check';
-                                        var csrfToken = $('meta[name="_csrf"]').attr('content');
-                                        var csrfHeader = $('meta[name="_csrf_header"]').attr('content');
-
-                                        var postData ={
-                                            id:id,
-                                            code:code
-                                        };
-
-                                        $.ajax({
-                                            type:'POST',
-                                            url:url,
-                                            data:postData,
-                                            beforeSend: function(xhr){
-                                                xhr.setRequestHeader(csrfHeader,csrfToken);
-                                            },
-                                            dataType:'json',
-                                            success: function(response) {
-                                                console.log('Post 성공',response);
-                                                responseData = response;
-                                                console.log('리스폰스 데이터'+responseData.purch_order_number)
-                                                $('#p1').text(responseData.purch_order_number);
-                                                $('#p2').text(responseData.purch_order_date);
-                                                $('#p3').text(responseData.receive_duedate);
-                                                $('#p4').text(responseData.company_name);
-                                                $('#p5').text(responseData.business_number);
-                                                $('#p6').text(responseData.manager);
-                                                $('#p7').text(responseData.item_code);
-                                                $('#p8').text(responseData.item_name);
-                                                $('#p9').text(responseData.purch_order_quantity);
-                                            },
-                                            error: function(error) {
-                                                console.log('Post 실패',error);
-                                            }
-                                        });
-
-                                    }
-                                </script>
-
-
-<!--                                <nav aria-label="Page navigation example">-->
-<!--                                    <ul class="pagination justify-content-end">-->
-<!--                                        <li class="page-item"><a class="page-link" href="#!" aria-label="Previous"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>-->
-<!--                                        <li class="page-item"><a class="page-link" href="#!">1</a></li>-->
-<!--                                        <li class="page-item"><a class="page-link" href="#!">2</a></li>-->
-<!--                                        <li class="page-item"><a class="page-link" href="#!">3</a></li>-->
-<!--                                        <li class="page-item"><a class="page-link" href="#!">4</a></li>-->
-<!--                                        <li class="page-item"><a class="page-link" href="#!">5</a></li>-->
-<!--                                        <li class="page-item"><a class="page-link" href="#!" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>-->
-<!--                                    </ul>-->
-<!--                                </nav>-->
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-12" id="getdata">
-                    <div class="card" id="card2" hidden>
-
-                        <div class="card-header">
-                            <div class="row">
-                                <div class="col">
-                                    <h5>검수처리</h5>
-                                </div>
-                                <div class="col-md-auto">
-                                    <script>
-                                        $(document).ready(function() {
-                                            $("#chPlan").click(function() {
-                                                alert("저장되었습니다.");
-                                            });
-                                        });
-                                    </script>
-<!--                                    <button id="save1" type="button" class="btn  btn-primary btn-sm">저장</button>-->
-<!--                                    <button id="removebutton" type="button" class="btn  btn-danger btn-sm">취소</button>-->
-
-                                </div>
-
-                            </div>
-                        </div>
-
-
-                        <div class="card-body table-border-style">
-
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover table-sm" >
-                                    <thead>
-                                        <tr>
-                                            <th>발주번호</th>
-                                            <th>업체명</th>
-                                            <th>사업자번호</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td id="p21"></td>
-                                            <td id="p22"></td>
-                                            <td id="p23"></td>
-                                        </tr>
-                                    </tbody>
-                                    <thead>
-                                        <tr>
-                                            <th>품목코드</th>
-                                            <th>품목명</th>
-                                            <th>발주수량</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td id="p24"></td>
-                                            <td id="p25"></td>
-                                            <td id="p26"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table class="table table-bordered table-hover table-sm" id="secondTable">
-                                    <thead>
-                                    <tr>
-                                        <th colspan="7">
-                                            <div class="row">
-                                                <div class="col">
-                                                    검수처리
-                                                </div>
-                                            </div>
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-
-                                        <th>차수</th>
-                                        <th>일정</th>
-                                        <th>검수결과</th>
-                                        <th>제작수량</th>
-                                        <th>보완사항</th>
-                                    </tr>
-                                    <tr>
-
-                                        <td id="p30" value="1">1</td>
-                                        <td id="p31"><input type="Date" value=""></td>
-                                        <td id="p32"><input type="text" value=""></td>
-                                        <td id="p33"><input type="text" value=""></td>
-                                        <td id="p34"><input type="text" value=""></td>
-                                    </tr>
-                                    <tr>
-
-                                        <td id="p35" value="2">2</td>
-                                        <td id="p36"><input type="Date" value=""></td>
-                                        <td id="p37"><input type="text" value=""></td>
-                                        <td id="p38"><input type="text" value=""></td>
-                                        <td id="p39"><input type="text" value=""></td>
-                                    </tr>
-
-                                    </tbody>
-                                </table>
-                                <button id="chPlan" class="btn  btn-primary btn-sm" style="float: right;">저장</button>
-                            </div>
-                            <script>
-                                $(document).ready(function () {
-                                    $('#chPlan').on('click',function(){
-                                    var p21 = $('#p21').text();
-                                    var p30 = $('#p30').val();
-                                    var p32 = $('#p32').val();
-                                    var p33 = $('#p33').val();
-                                    var p34 = $('#p34').val();
-                                    var p35 = $('#p35').val();
-                                    var p37 = $('#p37').val();
-                                    var p38 = $('#p38').val();
-                                    var p39 = $('#p39').val();
-                                    var csrfToken = $('meta[name="_csrf"]').attr('content');
-                                    var csrfHeader = $('meta[name="_csrf_header"]').attr('content');
-                                    var url = "/order/progress-check/itemPlan"
-
-
-                                    var data = {
-                                        p21:p21,
-                                        p30:p30,
-                                        p32:p32,
-                                        p33:p33,
-                                        p34:p34,
-                                        p35:p35,
-                                        p37:p37,
-                                        p38:p38,
-                                        p39:p39
-                                    };
-
-                                        $.ajax({
-                                            url: url,
-                                            type: 'POST',
-                                            data: data,
-                                            dataType: 'json',
-                                            beforeSend: function (xhr) {
-                                                xhr.setRequestHeader(csrfHeader, csrfToken);
-                                            },
-                                            success: function (response) {
-                                                console.log('response 데이터 검수처리' + response);
-                                                console.log('요청된 URL :::: ' + url);
-                                            },
-                                            error: function (error) {
-                                                console.log(error);
-                                            }
-                                        });
-                                    });
-
-
-                            </script>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-12">
-                    <div class="card" id="card2_1" hidden>
-                        <div class="card-header">
-                            <div class="row">
-                                <div class="col">
-                                    <h5>검수처리리스트</h5>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="card-body table-border-style">
-                            <div class="row">
-                                <div class="col">
-                                    <!-- 날짜 입력과 조회 버튼 -->
-                                    <input class="form-control-sm" type="date" value="2024-01-20"> ~ <input class="form-control-sm" type="date" value="2024-02-20">
-                                    <button class="btn btn-primary btn-sm" type="submit">조회</button>
-                                </div>
-
-
-                                <div class="col-md-auto">
-                                    <!-- 셀렉트 박스, 입력 필드, 검색 버튼 -->
-                                    <select id="inputState1" class="form-control-sm">
-                                        <option selected>품목코드</option>
-                                        <option>품목명</option>
-                                        <option>입고예정일</option>
-                                    </select>
-
-                                    <input type="text" class="form-control-sm" id="inputZip1">
-                                    <button class="btn btn-primary btn-sm" type="submit">검색</button>
-                                </div>
-                            </div>
-
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover table-sm" id="table3">
-                                    <thead>
-                                    <tr>
-                                        <th>발주번호</th>
-                                        <th>품목코드</th>
-                                        <th>품목명</th>
-                                        <th>검수결과</th>
-                                        <th>진척도</th>
-                                        <th>입고예정일</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr th:each="checkList : ${checkList}" th:attr="data-number=${checkList.purch_order_number}, data-code=${checkList.item_code}" th:onclick="redirectToURL2(this)">
-                                        <td th:text="${checkList.purch_order_number != null ? checkList.purch_order_number : 'N/A'}"></td>
-                                        <td th:text="${checkList.item_code != null ? checkList.item_code : 'N/A'}"></td>
-                                        <td th:text="${checkList.item_name != null ? checkList.item_name : 'N/A'}"></td>
-                                        <td th:text="${checkList.prog_check_result != null ? checkList.prog_check_result : 'N/A'}"></td>
-                                        <td th:text="${checkList.completed_quantity != null ? checkList.completed_quantity : 'N/A'}"></td>
-                                        <td th:text="${checkList.receive_duedate != null ? checkList.receive_duedate : 'N/A'}"></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                <script>
-                                    var responseData = {};
-                                    function redirectToURL2(row) {
-                                        var number = row.getAttribute('data-number')
-                                        var code = row.getAttribute('data-code')
-
-                                        console.log('클릭한 행의 발주번호 '+ number);
-                                        console.log('클릭한 행의 품목코드 '+ code);
-
-                                        var url = '/order/progress-check/checkItem';
-                                        var csrfToken = $('meta[name="_csrf"]').attr('content');
-                                        var csrfHeader = $('meta[name="_csrf_header"]').attr('content');
-
-                                        var postData ={
-                                            number:number,
-                                            code:code
-                                        };
-
-                                        $.ajax({
-                                            type:'POST',
-                                            url:url,
-                                            data:postData,
-                                            beforeSend: function(xhr){
-                                                xhr.setRequestHeader(csrfHeader,csrfToken);
-                                            },
-                                            dataType:'json',
-                                            success: function(response) {
-                                                console.log('Post 성공',response);
-                                                responseData = response;
-                                                console.log('리스폰스 데이터'+responseData.purch_order_number)
-                                                $('#p21').text(responseData.purch_order_number);
-                                                $('#p22').text(responseData.company_name);
-                                                $('#p23').text(responseData.business_number);
-                                                $('#p24').text(responseData.item_code);
-                                                $('#p25').text(responseData.item_name);
-                                                $('#p26').text(responseData.purch_order_quantity);
-                                            },
-                                            error: function(error) {
-                                                console.log('Post 실패',error);
-                                            }
-                                        });
-                                    }
-<!--                                    function updateInspectionTable(manyProg) {-->
-<!--                                    var table = $('#secondTable tbody');-->
-<!--                                    table.empty();-->
-
-<!--                                    $.each(manyProg, function (index, progCheck) {-->
-<!--                                        var row = $('<tr>');-->
-<!--                                        row.append('<td>' + progCheck.prog_check_order + '</td>');-->
-<!--                                        row.append('<td><input type="Date" value="' + progCheck.prog_check_date + '"></td>');-->
-<!--                                        row.append('<td><input type="text" value="' + progCheck.prog_check_result + '"></td>');-->
-<!--                                        row.append('<td><input type="text" value="' + progCheck.completed_quantity + '"></td>');-->
-<!--                                        row.append('<td><input type="text" value="' + progCheck.supplementation + '"></td>');-->
-
-<!--                                        table.append(row);-->
-<!--                                    });-->
-<!--                                }-->
-
-
-                                </script>
-                                <nav aria-label="Page navigation example">
-                                    <ul class="pagination justify-content-end">
-                                        <li class="page-item"><a class="page-link" href="#!" aria-label="Previous"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
-                                        <li class="page-item"><a class="page-link" href="#!">1</a></li>
-                                        <li class="page-item"><a class="page-link" href="#!">2</a></li>
-                                        <li class="page-item"><a class="page-link" href="#!">3</a></li>
-                                        <li class="page-item"><a class="page-link" href="#!">4</a></li>
-                                        <li class="page-item"><a class="page-link" href="#!">5</a></li>
-                                        <li class="page-item"><a class="page-link" href="#!" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
-                                    </ul>
-                                </nav>
-                            </div>
-
-
-
-
-                        </div>
-                    </div>
-                </div>
-
-
-
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        var toggleButton = document.getElementById('checkPlan');
-                        var checkButton = document.getElementById('checkResult');
-                        var card1 = document.getElementById('card1');
-                        var toggleButton = document.getElementById('checkPlan');
-                        var card1_1 = document.getElementById('card1_1');
-                        var card2 = document.getElementById('card2');
-                        var checkButton = document.getElementById('checkResult');
-                        var card2_1 = document.getElementById('card2_1');
-
-                        toggleButton.addEventListener('click', function() {
-                            if (card1.hidden) {
-                                card1.hidden = false;
-                                card1_1.hidden = false;
-                                card2.hidden= true;
-                                card2_1.hidden =true;
-
-                            } else {
-                                card1.hidden = true;
-                                card1_1.hidden = true;
-
-                              }
-                        });
-
-
-
-                       checkButton.addEventListener('click', function() {
-                            if (card2.hidden) {
-                                card2.hidden = false;
-                                card2_1.hidden = false;
-                                card1.hidden = true;
-                                card1_1.hidden = true;
-                            } else {
-                                card2.hidden = true;
-                                card2_1.hidden = true;
-                            }
-                        });
-                    });
-                </script>
-
-
-
-            </div>
+            </div>  
         </div>
+        <div class="pcoded-content" id="CheckPlanSection" style="display:none;">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-header">검수계획</h5>
+                    <div class="card-body table-border-style">
+                        <button type="button" id="SaveCheckPlanBtn" onclick="SaveCheckPlan()" class="btn btn-primary" style="float:right;">저장</button>
+                        <div class="table-responsive">
+                            <table id="table2" class="table table-bordered table-sm text-center" width="100%">
+                                <tr>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">발주번호</th>
+                                    <td><input type="text" style="border:none; float:left;" id="Make_purch_order_number" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">발주일자</th>
+                                    <td><input type="text" style="border:none; float:left;" id="Make_purch_order_date" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">입고예정일자</th>
+                                    <td><input type="text" style="border:none; float:left;" id="Make_receive_duedate" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">업체명</th>
+                                    <td><input type="text" style="border:none; float:left;" id="Make_company_name" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">사업자번호</th>
+                                    <td><input type="text" style="border:none; float:left;" id="Make_business_number" readonly></td>
+                                </tr>
+                            </table>
+                            <table id="table3" class="table table-bordered table-sm text-center" width="100%">
+                                <tr>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">품목코드</th>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">품목명</th>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">발주수량</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" style="border:none; text-align: center;" id="Make_item_code" readonly></td>
+                                    <td><input type="text" style="border:none; text-align: center;" id="Make_item_name" readonly></td>
+                                    <td><input type="text" style="border:none; text-align: center;" id="Make_purch_order_quantity" readonly></td>
+                                </tr>
+                            </table>
+                            <table id="table4" class="table table-bordered table-sm text-center" width="100%">
+                                <tr>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="30%;">차수</th>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="30%;">검수일자</th>
+                                    <td bgcolor="#f6f6f6" width="10%;" colspan="2"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" style="border:none; width:3%;" id="proc_check_order" value="1" readonly>차</td>
+                                    <td><input type="date" style="border:none;" id="table4_proc_check_date" value="today"></td>
+                                    <td><button type="button" class="btn btn-info btn-sm" id="addRowBtn" onclick="addRow()">추가</button></td>
+                                    <td><button type="button" class="btn btn-danger btn-sm" id="deleteRowBtn" onclick="deleteRow(this)">삭제</button></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>  
         </div>
+        <div class="pcoded-content" id="CompleteCheckPlanSection" style="display:none;">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-header">검수처리</h5>
+                    <div class="card-body table-border-style">
+                        <button type="button" id="UpdateCheckPlanBtn" onclick="UpdateCheckPlan()" class="btn btn-primary" style="float:right;">저장</button>
+                        <div class="table-responsive">
+                            <table id="table5" class="table table-bordered table-sm text-center" width="100%">
+                                <tr>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">발주번호</td>
+                                    <td><input type="text" style="border:none; float:left;" id="Complete_purch_order_number" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">발주일자</td>
+                                    <td><input type="text" style="border:none; float:left;" id="Complete_purch_order_date" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">입고예정일자</td>
+                                    <td><input type="text" style="border:none; float:left;" id="Complete_receive_duedate" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">업체명</td>
+                                    <td><input type="text" style="border:none; float:left;" id="Complete_company_name" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">사업자번호</td>
+                                    <td><input type="text" style="border:none; float:left;" id="Complete_business_number" readonly></td>
+                                </tr>
+                            </table>
+                            <table id="table6" class="table table-bordered table-sm text-center" width="100%">
+                                    <tr>
+                                        <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">품목코드</td>
+                                        <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">품목명</td>
+                                        <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">발주수량</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="text" style="border:none; text-align: center;" id="Complete_item_code" readonly></td>
+                                        <td><input type="text" style="border:none; text-align: center;" id="Complete_item_name" readonly></td>
+                                        <td><input type="text" style="border:none; text-align: center;" id="Complete_purch_order_quantity" readonly></td>
+                                    </tr>
+                            </table>
+                            <table id="table7" class="table table-bordered table-sm text-center" width="100%">
+                                <thead>
+                                    <tr>
+                                        <td bgcolor="#f6f6f6" align="center" valign="middle" width="10%;">차수</td>
+                                        <td bgcolor="#f6f6f6" align="center" valign="middle" width="15%;">검수일자</td>
+                                        <td bgcolor="#f6f6f6" align="center" valign="middle" width="10%;">검수수량</td>
+                                        <td bgcolor="#f6f6f6" align="center" valign="middle" width="50%;">보완사항</td>
+                                        <td bgcolor="#f6f6f6" align="center" valign="middle" width="10%;">검수결과</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="checkList:${ProgressCheckList}">
+                                        <td th:text="${checkList.proc_check_order}"></td>
+                                        <td th:text="${checkList.proc_check_date}"></td>
+                                        <td th:text="${checkList.complete_quantity}"></td>
+                                        <td th:text="${checkList.supplementation}"></td>
+                                        <td th:text="${checkList.prog_check_result}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>  
+        </div>
+
+<script th:inline="javascript">
+        function clearTable2Contents() {
+            $('#table2 tbody tr:eq(0) td:eq(1) input').val('');
+            $('#table2 tbody tr:eq(1) td:eq(1) input').val('');
+            $('#table2 tbody tr:eq(2) td:eq(1) input').val('');
+            $('#table2 tbody tr:eq(3) td:eq(1) input').val('');
+            $('#table2 tbody tr:eq(4) td:eq(1) input').val('');
+        }
+
+        function clearTable3Contents() {
+            $('#table3 tbody tr:eq(1) td:eq(0) input').val('');
+            $('#table3 tbody tr:eq(1) td:eq(1) input').val('');
+            $('#table3 tbody tr:eq(1) td:eq(2) input').val('');
+        }
+
+        function clearTable5Contents() {
+            $('#table2 tbody tr:eq(0) td:eq(1) input').val('');
+            $('#table2 tbody tr:eq(1) td:eq(1) input').val('');
+            $('#table2 tbody tr:eq(2) td:eq(1) input').val('');
+            $('#table2 tbody tr:eq(3) td:eq(1) input').val('');
+            $('#table2 tbody tr:eq(4) td:eq(1) input').val('');
+        }
+
+        function clearTable6Contents() {
+            $('#table6 tbody tr:eq(1) td:eq(0) input').val('');
+            $('#table6 tbody tr:eq(1) td:eq(1) input').val('');
+            $('#table6 tbody tr:eq(1) td:eq(2) input').val('');
+        }
+
+        var checkOrder = 1;
+
+        function addRow() {
+            checkOrder++;
+            $('#table4 tbody tr:eq(0) td:eq(0) input').val(checkOrder);
+            
+            var newRow = "<tr>" +
+                "<td><input type='text' style='border:none; width:3%;' value='" + checkOrder + "' readonly>차</td>" +
+                "<td><input type='date' style='border:none;' class='proc_check_date' value='" + today + "'></td>" +
+                "<td><button type='button' class='btn btn-info btn-sm' onclick='addRow()'>추가</button></td>" +
+                "<td><button type='button' class='btn btn-danger btn-sm' onclick='deleteRow(this)'>삭제</button></td>" +
+                "</tr>";
+
+            $('#table4 tbody').append(newRow);
+        }
+
+        function deleteRow(button) {
+            console.log("deleteRow 호출");
+            var row = $(button).closest('tr');
+            var rowOrder = parseInt(row.find('td:eq(0) input').val());
+            var hasHigherOrder = false;
+
+            $('#table4 tbody tr').each(function() {
+                var currentOrder = parseInt($(this).find('td:eq(0) input').val());
+                if (currentOrder > rowOrder) {
+                    hasHigherOrder = true;
+                    return false;
+                }
+            });
+
+            if (hasHigherOrder) {
+                alert('중간에 삭제할 수 없습니다.');
+            }
+            else if(hasHigherOrder==false && rowOrder===1)  {
+                alert('최소한 한개의 진척검수일정이 필요합니다.');
+            }
+            else {
+                row.remove();
+            }
+        }
+
+       function SaveCheckPlan()    {
+            
+            
+                
+                var Make_proc_check_order_array = [];
+                var Make_proc_check_date_array = [];
+                var Make_purch_order_number = $('#table2 tbody tr:eq(0) td:eq(1) input').val();
+
+                $('#table4 tbody tr:gt(0)').each(function(index, element) {
+                    var Make_proc_check_order = $(element).find('td:eq(0) input').val();
+                    var Make_proc_check_date = $(element).find('td:eq(1) input').val();
+                    Make_proc_check_order_array.push(Make_proc_check_order);
+                    Make_proc_check_date_array.push(Make_proc_check_date);
+                });
+
+                var checkPlans = new FormData();
+                checkPlans.append('Make_proc_plan_number', Make_proc_plan_number);
+                checkPlans.append('Make_proc_check_order[]', Make_proc_check_order_array);
+                checkPlans.append('Make_proc_check_date[]', Make_proc_check_date_array);
+                checkPlans.append('Make_purch_order_number',Make_purch_order_number);
+
+                for (var pair of checkPlans.entries()) {
+                    console.log(pair[0] + ': ' + pair[1]);
+                }
+
+                // Ajax 요청 보내기
+                $.ajax({
+                    type: 'POST',
+                    url: '/order/inputCheckPlans',
+                    processData: false,
+                    contentType: false,
+                    data: checkPlans,
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader(header, _csrfToken);
+                    },
+                    success: function(response) {
+                        alert("진척검수 일정이 등록되었습니다");
+                        $('#table2 tbody tr:eq(0) td:eq(1) input').val('');
+                        $('#table2 tbody tr:eq(1) td:eq(1) input').val('');
+                        $('#table2 tbody tr:eq(2) td:eq(1) input').val('');
+                        $('#table2 tbody tr:eq(3) td:eq(1) input').val('');
+                        $('#table2 tbody tr:eq(4) td:eq(1) input').val('');
+
+                        // table3의 내용을 비우기
+                        $('#table3 tbody tr:eq(1) td:eq(0) input').val('');
+                        $('#table3 tbody tr:eq(1) td:eq(1) input').val('');
+                        $('#table3 tbody tr:eq(1) td:eq(2) input').val('');
+
+                        // table4의 내용을 비우기
+                        $('#table4 tbody').empty();
+
+                        // 새로운 진척검수 차수를 초기값으로 설정
+                        checkOrder = 1;
+                        $('#table4 tbody tr:eq(0) td:eq(0) input').val(checkOrder);
+                        $('#table4 tbody tr:eq(0) td:eq(1) input').val(today);
+                    },
+                    error: function(error) {
+                        alert("진척검수 일정이 등록에 실패했습니다");
+                        console.error('Error:', error);
+                    }
+                });
+            }
+    
+
+    function showCheckPlanDetails() {
+
+        console.log("showCheckPlanDetails 호출");
+        var po_number = $('#table5 tr:eq(0) td:eq(1) input').val();
+        console.log("Make_company_name : ",Make_company_name);
+        console.log("Make_business_number",Make_business_number);
+        console.log("Make_proc_plan_number :", Make_proc_plan_number);
+        
+        var matchedRow = $('#table1 tbody tr').filter(function() {
+            return $(this).find('td:eq(0)').text() === po_number;
+        });
+
+        var matchedProcPlanNumber;
+
+        if (matchedRow.length > 0) {
+            matchedProcPlanNumber = matchedRow.eq(0).find('td:eq(8)').text();
+            proc_plan_number = matchedProcPlanNumber;
+
+            console.log("proc_plan_number : ",proc_plan_number);
+            console.log("purch_order_number : ",po_number);
+            $.ajax({
+                type: 'POST',
+                url: '/order/showCheckPlanDetails',
+                data: {proc_plan_number:proc_plan_number, purch_order_number: po_number},
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(header, _csrfToken);
+                },
+                success: function (response) {
+                    console.log('Received data:', response);
+                    updateTable(response);
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                }
+            });
+
+            function updateTable(data) {
+                // 테이블을 비우고 받은 데이터로 채우는 로직
+                $('#table7 tbody').empty();
+
+                // 받은 데이터를 이용하여 테이블의 각 행을 추가
+                for (var i = 0; i < data.length; i++) {
+                    var row = "<tr>" +
+                        "<td>" + data[i].proc_check_order + "</td>" +
+                        "<td>" + data[i].proc_check_date + "</td>" +
+                        "<td><input type='number' style='width:100%; border:none;'></td>" +
+                        "<td><input type='text' style='width:100%; border:none;'></td>" +
+                        "<td>" +
+                        "<input type='radio' name='isPassCheck" + i + "' value='완료'>     O     " +
+                        "<input type='radio' name='isPassCheck" + i + "' value='미완료'>     X     " +
+                        "</td>" +
+                        "</tr>";
+                    $('#table7 tbody').append(row);
+                }
+            }
+
+        }
+    }
+
+    function UpdateCheckPlan()  {
+        var updatedData = [];
+        $('#table7 tbody tr').each(function(index, element) {
+            var Complete_proc_check_order = $(element).find('td:eq(0)').text();
+            var Complete_proc_check_date = $(element).find('td:eq(1)').text();
+            var Complete_completed_quantity_array = [];
+            var Complete_supplementation_array = [];
+            var Complete_prog_check_result_array = [];
+            var Complete_completed_quantity = $(element).find('td:eq(2) input').val();
+            var Complete_supplementation = $(element).find('td:eq(3) input').val();
+            var Complete_prog_check_result = $(element).find('td:eq(4) input:checked').val();
+            
+            console.log(Complete_completed_quantity);
+            console.log(Complete_supplementation);
+            console.log(Complete_prog_check_result);
+
+            Complete_completed_quantity_array.push(Complete_completed_quantity);
+            Complete_supplementation_array.push(Complete_supplementation);
+            Complete_prog_check_result_array.push(Complete_prog_check_result);
+
+            console.log(Complete_completed_quantity_array);
+            console.log(Complete_supplementation_array);
+            console.log(Complete_prog_check_result_array);
+
+            var updatePlans = new FormData();
+            updatePlans.append('Complete_proc_check_order', Complete_proc_check_order);
+            updatePlans.append('Complete_proc_check_date', Complete_proc_check_date);
+            updatePlans.append('Complete_completed_quantity[]', Complete_completed_quantity_array);
+            updatePlans.append('Complete_supplementation[]', Complete_supplementation_array);
+            updatePlans.append('Complete_prog_check_result[]', Complete_prog_check_result_array);
+            updatePlans.append('Complete_purch_order_number', Complete_purch_order_number);
+            updatePlans.append('Make_proc_plan_number', Make_proc_plan_number);
+            
+            for (var pair of updatePlans.entries()) {
+                    console.log(pair[0] + ': ' + pair[1]);
+                }
+
+            $.ajax({
+                type: 'POST',
+                url: '/order/updateCheckPlan',
+                processData: false,
+                contentType: false,
+                data: updatePlans,
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(header, _csrfToken);
+                },
+                success: function(response) {
+                    console.log("전송성공");
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+    }
+
+    function CheckProgDB()  {
+
+        console.log("클릭한 행의 조달계획번호 : ", Make_proc_plan_number);
+        $.ajax({
+            type:'POST',
+            url:'/order/CheckProgDB',
+            data: {proc_plan_number:Make_proc_plan_number},
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(header, _csrfToken);
+                },
+                success: function (response) {
+                    console.log('Received data:', response);
+                    if(response==0) {
+                        return;
+                    }
+                    else if(response>0) {
+                        alert("이미 진척검수가 등록된 조달계획입니다.");
+                    }
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                }
+        })
+
+    }
+</script>
+<script th:inline="javascript">
+
+    var header = $('meta[name="_csrf_header"]').attr("content");
+    var _csrfToken = $('#_csrf_token').val();
+    <!--
+        var today = new Date().toISOString().split('T')[0];
+    document.getElementById('table4_proc_check_date').value = today;
+        -->
+    var Make_business_number;
+    var Make_company_name;
+    var Make_proc_plan_number;
+    var Complete_purch_order_number;
+
+    $(document).ready(function() {
+        console.log('table1List:', /*[[${table1List}]]*/);
+
+        // 탭 이동
+        $('#MakeCheckPlan').on('click', function() {
+            clearTable2Contents();
+            clearTable3Contents();
+            $('#CheckPlanSection').show();
+            $('#CompleteCheckPlanSection').hide();
+            console.log("검수계획 탭 보임");
+            console.log("검수계획 데이터 지움");
+        }),
+
+        $('#CompleteCheckPlan').on('click', function() {
+            clearTable5Contents();
+            clearTable6Contents();
+            $('#CompleteCheckPlanSection').show();
+            $('#CheckPlanSection').hide();
+            console.log("검수처리 탭 보임");
+            console.log("검수처리 데이터 지움");
+        })
+
+        $('#table1 tbody tr').on('click', function() {
+
+            // 검수계획 탭 보일때
+            if ($('#CheckPlanSection').is(':visible')) {
+                var Make_purch_order_number = $(this).find('td:eq(0)').text();
+                var Make_purch_order_date = $(this).find('td:eq(1)').text();
+                var Make_receive_duedate = $(this).find('td:eq(2)').text();
+                var Make_item_code = $(this).find('td:eq(3)').text();
+                var Make_item_name = $(this).find('td:eq(4)').text();
+                var Make_purch_order_quantity = $(this).find('td:eq(5)').text();
+                Make_business_number = $(this).find('td:eq(6)').text();
+                Make_company_name = $(this).find('td:eq(7)').text();
+                Make_proc_plan_number = $(this).find('td:eq(8)').text();
+
+                $('#table2 tbody tr:eq(0) td:eq(1) input').val(Make_purch_order_number);
+                $('#table2 tbody tr:eq(1) td:eq(1) input').val(Make_purch_order_date);
+                $('#table2 tbody tr:eq(2) td:eq(1) input').val(Make_receive_duedate);
+                $('#table2 tbody tr:eq(3) td:eq(1) input').val(Make_business_number);
+                $('#table2 tbody tr:eq(4) td:eq(1) input').val(Make_company_name);
+                $('#table3 tbody tr:eq(1) td:eq(0) input').val(Make_item_code);
+                $('#table3 tbody tr:eq(1) td:eq(1) input').val(Make_item_name);
+                $('#table3 tbody tr:eq(1) td:eq(2) input').val(Make_purch_order_quantity);
+
+                CheckProgDB();
+            }
+
+            // 검수처리 탭 보일때
+            if ($('#CompleteCheckPlanSection').is(':visible')) {
+                Complete_purch_order_number = $(this).find('td:eq(0)').text();
+                var Complete_purch_order_date = $(this).find('td:eq(1)').text();
+                var Complete_receive_duedate = $(this).find('td:eq(2)').text();
+                var Complete_item_code = $(this).find('td:eq(3)').text();
+                var Complete_item_name = $(this).find('td:eq(4)').text();
+                var Complete_purch_order_quantity = $(this).find('td:eq(5)').text();
+                Make_business_number = $(this).find('td:eq(6)').text();
+                Make_company_name = $(this).find('td:eq(7)').text();
+                Make_proc_plan_number = $(this).find('td:eq(8)').text();
+
+                $('#table5 tbody tr:eq(0) td:eq(1) input').val(Complete_purch_order_number);
+                $('#table5 tbody tr:eq(1) td:eq(1) input').val(Complete_purch_order_date);
+                $('#table5 tbody tr:eq(2) td:eq(1) input').val(Complete_receive_duedate);
+                $('#table5 tbody tr:eq(3) td:eq(1) input').val(Make_business_number);
+                $('#table5 tbody tr:eq(4) td:eq(1) input').val(Make_company_name);
+                $('#table6 tbody tr:eq(1) td:eq(0) input').val(Complete_item_code);
+                $('#table6 tbody tr:eq(1) td:eq(1) input').val(Complete_item_name);
+                $('#table6 tbody tr:eq(1) td:eq(2) input').val(Complete_purch_order_quantity);
+
+                showCheckPlanDetails();
+
+            }
+        })
+    });
+</script>
     </th:block>
 </th:block>
 </html>

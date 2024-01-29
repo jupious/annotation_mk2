@@ -2,6 +2,7 @@ package edu.mit.annotation.mapper;
 
 import edu.mit.annotation.realdto.Criteria;
 import edu.mit.annotation.realdto.ItemSaveDTO;
+import edu.mit.annotation.realdto.ReceiveHistorySearchDTO;
 import edu.mit.annotation.realdto.SearchDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +37,8 @@ public class InventoryMapperTests {
     @Test
     public void testGetReceiveHistory() throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        SearchDTO dto = SearchDTO.builder()
-                .item_code("C1G1C1_1")
+        ReceiveHistorySearchDTO dto = ReceiveHistorySearchDTO.builder()
+                .proc_plan_number("prc-1")
                 .startDate(sdf.parse("20240111"))
                 .endDate(sdf.parse("20240131"))
                 .build();
@@ -45,47 +46,33 @@ public class InventoryMapperTests {
     }
 
     @Test
-    public void testSaveItem(){
-        ItemSaveDTO dto = ItemSaveDTO.builder()
-                .item_code("C1G1C1_2")
-                .received_quantity(32)
+    public void testGetClosedProcPlan() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Criteria cri = Criteria.builder()
+                .pageNum(0)
+                .amount(10)
+                .type("CN")
+                .keyword("%젬블로%")
+                .startDate(sdf.parse("20240124"))
+                .endDate(sdf.parse("20240224"))
                 .build();
-        inventoryMapper.saveReceiveItem(dto);
+        inventoryMapper.getClosedProcPlan(cri).forEach(System.out::println);
     }
 
-    @Test
-    public void testCloseProcPlan(){
-        inventoryMapper.closingProcPlan("prc-3");
-    }
-
-    @Test
-    public void testFindPONumber(){
-        inventoryMapper.findPurchaseOrder("prc-1");
-    }
-
-    @Test
-    public void testPOClosingStat(){
-        inventoryMapper.getProcPlanCloingStatus("po-1").forEach(System.out::println);
-    }
-
-    @Test
-    public void testGetINCN(){
-        inventoryMapper.getItemCompanyName("po-2");
-    }
 
     @Test
     public void testGetStatementInfo(){
-        inventoryMapper.getStatementInfo("po-1").forEach(System.out::println);
+        inventoryMapper.getStatementItems("'prc-5','prc-6'").forEach(System.out::println);
     }
 
     @Test
     public void testGetReleaseList() throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         Criteria cri = Criteria.builder()
-                .pageNum(5)
-                .amount(5)
+                .pageNum(0)
+                .amount(10)
                 .type("IC")
-                .keyword("%C1%")
+                .keyword("%G1%")
                 .startDate(sdf.parse("20240101"))
                 .endDate(sdf.parse("20240321"))
                 .build();
@@ -99,9 +86,10 @@ public class InventoryMapperTests {
                 .pageNum(0)
                 .amount(10)
                 .type("IC")
-                .keyword("%C1%")
-                .startDate(sdf.parse("20240122"))
-                .endDate(sdf.parse("20240122"))
+                .keyword("%%")
+                .order("IAD")
+                .startDate(sdf.parse("20240101"))
+                .endDate(sdf.parse("20240125"))
                 .build();
         inventoryMapper.getInvCalcData(cri);
     }
@@ -113,7 +101,8 @@ public class InventoryMapperTests {
                 .startDate(sdf.parse("20240101"))
                 .endDate(sdf.parse("20240131"))
                 .type("unit")
-                .keyword("unit_code")
                 .build()).forEach(System.out::println);
     }
+
+
 }
