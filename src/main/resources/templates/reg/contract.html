@@ -80,50 +80,54 @@
                             </select>
                             <input type="text" class="form-control-sm" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;" id="keyword">
                             <button class="btn btn-primary btn-sm" type="button" style="float:left;" id="search">검색</button>
-                            <button type="button" class="btn btn-danger btn-sm" style="float:right;" id="ShowOnlyRed">미완료건만보기</button>
-                            <button type="button" class="btn btn-primary btn-sm" style="float:right;" id="ShowAll">전체보기</button>
+                            <a href="/reg/contract?pageNum=1&amount=10&flag=0"><button type="button" class="btn btn-danger btn-sm" style="float:right;" id="ShowOnlyRed">미완료건만보기</button></a>
+                            <a href="/reg/contract?pageNum=1&amount=10&flag=1"><button type="button" class="btn btn-primary btn-sm" style="float:right;" id="ShowAll">전체보기</button></a>
 
                             <table id="table2" class="table table-bordered table-sm" width="100%;">
                                 <thead>
-                                <tr>
-                                    <td bgcolor="#f6f6f6" width="1%;"></td>
-                                    <td bgcolor="#f6f6f6" width="10%;" align='center' valign='middle'>계약번호</td>
-                                    <td bgcolor="#f6f6f6" width="10%;" align='center' valign='middle'>품목코드</td>
-                                    <td bgcolor="#f6f6f6" width="20%;"  align='center' valign='middle'>품목명</td>
-                                    <td bgcolor="#f6f6f6" width="15%;" align='center' valign='middle'>업체명</td>
-                                    <td bgcolor="#f6f6f6" width="12%;" align='center' valign='middle'>사업자번호</td>
-                                    <td bgcolor="#f6f6f6" width="5%;" align='center' valign='middle'>단가</td>
-                                    <td bgcolor="#f6f6f6" width="5%;" align='center' valign='middle'>L/T(일)</td>
-                                    <td bgcolor="#f6f6f6" width="5%;" align='center' valign='middle'>계약여부</td>
-                                    <td bgcolor="#f6f6f6" width="3%;" align='center' valign='middle'>삭제</td>
-                                    <td bgcolor="#f6f6f6" width="3%;" align='center' valign='middle'>계약서</td>
-                                </tr>
+                                    <tr>
+                                        <td bgcolor="#f6f6f6" width="1%;"></td>
+                                        <td bgcolor="#f6f6f6" width="10%;" align='center' valign='middle'>계약번호</td>
+                                        <td bgcolor="#f6f6f6" width="10%;" align='center' valign='middle'>품목코드</td>
+                                        <td bgcolor="#f6f6f6" width="20%;"  align='center' valign='middle'>품목명</td>
+                                        <td bgcolor="#f6f6f6" width="15%;" align='center' valign='middle'>업체명</td>
+                                        <td bgcolor="#f6f6f6" width="12%;" align='center' valign='middle'>사업자번호</td>
+                                        <td bgcolor="#f6f6f6" width="5%;" align='center' valign='middle'>단가</td>
+                                        <td bgcolor="#f6f6f6" width="5%;" align='center' valign='middle'>L/T(일)</td>
+                                        <td bgcolor="#f6f6f6" width="5%;" align='center' valign='middle'>계약여부</td>
+                                        <td bgcolor="#f6f6f6" width="3%;" align='center' valign='middle'>삭제</td>
+                                        <td bgcolor="#f6f6f6" width="3%;" align='center' valign='middle'>계약서</td>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                     <tr th:each="contractList : ${contractList}">
-                                    <td><input type="checkbox"></td>
-                                    <td th:text="${contractList.contract_number}"></td>
-                                    <td th:text="${contractList.item_code}"></td>
-                                    <td th:text="${contractList.item_name}"></td>
-                                    <td th:text="${contractList.company_name}"></td>
-                                    <td th:text="${contractList.business_number}"></td>
-                                    <td th:text="${contractList.item_price}"></td>
-                                    <td th:text="${contractList.lead_time}"></td>
-                                    <td>완료</td>
-                                    <td><button type="button" class="btn btn-danger btn-sm" id="removeContract" onclick="removeContract()">삭제</button></td>
-                                    <td><button type="button" class="btn btn-info btn-sm" id="showContract" onclick="showContract(this)">계약서보기</button></td>
+                                        <td><input type="checkbox"></td>
+                                        <td th:text="${contractList.contract_number}"></td>
+                                        <td th:text="${contractList.item_code}"></td>
+                                        <td th:text="${contractList.item_name}"></td>
+                                        <td th:text="${contractList.company_name}"></td>
+                                        <td th:text="${contractList.business_number}"></td>
+                                        <td th:text="${contractList.item_price}"></td>
+                                        <td th:text="${contractList.lead_time}"></td>
+                                        <td>완료</td>
+                                        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeContract()">삭제</button></td>
+                                        <td>
+                                            <td>
+                                                <a th:href="@{'/upload/contract/' + ${contractList.contract_save_name}}" class="show-contract" th:data-contract_save_name="${contractList.contract_save_name}">
+                                                    <button type="button" class="btn btn-info btn-sm">계약서보기</button>
+                                                </a>
+                                            </td>
+                                        </td>
                                 </tr>
                                 </tbody>
                             </table>
-
                             <nav th:if="${pageMaker.total}">
                                 <ul class="pagination">
                                     <th:if test="${pageMaker.prev}">
                                         <th:block th:if="${pageMaker.startPage > 1}">
-                                            <a class = "page-link" th:href="@{'/reg/contract?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount}}">이전</a>
+                                            <a class = "page-link" th:href="@{'/reg/contract?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount}+'&flag=' + ${pageMaker.cri.flag}}">이전</a>
                                         </th:block>
                                     </th:if>
-                                
                                     <span th:each="num : ${#numbers.sequence(pageMaker.startPage, pageMaker.endPage)}">
                                         <th:block th:if="${num == pageMaker.cri.pageNum}">
                                             <li class="page-item active">
@@ -135,45 +139,35 @@
                                         <th:block th:unless="${num == pageMaker.cri.pageNum}">
                                             <li class = "page-item">
                                                 <span class="page-link">
-                                                    <a th:href="@{'/reg/contract?pageNum=' + ${num} + '&amount=' + ${pageMaker.cri.amount}}" th:text="${num}"></a>
+                                                    <a th:href="@{'/reg/contract?pageNum=' + ${num} + '&amount=' + ${pageMaker.cri.amount}+'&flag=' + ${pageMaker.cri.flag}}" th:text="${num}"></a>
                                                 </span>
                                             </li>
                                         </th:block>
                                     </span>
-                                
                                     <th:if test="${pageMaker.next}">
                                         <th:block th:if="${pageMaker.endPage*pageMaker.cri.amount < pageMaker.total}">
-                                            <a class="page-link" th:href="@{'/reg/contract?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount}}">다음</a>
+                                            <a class="page-link" th:href="@{'/reg/contract?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount}+'&flag='+ ${pageMaker.cri.flag}}">다음</a>
                                         </th:block>
                                     </th:if>
                                 </ul>
                             </nav>
-
                         </div>
                     </div>
                 </div>
+                <!-- 모달창 -->
                 <div class="card-body">
-                    <div id="exampleModalLive" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLiveLabel" style="display: none;" aria-hidden="true">
+                    <div id="contractModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="contractModal" style="display: none; width: 100%; height: 100%; max-width: none; max-height: none;" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLiveLabel">Modal Title</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                    <h5 class="modal-title" id="contractModalLabel">이미지 미리보기</h5>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="emailForm" class="gform" method="POST" data-email="black5225@gmail.com" action="https://script.google.com/macros/s/AKfycbyrWKrDLWlCUEqI3HrZNPxi4EUXPxFddPmdGy2MeRzjvwczFIlwBSnr6h0O1eYGnrhs/exec">
-                                        <p class="mb-0">
-                                            이메일주소 입력
-                                            <input type="email" class="form-control" id="emailAddress" placeholder="이메일주소 입력"><br>
-                                            제목
-                                            <input type="text" class="form-control" id="emailTitle" placeholder="제목 입력"><br>
-                                            본문
-                                            <input type="text" class="form-control" id="emailText" placeholder="본문 입력" style="height:300px;"><br><br>
-                                            <button type="submit" class="btn  btn-primary">발송</button>
-                                        </p>
-                                    </form>
+                                    <button type="button" class="badge badge-primary">전송</button>
+                                    <img id="modalImage" style="width: 100%; height: 100%;" alt="Contract Preview">
                                 </div>
                                 <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
                                 </div>
                             </div>
                         </div>
@@ -193,6 +187,7 @@
 </script>
 <script>
     $(document).ready(function () {
+
         function search() {
                 var type = $("#type").val();
                 var keyword = $("#keyword").val();
@@ -211,34 +206,25 @@
                     }
                 });
             }
-        function searchTable(response) {
-            var tbody = $("#table2 tbody");
-            tbody.empty();  // 기존 데이터 삭제
-
-            for (var i = 0; i < response.length; i++) {
-                var item = response[i];
-                var row = "<tr>" +
-                        "<td><input type='checkbox'></td>" +
-                        "<td>" + (item.contract_number || '') + "</td>" +
-                        "<td>" + (item.item_code || '') + "</td>" +
-                        "<td>" + (item.item_name || '') + "</td>" +
-                        "<td>" + (item.company_name || '') + "</td>" +
-                        "<td>" + (item.business_number || '') + "</td>" +
-                        "<td>" + (item.item_price || '') + "</td>" +
-                        "<td>" + (item.lead_time || '') + "</td>" +
-                        "<td></td>" +
-                        "<td><button type='button' class='btn btn-danger btn-sm' id='removeContract' onclick='removeContract()'>삭제</button></td>" +
-                        "<td><button type='button' class='btn btn-info btn-sm' id='showContract' onclick='showContract(this)'>계약서보기</button></td>" +
-                        "</tr>";
-                tbody.append(row);
-            }
-        }
 
         $("#search").on("click", function () {
                 search();
             });
 
-        $('#table2 tbody tr').each(function () {
+        $(document).on("click", ".show-contract", function () {
+            showContract($(this).closest('tr').find('.show-contract'));
+        });
+        
+        function showContract(element) {
+            var contractSaveName = $(element).data("contract_save_name");
+            console.log(contractSaveName);
+            var imagePath = "/upload/contract/" + contractSaveName;
+
+            $("#modalImage").attr("src", imagePath);
+            $("#contractModal").modal("show");
+        }
+
+        $('#table2 tbody tr').each(function (index) {
             var contractNumber = $(this).find('td:eq(1)').text().trim();
             var statusValue = $(this).find('td:eq(8)').text().trim();
 
@@ -251,12 +237,11 @@
                 $(this).find('td:eq(8)').text('완료').css('background-color', '#aaffaa');
 
                 if (statusValue === '완료') {
-                    $(this).find('td:eq(9)').html('<button type="button" class="btn btn-danger btn-sm"onclick="removeContract()">삭제</button>');
-                    $(this).find('td:eq(10)').html('<button type="button" class="btn btn-info btn-sm" >계약서보기</button>');
-                } 
-                else {
-                    $(this).find('td:eq(10)').empty();
-                }
+                $(this).find('td:eq(9)').html('<button type="button" class="btn btn-danger btn-sm" onclick="removeContract()">삭제</button>');
+                $(this).find('td:eq(10)').html('<button type="button" class="btn btn-info btn-sm">계약서보기</button>');
+            } else {
+                $(this).find('td:eq(10)').empty();
+            }
             }
         });
 
@@ -283,12 +268,9 @@
             updateTable();
         });
 
-// 테이블1을 업데이트하는 함수
     function updateTable() {
         console.log("Updating table1...");
-        // 기존 데이터 삭제
 
-        // 새로운 데이터로 테이블1 채우기
         var newRow = '<tr>' +
             '<td id="item_code">' + selectedContracts.item_code + '</td>' +
             '<td id="item_name">' + selectedContracts.item_name + '</td>' +
@@ -298,14 +280,7 @@
             '</tr>';
         $('#table1 tbody').append(newRow);
     }
-        $('#ShowAll').on('click', function () {
-            $('#table2 tbody tr').show();
-        });
-        $('#ShowOnlyRed').on('click', function () {
-            $('#table2 tbody tr').hide();
-            $('#table2 tbody tr:has(td:eq(8):contains("미완료"))').show();
-        });
-    });
+    })
 </script>
 <script>
     function displayFileName() {
@@ -316,45 +291,19 @@
     }
 </script>
 <script>
-    $('#table2 tbody').on('click', 'tr button', function () {
-        var rowData = $(this).parent().parent();
-        var rowIndex = rowData.index();
-        var selectedContract = contractList[rowIndex];
-
-        if (selectedContract) {
-            var contract_save_name = selectedContract.contract_save_name;
-            console.log('contract_save_name : ', contract_save_name);
-            var popup = window.open('/reg/contractView/' + contract_save_name, 'pop', 'width=800,height=1000');
-
-            // if (!popup || popup.closed || typeof popup.closed == 'undefined') {
-            //     alert('팝업이 차단되었습니다. 팝업 차단을 해제해주세요.');
-            // } 
-            // else {
-            //     popup.document.write('<html><head><title>Contract View</title>');
-            //     popup.document.write('<link rel="stylesheet" href="/assets/css/style.css">');
-            //     popup.document.write('<style>');
-            //     popup.document.write('body { background-color: white; margin: 0; padding: 0; }');
-            //     popup.document.write('img { max-width: 100%; height: auto; display: block; margin: 0 auto; }');
-            //     popup.document.write('</style></head>');
-            //     popup.document.write('<body>');
-            //     popup.document.write('<button id="sendEmail">이메일 전송</button>');
-            //     popup.document.write('<button id="print">인쇄</button>');
-            //     popup.document.write('<img src="/upload/contract/' + contract_save_name + '" alt="계약 이미지">');
-            //     popup.document.write('</body></html>');
-                
-            //     popup.document.getElementById('sendEmail').addEventListener('click', function () {
-            //         console.log('이메일 전송 버튼 클릭');
-            //     });
-            //     popup.document.getElementById('print').addEventListener('click', function () {
-            //         console.log('인쇄 버튼 클릭')
-            //     });
-            // }
-        
-        } 
-        else {
-            console.log('해당 인덱스에 대한 데이터를 찾을 수 없습니다.');
-        }
+    $(document).on("click", ".show-contract", function (e) {
+        e.preventDefault();
+        showContract(this);
     });
+
+    function showContract(element) {
+        var contractSaveName = $(element).data("contract_save_name");
+        console.log(contractSaveName);
+        var imagePath = "/upload/contract/" + contractSaveName;
+
+        $("#modalImage").attr("src", imagePath);
+        $("#contractModal").modal("show");
+    }
 </script>
 <script>
     $('#business_number').on('keyup', function(){

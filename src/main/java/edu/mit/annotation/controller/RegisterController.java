@@ -3,6 +3,8 @@ package edu.mit.annotation.controller;
 import edu.mit.annotation.service.RegisterService;
 import edu.mit.annotation.testdto.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -196,10 +198,19 @@ public class RegisterController {
     @GetMapping("/contract")
     public void contract(RegisterCriteria cri, Model model)   {
         cri.setOffset((cri.getPageNum()-1)*cri.getAmount());
-        int total = service.getTotalContractCount(cri);
-        model.addAttribute("contractList", service.getListContractWithPaging(cri));
-        model.addAttribute("pageMaker", new PageDTO(cri, total));
+
+        if(cri.getFlag()==1)   {
+            model.addAttribute("contractList", service.getListContractWithPaging(cri));
+            model.addAttribute("pageMaker", new PageDTO(cri, service.getTotalNoContractCount()));
+        }
+        else {
+            model.addAttribute("contractList", service.checkContract(cri));
+            model.addAttribute("pageMaker", new PageDTO(cri, service.getTotalNoContractCount()));
+        }
+
     }
+
+
 
     @ResponseBody
     @GetMapping("/contractSearch")
@@ -280,12 +291,12 @@ public class RegisterController {
         return "redirect:/reg/contract";
     }
 
-    @GetMapping("/contractView/{contract_save_name}")
-    public String contractView(@PathVariable String contract_save_name, Model model) {
-        contract_save_name = contractuploadPath+File.separator+ contract_save_name;
-        model.addAttribute("img_path", contract_save_name);
-        return "/reg/contractView";
-    }
+//    @GetMapping("/contractView/{contract_save_name}")
+//    public String contractView(@PathVariable String contract_save_name, Model model) {
+//        contract_save_name = "/upload/contract/"+ contract_save_name;
+//        model.addAttribute("img_path", contract_save_name);
+//        return "/reg/contractView";
+//    }
 
     @GetMapping("/plan")
     public void plan(RegisterCriteria cri, Model model)   {

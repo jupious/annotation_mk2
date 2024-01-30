@@ -117,6 +117,7 @@
 
             $('#itemsTbody').on("click","tr td",function(){
                 console.log("테이블 클릭됨");
+                let reqQuantity = $(this).parent().children('.reqQuantity').text();
                     if($(this).parent().hasClass('inputOff')){
                         $(this).parent().addClass('inputOn');
                         $(this).parent().removeClass('inputOff');

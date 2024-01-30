@@ -190,20 +190,24 @@
         let business_number = [[${bsno}]];
         let param = [[${pono}]];
         let email = [[${company_info.manager_email}]];
-        $.ajax({
-            type:'get',
-            url:'/orderapi/save-pdf',
-            data:{"htmlPath":"/templates/order/pur-order-content","sendType":"poContent", "business_number":business_number, "param": param, "etc":"", "email":"jupious@naver.com"},
-            success:function(res){
-                console.log(res);
-            },
-            error:function(a,b,c){
-                console.log("에러");
-                console.log("a",a);
-                console.log("b",b);
-                console.log("c",c);
-            }
-        })
+        let company_name = [[${company_info.company_name}]];
+        var result = confirm("발주서를 전송하시겠습니까?\n 1부는 저장되며, 1부는 "+company_name+"의 담당자에게 전송됩니다.");
+        if(result){
+            $.ajax({
+                type:'get',
+                url:'/orderapi/save-pdf',
+                data:{"htmlPath":"/templates/order/pur-order-content","sendType":"poContent", "business_number":business_number, "param": param, "etc":"", "email":"jupious@naver.com"},
+                success:function(res){
+                    console.log(res);
+                },
+                error:function(a,b,c){
+                    console.log("에러");
+                    console.log("a",a);
+                    console.log("b",b);
+                    console.log("c",c);
+                }
+            })
+        }
     })
    
 </script>

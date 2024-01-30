@@ -2,13 +2,11 @@ package edu.mit.annotation.controller;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BaseFont;
+import edu.mit.annotation.dto.ProdCodeWithNameDTO;
 import edu.mit.annotation.entity.EmailMessage;
 import edu.mit.annotation.mailfactory.MailSenderFactory;
 import edu.mit.annotation.realdto.*;
-import edu.mit.annotation.service.InventoryService;
-import edu.mit.annotation.service.MailService;
-import edu.mit.annotation.service.MemberService;
-import edu.mit.annotation.service.OrderService;
+import edu.mit.annotation.service.*;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileItem;
@@ -45,6 +43,7 @@ public class OrderAPI {
     private final MemberService memberService;
     private final MailService mailService;
     private final InventoryService inventoryService;
+    private final ComService comService;
 
     @GetMapping("/po-proc-plan")
     public ListWithPaging<ProcPlanNoPO> poProcPlan(String  startDate, String  endDate, String type, String keyword, Integer pageNum, Integer amount) throws ParseException {
@@ -112,6 +111,11 @@ public class OrderAPI {
     @GetMapping("/search-with-mail")
     public List<CompanyInfoDTO> searchWithMail(String email){
         return orderService.getCompWithEmail("%"+email+"%");
+    }
+
+    @GetMapping("/search-prod-code")
+    public List<ProdCodeWithNameDTO> searhProdCode(String product_code){
+        return comService.autoPcPn("%"+product_code+"%");
     }
 
     @GetMapping("/save-pdf")

@@ -29,6 +29,8 @@
 			border:none;
 			width:100%;
 		}
+		.fc-day-sat { color:#0000FF; }
+		.fc-day-sun { color:#FF0000; }
 	</style>
 </head>
 <body class="">
@@ -49,7 +51,10 @@
 						<label>물류관리</label>
 					</li>
 					<li class="nav-item">
-						<a href="/main/main" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">메인포탈</span></a>
+						<a href="/main/portal" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">메인포탈</span></a>
+					</li>
+					<li class="nav-item">
+						<a href="/main/main" class="nav-link"><span class="pcoded-micon"><i class="feather icon-layout"></i></span><span class="pcoded-mtext">생산계획</span> </a>
 					</li>
 					<li class="nav-item pcoded-hasmenu">
 						<a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-layout"></i></span><span class="pcoded-mtext">조달관리</span></a>
@@ -146,6 +151,15 @@
 							<textarea class="form-control-sm" id="mailText" rows="5"></textarea>
 						</div>
 					</form>
+					<div id="layoutLoadingSpinner" >
+						<div class="d-flex justify-content-center">
+							<div id="layoutSpinner"  class="spinner-border text-primary" role="status">
+								<span class="sr-only">전송중입니다..</span>
+							</div><br/>
+							
+							<p id="layoutEmailStatus"></p>
+						</div>
+					</div>
 				</p>
 			</div>
 			<div class="modal-footer">
@@ -165,6 +179,9 @@
 <script src="/assets/js/plugins/bootstrap.min.js"></script>
 <script src="/assets/js/pcoded.min.js"></script>
 <script>
+	$(function(){
+		$('#layoutLoadingSpinner').hide();
+	})
 	$('#sendMail-modal').on('click',function(){
 		let to = $('#to').val();
 		let subject = $('#subject').val();
@@ -179,6 +196,9 @@
 		formData.append('file',file);
 		formData.append('message',message);
 		console.log('file',file);
+		$('#layoutMailForm').hide();
+		$('#layoutLoadingSpinner').show();
+		$('#layoutEmailStatus').text('이메일 전송중입니다..');
 		$.ajax({
 			type:'post',
 			url:'/orderapi/send',
@@ -189,6 +209,9 @@
             contentType:false,
 			data:formData,
 			success: function(){
+				$('#layoutMailForm').show();
+				$('#layoutMailForm')[0].reset();
+				$('#layoutLoadingSpinner').hide();
 				console.log("이메일 전송 완료");
 				$('#close-mail-modal').trigger('click');
 			},
@@ -197,6 +220,9 @@
 				console.log("a",a);
 				console.log("b",b);
 				console.log("c",c);
+				alert('메일 전송중 오류가 발생했습니다.');
+				$('#layoutMailForm').show();
+				$('#layoutLoadingSpinner').hide();
             }
 		})
 	})

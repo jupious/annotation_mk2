@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{./layout/layout::setContent(~{::content})}">
+    <th:block th:fragment="content">
+    <div class="pcoded-content">
+        <div class="row">
+            <!-- [ Typography ] start -->
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <style>
+                        .custom-btn {
+                            font-size: 20px;
+                            padding: 20px 30px;
+                        }
+                    </style>
+                    <div class="card-header text-center">
+                        <h4>조달관리</h4>
+                    </div>
+                    <div class="card-body text-center" >
+                        <br>
+                        <a href="/reg/item"><button type="button" class="btn  btn-primary custom-btn">품목정보등록</button></a><br><br><br><br>
+                        <a href="/reg/contract"><button type="button" class="btn  btn-primary custom-btn">계약 등록</button></a><br><br><br><br>
+                        <a href="/reg/plan"><button type="button" class="btn  btn-primary custom-btn">조달계획등록</button></a>
+                        <br><br><br><br>
+
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h4>발주관리</h4>
+                    </div>
+                    <div class="card-body text-center">
+                        <br>
+                        <a href="/order/pur-order"><button type="button" class="btn  btn-primary custom-btn">구매발주서발행</button></a><br><br><br><br>
+                        <a href="/order/progress-check"><button type="button" class="btn  btn-primary custom-btn">진척검수처리</button></a><br><br><br><br>
+                        <a href="/order/pur-order-report"><button type="button" class="btn  btn-primary custom-btn">발주진행현황</button></a>
+                        <br><br><br><br>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-4">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h4>자재관리</h4>
+                    </div>
+                    <div class="card-body text-center">
+                        <br>
+                        <a href="/inv/receiving"><button type="button" class="btn  btn-primary btn-lg">자재입고</button></a><br><br>
+                        <a href="/inv/statement"><button type="button" class="btn  btn-primary btn-lg">거래명세서 발행</button></a><br><br>
+                        <a href="/inv/releasing"><button type="button" class="btn  btn-primary btn-lg">자재출고</button></a><br><br>
+                        <a href="/inv/inv-calc"><button type="button" class="btn  btn-primary btn-lg">재고산출</button></a><br><br>
+                        <a href="/inv/inv-amount"><button type="button" class="btn  btn-primary btn-lg">재고(금액)관리</button></a><br><br>
+                        <br>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- [ Typography ] end -->
+    </div>
+    </th:block>
+</th:block>

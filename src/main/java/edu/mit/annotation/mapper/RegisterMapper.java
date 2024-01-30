@@ -42,12 +42,13 @@ public interface RegisterMapper {
     void updateContract(ContractDTO dto);
     void updateContractItem(ContractDTO dto);
     List<ContractListDTO> getListContract();
-    int getTotalContractCount(RegisterCriteria cri);
+    int getTotalNoContractCount();
     List<ContractListDTO> getListContractWithPaging(RegisterCriteria cri);
 
     List<ContractListDTO> searchListContractWithPaging(RegisterCriteria cri);
     int removeContract(String contract_number);
 
+   List<ContractListDTO> checkContract(RegisterCriteria cri);
 
     int checkDuplicateContractNumber1(String contract_number);
     int checkDuplicateContractNumber2(String contract_number);

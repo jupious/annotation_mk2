@@ -26,7 +26,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         responseDTO.setStatus(ResponseDataStatus.SUCCESS);
         System.out.println("여긴 왔나요");
         Map<String,String> items = new HashMap<>();
-        items.put("url","/main/main");
+        items.put("url","/main/portal");
         responseDTO.setItem(items);
 
         response.setCharacterEncoding("UTF-8");

@@ -147,7 +147,7 @@
             <div class="row">
                 <div class="col"></div>
                 <div class="button-container" id="btc" aria-hidden="true">
-                    <button class="buttons" id="save">저장</button>
+                    <button class="buttons" id="save">전송</button>
                     <button class="btn btn-primary justify-content-end buttons" id="print">인쇄</button>
                 </div>
             </div>
@@ -165,32 +165,35 @@
 </script>
 <script th:inline="javascript">
     $('#print').on("click",function(){
-        var result = confirm("명세서를 발행하시겠습니까?");
-        if(result){
-            window.print();
-          
-        }
+        window.print();
+       
     })
     $('#save').on('click',function(){
         let business_number = [[${bsno}]];
         let param = [[${ppno}]];
         let etc = $('#etc').val();
         let email = [[${data.companyInfo.manager_email}]];
+        let company_name = [[${data.companyInfo.company_name}]];
         console.log(email);
-        $.ajax({
-            type:"get",
-            url:"/orderapi/save-pdf",
-            data:{"htmlPath":"/templates/inv/statement-preview","sendType":"statement", "business_number":business_number, "param": param, "etc":etc, "email":"jupious@naver.com"},
-            success:function(){
-                console.log("성공");
-            },
-            error:function(a,b,c){
-                console.log("에러");
-                console.log("a",a);
-                console.log("b",b);
-                console.log("c",c);
-            }
-        })
+        var result = confirm("명세서를 전송하시겠습니까?\n 1부는 저장되며, 1부는 "+company_name+"의 담당자에게 전송됩니다.");
+        if(result){
+            $.ajax({
+                type:"get",
+                url:"/orderapi/save-pdf",
+                data:{"htmlPath":"/templates/inv/statement-preview","sendType":"statement", "business_number":business_number, "param": param, "etc":etc, "email":"jupious@naver.com"},
+                success:function(){
+                    console.log("성공");
+                    alert('전송이 완료되었습니다.');
+                    window.close();
+                },
+                error:function(a,b,c){
+                    console.log("에러");
+                    console.log("a",a);
+                    console.log("b",b);
+                    console.log("c",c);
+                }
+            })
+        }
     })
 </script>
 </body>

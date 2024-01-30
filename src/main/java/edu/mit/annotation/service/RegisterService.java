@@ -39,14 +39,18 @@ public interface RegisterService {
     // 계약 리스트 보기
     List<ContractListDTO> getListContract();
     List<ContractListDTO> getListContractWithPaging(RegisterCriteria cri);
+    List<ContractListDTO> checkContract(RegisterCriteria cri);
     List<ContractListDTO> searchListContractWithPaging(RegisterCriteria cri);
-    int getTotalContractCount(RegisterCriteria cri);
+    int getTotalNoContractCount();
 
     boolean removeContract(@Param("contract_number") String contract_number);
     void registerContract(ContractDTO dto);
     void registerContractItem(ContractItemDTO dto);
     String getUniqueContractNumber1(String contract_number);
     String getUniqueContractNumber2(String contract_number);
+
+
+
     List<ProductionPlanDTO> getListprodPlan();
     List<PlanTable1> getListforTable1();
     void registerPlan(ProcurementPlanDTO dto);

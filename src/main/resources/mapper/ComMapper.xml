@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.mit.annotation.mapper.ComMapper">
+
+    <insert id="com">
+        insert into `co-op_company`
+            (business_number,
+            company_name,
+            company_address,
+            manager,manager_tel,
+            manager_email,
+            company_account)
+        values
+            (#{business_number},
+            #{company_name},
+            #{company_address},
+            #{manager},
+            #{manager_tel},
+            #{manager_email},
+            #{company_account})
+    </insert>
+
+    <insert id="plan">
+        insert into production_plan
+            (product_code,
+            prod_start_date,
+            prod_end_date,
+            prod_quantity)
+        value
+            (#{product_code},
+            #{prod_start_date},
+            #{prod_end_date},
+            #{prod_quantity})
+    </insert>
+
+    <select id="calList" resultType="edu.mit.annotation.dto.ProductionPlan">
+        select * from production_plan
+    </select>
+
+    <update id="update" parameterType="edu.mit.annotation.dto.ProductionPlan">
+        update
+            production_plan
+        set
+            product_code=#{product_code},
+            prod_start_date=#{prod_start_date},
+            prod_end_date=#{prod_end_date},
+            prod_quantity=#{prod_quantity},
+            procure_term=#{procure_term}
+        where
+            prod_plan_code = #{prod_plan_code}
+    </update>
+
+    <delete id="delete">
+        delete from production_plan
+        where prod_plan_code = #{prod_plan_code};
+    </delete>
+
+    <select id="autoProductCode" resultType="edu.mit.annotation.dto.ProdCodeWithNameDTO">
+        select product_code, product_name
+        from product
+        where product_code like #{product_code}
+    </select>
+
+</mapper>

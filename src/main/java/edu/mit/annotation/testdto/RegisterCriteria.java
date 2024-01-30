@@ -14,11 +14,12 @@ public class RegisterCriteria {
 
     private String type;
     private String keyword;
-
+    private Integer flag;
 
     public RegisterCriteria() {
         this.pageNum = 1;
         this.amount = 10;
+        this.flag=1;
     }
 
 

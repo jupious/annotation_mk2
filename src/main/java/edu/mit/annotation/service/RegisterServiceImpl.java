@@ -172,13 +172,19 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
+    public List<ContractListDTO> checkContract(RegisterCriteria cri)    {
+        return mapper.checkContract(cri);
+    }
+
+    @Override
     public List<ContractListDTO> searchListContractWithPaging(RegisterCriteria cri)    {
         return mapper.searchListContractWithPaging(cri);
     }
 
+
     @Override
-    public int getTotalContractCount(RegisterCriteria cri)  {
-        return mapper.getTotalContractCount(cri);
+    public int getTotalNoContractCount()    {
+        return mapper.getTotalNoContractCount();
     }
 
     @Transactional

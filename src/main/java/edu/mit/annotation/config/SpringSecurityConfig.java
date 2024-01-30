@@ -45,15 +45,15 @@ public class SpringSecurityConfig {
                             .requestMatchers("/assets/**").permitAll()
                             .requestMatchers("/fonts/**").permitAll()
                             .requestMatchers("/auth/error").permitAll()
-                            .requestMatchers("/invapi/**").permitAll()
-                            .requestMatchers("/orderapi/**").permitAll()
+//                            .requestMatchers("/invapi/**").permitAll()
+//                            .requestMatchers("/orderapi/**").permitAll()
                             .anyRequest().authenticated();
 
                 }).formLogin(
                         login -> login
                         .loginPage("/main/login")
                         .loginProcessingUrl("/main/login")
-                        .defaultSuccessUrl("/main/main",true).permitAll()
+                        .defaultSuccessUrl("/main/portal",true).permitAll()
                         .failureUrl("/error").permitAll()
                         .failureHandler(customFailHandler)
                         .successHandler(customSuccessHandler)
