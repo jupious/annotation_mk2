@@ -20,6 +20,8 @@ public class RegisterCriteria {
         this.pageNum = 1;
         this.amount = 10;
         this.flag=1;
+        this.type="IC";
+        this.keyword="";
     }
 
 

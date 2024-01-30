@@ -30,8 +30,8 @@ public class RegisterController {
     @GetMapping("/item")
     public void item(RegisterCriteria cri, Model model) {
         cri.setOffset((cri.getPageNum() - 1) * cri.getAmount());
-        int total = service.getTotalItemCount(cri);
         model.addAttribute("itemList", service.getListItemWithPaging(cri));
+        int total = service.getTotalNoContractCount();
         model.addAttribute("pageMaker", new PageDTO(cri, total));
         model.addAttribute("unitCodeList", service.getListUnitCode());
         model.addAttribute("assyCodeList", service.getListAssyCode());

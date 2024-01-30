@@ -69,7 +69,7 @@
 
     <select id="getListItemWithPaging" resultType="edu.mit.annotation.testdto.ItemDTO">
         <![CDATA[
-    select item_code, item_name, width, length, height, material, blueprint_origin_name, blueprint_save_name
+    select SQL_CALC_FOUND_ROWS item_code, item_name, width, length, height, material, blueprint_origin_name, blueprint_save_name
     from item
     ]]><include refid="item_Criteria"></include>
         limit #{amount} offset #{offset}

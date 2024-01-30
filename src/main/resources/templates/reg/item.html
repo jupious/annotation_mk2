@@ -78,14 +78,15 @@
                     <h5 class="card-header">품목정보관리</h5>
                     <div class="card-body table-border-style">
                         <div class="table-responsive">
-                            <select id="type" name="type" title="검색분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" style="float:left; height:31px;">
-                                <option value="">검색어</option>
-                                <option value="IC" th:selected="${pageMaker.cri.type eq 'IC'}">품목코드</option>
-                                <option value="IN" th:selected="${pageMaker.cri.type eq 'IN'}">품목명</option>
-                                <option value="M" th:selected="${pageMaker.cri.type eq 'M'}">재질</option>
-                            </select>
-                            <input type="text" class="form-control-sm" id="keyword" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;">
-                            <button class="btn btn-primary btn-sm" type="button" style="float:left;" id="search">검색</button>
+                            <form>
+                                <select id="type" name="type" title="검색분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" style="float:left; height:31px;">
+                                    <option value="IC" th:selected="${pageMaker.cri.type eq 'IC'}">품목코드</option>
+                                    <option value="IN" th:selected="${pageMaker.cri.type eq 'IN'}">품목명</option>
+                                    <option value="M" th:selected="${pageMaker.cri.type eq 'M'}">재질</option>
+                                </select>
+                                <input type="text" class="form-control-sm" id="keyword" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;" th:value="${pageMaker.cri.keyword}">
+                                <button class="btn btn-primary btn-sm" type="button" style="float:left;" id="search">검색</button>
+                            </form>
                             <button type="button" onclick="showallList()" class="btn btn-primary btn-sm" style="float:right;">전체보기</button>
                             <button type="button" class="btn btn-danger btn-sm" style="float:right;" id="removeSelectedRows">삭제</button>
                             <table id="table2" class="table table-bordered table-sm text-center" width="100%;">
@@ -119,7 +120,7 @@
                             <ul class="pagination">
                                 <th:if test="${pageMaker.prev}">
                                     <th:block th:if="${pageMaker.startPage > 1}">
-                                        <a class = "page-link" th:href="@{'/reg/item?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount}}">이전</a>
+                                        <a class = "page-link" th:href="@{'/reg/item?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount} +'&type='+${pageMaker.cri.type}+'&keyword='+${pageMaker.cri.keyword}}">이전</a>
                                     </th:block>
                                 </th:if>
                             
@@ -134,7 +135,7 @@
                                     <th:block th:unless="${num == pageMaker.cri.pageNum}">
                                         <li class = "page-item">
                                             <span class="page-link">
-                                                <a th:href="@{'/reg/item?pageNum=' + ${num} + '&amount=' + ${pageMaker.cri.amount}}" th:text="${num}"></a>
+                                                <a th:href="@{'/reg/item?pageNum=' + ${num} + '&amount=' + ${pageMaker.cri.amount} +'&type='+${pageMaker.cri.type}+'&keyword='+${pageMaker.cri.keyword}}" th:text="${num}"></a>
                                             </span>
                                         </li>
                                     </th:block>
@@ -142,7 +143,7 @@
                             
                                 <th:if test="${pageMaker.next}">
                                     <th:block th:if="${pageMaker.endPage*pageMaker.cri.amount < pageMaker.total}">
-                                        <a class="page-link" th:href="@{'/reg/item?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount}}">다음</a>
+                                        <a class="page-link" th:href="@{'/reg/item?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount} +'&type='+${pageMaker.cri.type}+'&keyword='+${pageMaker.cri.keyword}}">다음</a>
                                     </th:block>
                                 </th:if>
                             </ul>
@@ -343,8 +344,13 @@
                 }
             });
         }
-        $("#search").on("click", function () {
-            search();
+        $("#search").on("click", function (e) {
+            e.preventDefault();
+            let type = $("#type").val();
+            let keyword = $("#keyword").val();
+            let pageNum = $("#table2_paginate .active a").text();
+            console.log(type,keyword,pageNum);
+            //window.location.replace('/reg/item?pageNum=1&amount=10&type='+type+'&keyword='+keyword);
         });
         function showallList() {
             var table = document.getElementById('table2');
