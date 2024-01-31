@@ -80,6 +80,11 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
+    public Integer isPrcpClosed(String purch_order_number) {
+        return orderMapper.isPrcpClosed(purch_order_number);
+    }
+
+    @Override
     public void deletePurchaseOrder(String purch_order_number) {
         orderMapper.deletePurchaseOrderItem(purch_order_number);
         orderMapper.deletePurchaseOrder(purch_order_number);

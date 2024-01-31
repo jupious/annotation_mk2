@@ -16,20 +16,22 @@
         var calendarEl = document.getElementById('calendar');
         var calList = [[${calList}]];
         var events = [];
-        console.log("view에서 받은 List :: "+calList);
+        console.log("view에서 받은 List :: ",calList);
         calList.forEach(function(object){
+                    let prod_end_date = new Date(object.prod_end_date);
+                    prod_end_date.setDate(prod_end_date.getDate() + 1);
                     events.push({
                         id: object.prod_plan_code,
                         title: object.product_code,
                         start: object.prod_start_date,
-                        end: object.prod_end_date,
+                        end: prod_end_date,
                         quantity: object.prod_quantity,
                         term: object.procure_term
                     });
-                    console.log("view에서 받은 List :: "+events[0].info);
                 });
+                console.log("view에서 받은 List :: ",events);
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            timeZone: 'UTC',
+            timeZone: 'local',
             initialView: 'dayGridMonth',
             events:events,
             eventClick:function(info){
@@ -38,8 +40,8 @@
 
                 $("#prod_plan_code").val(event.id);
                 $("#product_code1").val(event.title);
-                $("#prod_start_date1").val(event.start.toISOString().slice(0, 10));
-                $("#prod_end_date1").val(event.end.toISOString().slice(0, 10));
+                $("#prod_start_date1").val(dateFormatter(event.start));
+                $("#prod_end_date1").val(event.end.toISOString().slice(0,10));
                 $("#prod_quantity1").val(event.extendedProps.quantity);
                 $("#procure_term").val(event.extendedProps.term);
 
@@ -182,6 +184,7 @@
                                                 <input type="number" class="form-control" id="prod_quantity1" name="prod_quantity">
                                                 <label for="procure_term" class="col-form-label">조달간격</label>
                                                 <input type="number" class="form-control" id="procure_term" name="procure_term">
+                                                <input type="hidden" id="_csrf" name="_csrf" th:data-token-name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -262,6 +265,14 @@
                                 }
                             })
                         });
+                        function dateFormatter(date){
+                            let inputDate = new Date(date);
+                            let offset = inputDate.getTimezoneOffset() * 60000;
+                            let dateOffset = new Date(inputDate.getTime() - offset);
+                            let returnDate = (dateOffset.toISOString()).slice(0,10);
+                            console.log("returnDate",returnDate);
+                            return returnDate;
+                        }
                     </script>
                     <script>
                         $('#companySubmit').on('click',function (e) {

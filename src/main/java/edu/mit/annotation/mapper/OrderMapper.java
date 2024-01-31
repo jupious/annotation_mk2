@@ -44,6 +44,9 @@ public interface OrderMapper {
     //이메일 자동완성
     List<CompanyInfoDTO> getCompInfoWithEmail(String email);
 
+    //발주서의 조달계획 마감여부
+    Integer isPrcpClosed(String purch_ordre_number);
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 아래부터 나중에 이어붙일 부분
 
     // 진척검수 관련

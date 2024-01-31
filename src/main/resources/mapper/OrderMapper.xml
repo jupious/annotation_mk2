@@ -138,6 +138,15 @@
         from `co-op_company`
         where manager_email like #{email}
     </select>
+
+    <select id="isPrcpClosed" resultType="int">
+        select sum(proc_progress) is_closed
+        from(
+        select proc_plan_number, purch_order_number
+        from purchase_order_item where purch_order_number = #{purch_order_number})a left join procurement_plan b using(proc_plan_number)
+        group by purch_order_number
+    </select>
+
     <!--여기부턴내꺼아님-->
     <select id="getListforTable1" resultType="edu.mit.annotation.testdto.PurchaseOrderListDTO">
         SELECT

@@ -22,6 +22,9 @@ public interface OrderService {
     //발주서 목록
     ListWithPaging<PublishedPurchaseOrderDTO> getPublishedPOList(Criteria cri);
 
+    //발주서 삭제 전 마감여부 확인
+    Integer isPrcpClosed(String purch_order_number);
+
     //발주서 삭제
     void deletePurchaseOrder(String purch_order_number);
 

@@ -247,6 +247,12 @@
                         },
                         success:function(res){
                             console.log(res);
+                            if(res.length != 0){
+                                let alertStr = res.join(', ');
+                                alert('발주서 '+ alertStr + '를 삭제하는데 실패 했습니다.\n 사유:마감처리된 품목존재');
+                            }
+                            loadList({"startDate":$('#upperSDate').val(),"endDate":$('#upperEDate').val(),"type":$('#upperType').val(),"keyword":$('#upperSearchText').val(),"pageNum":0,"amount":amount},upperTbody,upperPaging, 0);
+                            loadLowerList({"startDate":$('#lowerSDate').val(),"endDate":$('#lowerEDate').val(),"type":$('#lowerType').val(),"keyword":$('#lowerSearchText').val(),"pageNum":0,"amount":amount});
                         },
                         error:function(a,b,c){
                         console.log("에러");

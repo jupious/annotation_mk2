@@ -30,10 +30,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/orderapi")
@@ -85,12 +82,17 @@ public class OrderAPI {
     }
 
     @DeleteMapping("/po-delete")
-    public String deletePO(@RequestParam(value = "purch_order_numbers[]") List<String> purch_order_numbers){
+    public List<String> deletePO(@RequestParam(value = "purch_order_numbers[]") List<String> purch_order_numbers){
         System.out.println(purch_order_numbers);
+        List<String> poList = new ArrayList<>();
         for (String purch_order_number: purch_order_numbers) {
-            orderService.deletePurchaseOrder(purch_order_number);
+            if(orderService.isPrcpClosed(purch_order_number) == 0){
+                orderService.deletePurchaseOrder(purch_order_number);
+            }else{
+                poList.add(purch_order_number);
+            }
         }
-        return "그들은 갔습니다..";
+        return poList;
     }
 
     @PostMapping("/send")

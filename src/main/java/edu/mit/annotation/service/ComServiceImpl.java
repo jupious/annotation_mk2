@@ -31,7 +31,6 @@ public class ComServiceImpl implements ComService{
 
     @Override
     public List<ProductionPlan> calList() {
-        System.out.println("Service에서 받은 값 :: ");
         return mapper.calList();
     }
 
