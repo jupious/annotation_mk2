@@ -37,13 +37,22 @@ public class InventoryServiceImpl implements InventoryService{
 
     @Override
     public Integer closingProcPlan(String proc_plan_number) {
+        return inventoryMapper.saveClosedProcPlan(proc_plan_number) + inventoryMapper.closingProcPlan(proc_plan_number);
+    }
 
-        return inventoryMapper.closingProcPlan(proc_plan_number);
+    @Override
+    public List<ReceiveItemDTO> autoReceiveSearch(Criteria cri) {
+        return inventoryMapper.autoReceiveSearch(cri);
     }
 
     @Override
     public ListWithPaging<ClosedProcPlanDTO> getClosedPrc(Criteria cri) {
         return pagingSupport(inventoryMapper.getClosedProcPlan(cri),cri);
+    }
+
+    @Override
+    public List<ClosedProcPlanDTO> autoPrcpSearch(Criteria cri) {
+        return inventoryMapper.autoSearchClosedProcPlan(cri);
     }
 
     @Override
@@ -64,6 +73,11 @@ public class InventoryServiceImpl implements InventoryService{
     }
 
     @Override
+    public List<ReleasingDTO> autoSearchRelease(Criteria cri) {
+        return inventoryMapper.autoSearchRelease(cri);
+    }
+
+    @Override
     public Integer saveReleaseItem(ReleaseItemDTO dto) {
         return inventoryMapper.saveReleaseItem(dto);
     }
@@ -73,6 +87,11 @@ public class InventoryServiceImpl implements InventoryService{
         List<InventoryCalcDTO> list = inventoryMapper.getInvCalcData(cri);
 
         return pagingSupport(list,cri);
+    }
+
+    @Override
+    public List<InventoryCalcDTO> autoSearchInvCalc(Criteria cri) {
+        return inventoryMapper.autoSearchInvCalc(cri);
     }
 
     @Override

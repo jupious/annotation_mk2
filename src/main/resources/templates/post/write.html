@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{./layout/layout::setContent(~{::content})}">
+
+
+    <th:block th:fragment="content">
+        <div class="pcoded-content">
+            <script>
+                /*<![CDATA[*/
+                    function savePost() {
+                        const form = document.getElementById('saveForm');
+                        const fields = [form.title, form.writer, form.content];
+                        const fieldNames = ['제목', '작성자', '내용'];
+
+                        document.getElementById('saveBtn').disabled = true;
+                        form.action = '/post/save';
+                        form.submit();
+                    }
+                /*]]>*/
+            </script>
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col">
+                                    <h3>문의작성</h3>
+                                </div>
+                                <div class="col-md-auto">
+                                    <button type="button" id="saveBtn" onclick="savePost();" class="btn btn-primary btn-sm">저장</button>
+                                    <a th:href="@{/post/list}" class="btn btn-info btn-sm">뒤로</a>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="card-body">
+                            <section>
+                                <form id="saveForm" method="post">
+                                    <input type="hidden" id="_csrf" name="_csrf" th:data-token-name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <table class="tb tb_row">
+                                        <colgroup>
+                                            <col style="width:15%;" /><col style="width:35%;" /><col style="width:15%;" /><col style="width:35%;" />
+                                        </colgroup>
+                                        <tbody>
+                                        <tr>
+                                            <th>제목 <span class="es"></span></th>
+                                            <td colspan="3"><input type="text" id="title" name="title" maxlength="80" placeholder="제목을 입력해 주세요." /></td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>작성자 <span class="es"></span></th>
+                                            <td colspan="3"><input type="text" id="writer" name="writer" maxlength="10" placeholder="이름을 입력해 주세요." /></td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>내용 <span class="es"></span></th>
+                                            <td colspan="3"><textarea id="content" name="content" cols="80" rows="13" placeholder="내용을 입력해 주세요."></textarea></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
+                            </section>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+
+</html>

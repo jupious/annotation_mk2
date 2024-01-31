@@ -27,6 +27,11 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
+    public List<ProcPlanNoPO> autoSearchNoPOPrcp(Criteria cri) {
+        return orderMapper.autoSearchPrcp(cri);
+    }
+
+    @Override
     public CompanyInfoDTO getCompInfo(String business_number) {
         return orderMapper.getCompanyInfo(business_number);
     }
@@ -77,6 +82,11 @@ public class OrderServiceImpl implements OrderService{
         }
 
         return pagingSupport(list,cri);
+    }
+
+    @Override
+    public List<PublishedPurchaseOrderDTO> autoSearchPoList(Criteria cri) {
+        return orderMapper.autoSearchPOList(cri);
     }
 
     @Override

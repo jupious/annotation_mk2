@@ -49,11 +49,23 @@ public class OrderAPI {
                 .pageNum(pageNum*amount)
                 .amount(amount)
                 .startDate(sdf.parse(startDate))
-                .endDate(sdf.parse(endDateValidate(endDate)))
+                .endDate(sdf.parse(endDate))
                 .type(type)
                 .keyword("%"+keyword+"%")
                 .build();
         return orderService.getProcPlanListWithNoPO(cri);
+    }
+
+    @GetMapping("/auto-search-proc-plan")
+    public List<ProcPlanNoPO> autoSearchProcPlan(String  startDate, String  endDate, String type, String keyword) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Criteria cri = Criteria.builder()
+                .startDate(sdf.parse(startDate))
+                .endDate(sdf.parse(endDate))
+                .type(type)
+                .keyword("%"+keyword+"%")
+                .build();
+        return orderService.autoSearchNoPOPrcp(cri);
     }
 
     @PostMapping("/po-new-order/{purch_order_detail}")
@@ -74,11 +86,23 @@ public class OrderAPI {
                 .pageNum(pageNum*amount)
                 .amount(amount)
                 .startDate(sdf.parse(startDate))
-                .endDate(sdf.parse(endDateValidate(endDate)))
+                .endDate(sdf.parse(endDate))
                 .type(type)
                 .keyword("%"+keyword+"%")
                 .build();
         return orderService.getPublishedPOList(cri);
+    }
+
+    @GetMapping("/auto-search-po")
+    public List<PublishedPurchaseOrderDTO> autoSearchPo(String  startDate, String  endDate, String type, String keyword) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Criteria cri = Criteria.builder()
+                .startDate(sdf.parse(startDate))
+                .endDate(sdf.parse(endDate))
+                .type(type)
+                .keyword("%"+keyword+"%")
+                .build();
+        return orderService.autoSearchPoList(cri);
     }
 
     @DeleteMapping("/po-delete")

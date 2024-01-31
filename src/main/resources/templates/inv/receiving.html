@@ -71,7 +71,10 @@
                                                     <option value="IN" >품목명</option>
                                                     <option value="MA">재질</option>
                                                 </select>
-                                                <input type="text" class="form-control-sm" id="searchText" aria-label="Text input with dropdown button">
+                                                <input type="text" class="form-control-sm" id="searchText" aria-label="Text input with dropdown button" list="receiveAutoList">
+                                                <datalist id="receiveAutoList">
+								
+                                                </datalist>
                                                 <button id="searchBtn" class="btn btn-primary btn-sm"><i class="feather icon-search"></i></button>
                                             </form>
                                         </div>
@@ -122,6 +125,31 @@
                 var criteria = {"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":"IC","keyword":"","pageNum":0,"amount":amount};
                 loadList(criteria);
               
+            })
+
+            $('#searchText').on('keyup', function(){
+                $.ajax({
+                    type:'get',
+                    url:'/invapi/auto-search-receive',
+                    data:{"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$(this).val()},
+                    success: function(res){
+                        $('#receiveAutoList').empty();
+                        res.slice(0,10).forEach(function(data) {
+                            let option = $('<option>');
+                            if($('#type').val() == 'IC'){
+                                option.val(data.item_code);
+                                option.text(data.item_name);
+                            }else if($('#type').val() == 'MA'){
+                                option.val(data.material);
+                                option.text(data.item_code);
+                            }else if($('#type').val() == 'IN'){
+                                option.val(data.item_name);
+                                option.text(data.item_code);
+                            }
+                            $('#receiveAutoList').append(option);
+                        });
+                    }
+                })
             })
 
             $('#dateSearchBtn').on("click",function(){

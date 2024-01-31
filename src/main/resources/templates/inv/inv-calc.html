@@ -38,7 +38,10 @@
                                                 <option value="IN">품목명</option>
                                                 <option value="MA">재질</option>
                                             </select>
-                                            <input id="termSearchText" type="text" class="form-control-sm" aria-label="Text input with dropdown button">
+                                            <input id="termSearchText" type="text" class="form-control-sm" aria-label="Text input with dropdown button" list="termAutoList">
+                                            <datalist id="termAutoList">
+
+                                            </datalist>
                                             <button class="btn btn-primary btn-sm" id="termSearchBtn"><i class="feather icon-search"></i></button>
                                         </form>
                                     </div>
@@ -96,7 +99,10 @@
                                                 <option value="IN">품목명</option>
                                                 <option value="MA">재질</option>
                                             </select>
-                                            <input id="searchText" type="text" class="form-control-sm" aria-label="Text input with dropdown button">
+                                            <input id="searchText" type="text" class="form-control-sm" aria-label="Text input with dropdown button" list="dayAutoList">
+                                            <datalist id="dayAutoList">
+
+                                            </datalist>
                                             <button id="searchBtn" class="btn btn-primary btn-sm"><i class="feather icon-search"></i></button>
                                         </form>
                                     </div>
@@ -147,6 +153,57 @@
                 loadList({"startDate":$('#sDate').val(),"endDate":datePlusOne($('#eDate').val()),"type":$('#termType').val(),"keyword":$('#termSearchText').val(),"pageNum":0,"amount":amount, "order":"IAD"},termTbody, termPaging, 1);
                 loadList({"startDate":$('#date').val(),"endDate":datePlusOne($('#date').val()),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount,"order":"IAD"},calcTbody, paging, 0)
             })
+
+            $('#termSearchText').on('keyup', function(){
+                autoSearchInvCalc($('#termType').val(), $(this).val(), 1);
+            })
+
+            $('#searchText').on('keyup', function(){
+                autoSearchInvCalc($('#type').val(), $(this).val(), 0);
+            })
+
+            function autoSearchInvCalc(type, keyword, flag){
+                $.ajax({
+                    type:'get',
+                    url:'/invapi/auto-search-inv-calc',
+                    data:{"type":type,"keyword":keyword},
+                    success: function(res){
+                        if(flag == 1){
+                            $('#termAutoList').empty();
+                            res.forEach(function(data) {
+                                let option = $('<option>');
+                                if(type == 'IC'){
+                                    option.val(data.item_code);
+                                    option.text(data.item_name);
+                                }else if(type == 'MA'){
+                                    option.val(data.material);
+                                    option.text(data.item_name);
+                                }else if(type == 'IN'){
+                                    option.val(data.item_name);
+                                    option.text(data.item_code);
+                                }
+                                $('#termAutoList').append(option);
+                            });
+                        }else{
+                            $('#dayAutoList').empty();
+                            res.forEach(function(data) {
+                                let option = $('<option>');
+                                if(type == 'IC'){
+                                    option.val(data.item_code);
+                                    option.text(data.item_name);
+                                }else if(type == 'MA'){
+                                    option.val(data.material);
+                                    option.text(data.item_name);
+                                }else if(type == 'IN'){
+                                    option.val(data.item_name);
+                                    option.text(data.item_code);
+                                }
+                                $('#dayAutoList').append(option);
+                            });
+                        }
+                    }
+                })
+            }
 
             $('#dateTermSearchBtn, #termSearchBtn').on('click', function(e){
                 e.preventDefault();

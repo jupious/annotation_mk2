@@ -25,7 +25,7 @@ public class InventoryAPI {
                 .pageNum(pageNum*amount)
                 .amount(amount)
                 .startDate(sdf.parse(startDate))
-                .endDate(sdf.parse(endDate))
+                .endDate(sdf.parse(endDateValidate(endDate)))
                 .type(type)
                 .keyword("%"+keyword+"%")
                 .build();
@@ -58,6 +58,18 @@ public class InventoryAPI {
         return inventoryService.closingProcPlan(proc_plan_number);
     }
 
+    @GetMapping("/auto-search-receive")
+    public List<ReceiveItemDTO> autoSearchReceive(String  startDate, String  endDate, String type, String keyword) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Criteria cri = Criteria.builder()
+                .startDate(sdf.parse(startDate))
+                .endDate(sdf.parse(endDateValidate(endDate)))
+                .type(type)
+                .keyword("%"+keyword+"%")
+                .build();
+        return inventoryService.autoReceiveSearch(cri);
+    }
+
 
 
     @GetMapping("/statement-get-data")
@@ -67,13 +79,25 @@ public class InventoryAPI {
                 .pageNum(pageNum*amount)
                 .amount(amount)
                 .startDate(sdf.parse(startDate))
-                .endDate(sdf.parse(endDate))
+                .endDate(sdf.parse(endDateValidate(endDate)))
                 .type(type)
                 .keyword("%"+keyword+"%")
                 .build();
 
         System.out.println(cri);
         return inventoryService.getClosedPrc(cri);
+    }
+
+    @GetMapping("/auto-search-statement")
+    public List<ClosedProcPlanDTO> autoSearchStatement(String  startDate, String  endDate, String type, String keyword) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Criteria cri = Criteria.builder()
+                .startDate(sdf.parse(startDate))
+                .endDate(sdf.parse(endDateValidate(endDate)))
+                .type(type)
+                .keyword("%"+keyword+"%")
+                .build();
+        return inventoryService.autoPrcpSearch(cri);
     }
 
     @GetMapping("/release-get-data")
@@ -83,11 +107,23 @@ public class InventoryAPI {
                 .pageNum(pageNum*amount)
                 .amount(amount)
                 .startDate(sdf.parse(startDate))
-                .endDate(sdf.parse(endDate))
+                .endDate(sdf.parse(endDateValidate(endDate)))
                 .type(type)
                 .keyword("%"+keyword+"%")
                 .build();
         return inventoryService.getReleaseData(cri);
+    }
+
+    @GetMapping("/auto-search-release")
+    public List<ReleasingDTO> autoSearchRelease(String  startDate, String  endDate, String type, String keyword) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Criteria cri = Criteria.builder()
+                .startDate(sdf.parse(startDate))
+                .endDate(sdf.parse(endDateValidate(endDate)))
+                .type(type)
+                .keyword("%"+keyword+"%")
+                .build();
+        return inventoryService.autoSearchRelease(cri);
     }
 
 
@@ -111,6 +147,15 @@ public class InventoryAPI {
                 .keyword("%"+keyword+"%")
                 .build();
         return inventoryService.getInvCalcData(cri);
+    }
+
+    @GetMapping("/auto-search-inv-calc")
+    public List<InventoryCalcDTO> autoSearchInvCalc(String type, String keyword) throws ParseException {
+        Criteria cri = Criteria.builder()
+                .type(type)
+                .keyword("%"+keyword+"%")
+                .build();
+        return inventoryService.autoSearchInvCalc(cri);
     }
 
     private String  endDateValidate(String endDate){

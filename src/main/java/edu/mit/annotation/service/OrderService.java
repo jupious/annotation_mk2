@@ -11,6 +11,9 @@ public interface OrderService {
     //미발주 조달계획리스트
     ListWithPaging<ProcPlanNoPO> getProcPlanListWithNoPO(Criteria cri);
 
+    //발주검색 자동완성
+    List<ProcPlanNoPO> autoSearchNoPOPrcp(Criteria cri);
+
     //발주 회사정보
     CompanyInfoDTO getCompInfo(String business_number);
     //발주품목정보
@@ -21,6 +24,9 @@ public interface OrderService {
 
     //발주서 목록
     ListWithPaging<PublishedPurchaseOrderDTO> getPublishedPOList(Criteria cri);
+
+    //발주서 검색 자동완성
+    List<PublishedPurchaseOrderDTO> autoSearchPoList(Criteria cri);
 
     //발주서 삭제 전 마감여부 확인
     Integer isPrcpClosed(String purch_order_number);

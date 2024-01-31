@@ -43,7 +43,10 @@
                                                 <option value="IN">품목명</option>
                                                 <option value="CN">업체명</option>
                                             </select>
-                                            <input type="text" class="form-control-sm" id="searchText" aria-label="Text input with dropdown button">
+                                            <input type="text" class="form-control-sm" id="searchText" aria-label="Text input with dropdown button" list="statementAutoList">
+                                            <datalist id="statementAutoList">
+								
+                                            </datalist>
                                             <button class="btn btn-primary btn-sm" id="searchBtn"><i class="feather icon-search"></i></button>
                                         </form>
                                     </div>
@@ -89,9 +92,41 @@
             var crntPage;
             var prcNumberArr = [];
             var bsNumArr = [];
+
+            //명세서발행 자동완성은 쿼리최적화를 해도 조인이 너무 많아서 전용테이블을 추가로 생성해서 처리함
+
+
             $(function(){
                 var criteria = {"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":"PC","keyword":"","pageNum":0,"amount":amount};
                 loadList(criteria);
+            })
+
+            $('#searchText').on('keyup', function(){
+                $.ajax({
+                    type:'get',
+                    url:'/invapi/auto-search-statement',
+                    data:{"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$(this).val()},
+                    success: function(res){
+                        $('#statementAutoList').empty();
+                        res.slice(0,10).forEach(function(data) {
+                            let option = $('<option>');
+                            if($('#type').val() == 'IC'){
+                                option.val(data.item_code);
+                                option.text(data.item_name);
+                            }else if($('#type').val() == 'CN'){
+                                option.val(data.company_name);
+                                option.text(data.item_code);
+                            }else if($('#type').val() == 'IN'){
+                                option.val(data.item_name);
+                                option.text(data.proc_plan_number);
+                            }else if($('#type').val() == 'PC'){
+                                option.val(data.proc_plan_number);
+                                option.text(data.item_name);
+                            }
+                            $('#statementAutoList').append(option);
+                        });
+                    }
+                })
             })
 
             $('#dateSearchBtn').on("click",function(){

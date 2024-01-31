@@ -23,6 +23,31 @@
             </when>
         </choose>
     </sql>
+    <sql id="searchTypeNoAnd">
+        <choose>
+            <when test='type=="IC"'>
+                item_code like #{keyword}
+            </when>
+            <when test='type=="MA"'>
+                material like #{keyword}
+            </when>
+            <when test='type=="IN"'>
+                item_name like #{keyword}
+            </when>
+            <when test='type=="PN"'>
+                product_name like #{keyword}
+            </when>
+            <when test='type=="CN"'>
+                company_name like #{keyword}
+            </when>
+            <when test='type=="OC"'>
+                purch_order_numbber like #{keyword}
+            </when>
+            <when test='type=="INS"'>
+                item_names like #{keyword}
+            </when>
+        </choose>
+    </sql>
 
 
     <select id="getProcPlanList" resultType="edu.mit.annotation.realdto.ProcPlanNoPO">
@@ -44,6 +69,30 @@
         <![CDATA[
         proc_duedate between date(#{startDate}) and date(#{endDate})
         order by company_name, proc_duedate ]]>
+    </select>
+
+    <select id="autoSearchPrcp" resultType="edu.mit.annotation.realdto.ProcPlanNoPO">
+        <![CDATA[
+        select item_name, company_name
+        from(
+        select item_name, business_number
+        from(
+        select item_name, contract_number
+        from(
+        select item_code, item_name
+        from(
+        select item_code
+        from procurement_plan
+        where proc_duedate between date(#{startDate}) and date(#{endDate}) and proc_plan_number not in (
+        select proc_plan_number
+        from purchase_order_item)) a
+        join item b using(item_code)) aa
+        join contract_item bb using(item_code)) aaa
+        join contract bbb using(contract_number)) c
+        join `co-op_company` d using(business_number)
+        where ]]>
+        <include refid="searchTypeNoAnd"/>
+        <![CDATA[limit 0, 10]]>
     </select>
 
     <select id="getSearchDataCount" resultType="long">
@@ -106,6 +155,34 @@
         purch_order_date between date(#{startDate}) and date(#{endDate})
         group by purch_order_number, company_name, purch_order_date, business_number
         order by purch_order_date limit #{pageNum},#{amount}]]>
+    </select>
+
+    <select id="autoSearchPOList" resultType="edu.mit.annotation.realdto.PublishedPurchaseOrderDTO">
+        <![CDATA[
+        select company_name, item_names
+        from(
+        select purch_order_number, group_concat(item_name) item_names, business_number
+        from(
+        select purch_order_number, item_name, contract_number
+        from(
+        select purch_order_number, item_name, item_code
+        from(
+        select purch_order_number, item_code
+        from(
+        select proc_plan_number, purch_order_number
+        from(
+        select purch_order_number
+        from purchase_order where purch_order_date between date('20231231') and date('20240131'))a
+        join purchase_order_item using (purch_order_number))aa
+        join procurement_plan bb using(proc_plan_number))aaa
+        join item bbb using(item_code)) c
+        join contract_item d using(item_code))cc
+        join contract dd using(contract_number)
+        group by purch_order_number,business_number) ccc
+        join `co-op_company` ddd using (business_number)
+        where ]]>
+        <include refid="searchTypeNoAnd"/>
+        <![CDATA[limit 0,10]]>
     </select>
     
     <delete id="deletePurchaseOrderItem">

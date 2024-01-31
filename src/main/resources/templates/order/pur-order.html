@@ -32,6 +32,9 @@
                             </div>
                         </div>
                         <div class="card-body table-border-style">
+                            <div>
+                                <span class="badge badge-primary">조달납기 선택</span>
+                            </div>
                             <div class="row">
                                 <div class="col">
                                     <input class="form-control-sm" type="date" id="upperSDate" th:value="${defaultStartDate}"> ~ <input class="form-control-sm" type="date" id="upperEDate" th:value="${defaultEndDate}">
@@ -45,7 +48,10 @@
                                                 <option value="IN">품목명</option>
                                             </select>
 
-                                            <input id="upperSearchText" type="text" class="form-control-sm">
+                                            <input id="upperSearchText" type="text" class="form-control-sm" list="upperAutoList">
+                                            <datalist id="upperAutoList">
+
+                                            </datalist>
                                             <button class="btn  btn-primary btn-sm" id="upperSearchBtn">검색</button>
                                         </form>
                                     </div>
@@ -89,6 +95,9 @@
 
                         </div>
                         <div class="card-body table-border-style">
+                            <div>
+                                <span class="badge badge-primary">발주일 선택</span>
+                            </div>
                             <div class="row">
                                 <div class="col">
                                     <input class="form-control-sm" type="date" id="lowerSDate"  th:value="${defaultLowerDate}"> ~ <input class="form-control-sm" type="date" id="lowerEDate"  th:value="${defaultStartDate}">
@@ -99,10 +108,13 @@
                                         <form>
                                             <select id="lowerType" class="form-control-sm">
                                                 <option value="CN" selected>업체명</option>
-                                                <option value="IN">품목명</option>
+                                                <option value="INS">품목명</option>
                                             </select>
 
-                                            <input type="text" class="form-control-sm" id="lowerSearchText">
+                                            <input type="text" class="form-control-sm" id="lowerSearchText" list="lowerAutoList">
+                                            <datalist id="lowerAutoList">
+
+                                            </datalist>
                                             <button class="btn  btn-primary btn-sm" id="lowerSearchBtn">검색</button>
                                         </form>
                                     </div>
@@ -152,6 +164,49 @@
             $(function(){
                 loadList({"startDate":$('#upperSDate').val(),"endDate":$('#upperEDate').val(),"type":$('#upperType').val(),"keyword":"","pageNum":0,"amount":amount},upperTbody,upperPaging, 0);
                 loadLowerList({"startDate":$('#lowerSDate').val(),"endDate":$('#lowerEDate').val(),"type":"CN","keyword":"","pageNum":0,"amount":amount});
+            })
+            $('#lowerSearchText').on('keyup', function(){
+                $.ajax({
+                    type:'get',
+                    url:'/orderapi/auto-search-po',
+                    data:{"startDate":$('#lowerSDate').val(),"endDate":$('#lowerEDate').val(),"type":$('#lowerType').val(),"keyword":$(this).val()},
+                    success: function(res){
+                        $('#lowerAutoList').empty();
+                        res.forEach(function(data) {
+                            let option = $('<option>');
+                            if($('#lowerType').val() == 'INS'){
+                                option.val(data.item_name);
+                                option.text(data.company_names);
+                            }else if($('#lowerType').val() == 'CN'){
+                                option.val(data.company_name);
+                                option.text(data.item_names);
+                            }
+                            $('#lowerAutoList').append(option);
+                        });
+                    }
+                })
+            })
+
+            $('#upperSearchText').on('keyup', function(){
+                $.ajax({
+                    type:'get',
+                    url:'/orderapi/auto-search-proc-plan',
+                    data:{"startDate":$('#upperSDate').val(),"endDate":$('#upperEDate').val(),"type":$('#upperType').val(),"keyword":$(this).val()},
+                    success: function(res){
+                        $('#upperAutoList').empty();
+                        res.forEach(function(data) {
+                            let option = $('<option>');
+                            if($('#upperType').val() == 'IN'){
+                                option.val(data.item_name);
+                                option.text(data.company_name);
+                            }else if($('#upperType').val() == 'CN'){
+                                option.val(data.company_name);
+                                option.text(data.item_name);
+                            }
+                            $('#upperAutoList').append(option);
+                        });
+                    }
+                })
             })
 
             $('#makePO').on("click", function(){

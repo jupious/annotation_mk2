@@ -14,6 +14,9 @@ public interface OrderMapper {
     //미발주 조달계획 리스트
     List<ProcPlanNoPO> getProcPlanList(Criteria cri);
 
+    //미발주 조달계획검색 자동완성
+    List<ProcPlanNoPO> autoSearchPrcp(Criteria cri);
+
     //발주서 회사정보
     CompanyInfoDTO getCompanyInfo(String business_number);
     //발주서 품목정보
@@ -29,6 +32,9 @@ public interface OrderMapper {
 
     //발행된 발주리스트 가져오기
     List<PublishedPurchaseOrderDTO> getPoList(Criteria cri);
+
+    //발행된 발주리스트 검색 자동완성
+    List<PublishedPurchaseOrderDTO> autoSearchPOList(Criteria cri);
 
     //발주품목 삭제
     void deletePurchaseOrderItem(String purch_order_number);

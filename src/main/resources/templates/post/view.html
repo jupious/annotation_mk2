@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{./layout/layout::setContent(~{::content})}">
+
+
+    <th:block th:fragment="content">
+        <div class="pcoded-content">
+            <div class="content">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-header">
+                                <div class="row">
+                                    <div class="col">
+                                        <h3>글내용</h3>
+                                    </div>
+                                <div class="col-md-auto">
+                                <p class="btn_set">
+                                    <a th:href="@{/post/modify( bno=${post.bno} )}" class="btn btn-warning btn-sm">수정</a>
+                                    <button type="button" onclick="deletePost()" class="btn btn-danger btn-sm">삭제</button>
+                                    <a th:href="@{/post/list}" class="btn btn-info btn-sm">뒤로</a>
+                                </p>
+                                </div>
+                            </div>
+                        <div class="card-body table-border-style">
+                            <div class="row">
+                                <div class="table-responsive" id="qalist">
+                                    <table class="table table-bordered table-hover table-sm">
+                                        <tr>
+                                            <th scope="row">등록일</th>
+                                            <td colspan="6" th:text="${#dates.format(post.created_date,'yyyy년MM월dd일 HH:mm')}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">제목</th>
+                                            <td>[[ ${post.title} ]]</td>
+                                            <th scope="row">조회</th>
+                                            <td colspan="3">[[ ${post.view_cnt} ]]</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">이름</th>
+                                            <td colspan="3">[[ ${post.writer} ]]</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <p>내용</p>
+                                <textarea rows="18" style="resize:none; width:100%;" readonly th:text=" ${post.content}" ></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Comments Form -->
+            <div class="card my-4">
+                <h5 class="card-header">댓글작성:</h5>
+                <div class="card-body">
+                    <form name="comment-form" action="/reply/write" method="post" autocomplete="off">
+                        <div class="form-group">
+                            <input type="hidden" name="rno" th:value="*{rno}" />
+                            <textarea name="content" class="form-control" rows="3"></textarea>
+                        </div>
+                        <button type="button" class="btns">등록</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> <!--/* .content */-->
+    <th:block layout:fragment="script">
+        <script th:inline="javascript">
+            const token_name = [[${_csrf.parameterName}]];
+            const _csrf_value = [[${_csrf.token}]];
+            const bno = [[ ${post.bno} ]];
+
+                // 게시글 삭제
+                function deletePost() {
+
+                    if ( !confirm(bno + '번 게시글을 삭제할까요?') ) {
+                        return false;
+                    }
+
+                    const formHtml2 = `
+                        <form id="deleteForm" action="/post/delete" method="post">
+                            <input type="hidden" id="bno" name="bno" value="${bno}" />
+                            <input type="hidden" id="_csrf" name="_csrf" data-token-name="${token_name}" value="${_csrf_value}">
+                        </form>
+                    `;
+                    const doc = new DOMParser().parseFromString(formHtml, 'text/html');
+                    const form = doc.body.firstChild;
+                    document.body.append(form);
+                    document.getElementById('deleteForm').submit();
+                }
+
+        </script>
+    </th:block>
+</th:block>
+</html>

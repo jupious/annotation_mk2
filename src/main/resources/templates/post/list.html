@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{./layout/layout::setContent(~{::content})}">
+
+
+    <th:block th:fragment="content">
+    <div class="content">
+        <div class="pcoded-content">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col">
+                                <h3>Q&A</h3>
+                            </div>
+                            <div class="col-md-auto">
+                                <a th:href="@{/post/write}" class="btn btn-primary btn-sm">글쓰기</a>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card-body table-border-style">
+                        <div class="table-responsive" id="orderlist">
+                            <table class="table table-bordered table-hover table-sm">
+                                <thead>
+                                <tr>
+                                    <th maxlength="10">번호</th>
+                                    <th maxlength="60">제목</th>
+                                    <th maxlength="50">작성자</th>
+                                    <th maxlength="30">등록일</th>
+                                    <th maxlength="10">조회수</th>
+                                </tr>
+                                </thead>
+                                <tbody id="lowerTbody">
+                                <tr th:if="${not #lists.isEmpty( posts )}" th:each="row, status : ${posts}">
+                                    <td th:text="${row.bno}"></td>
+                                    <td class="tl"><a th:href="@{/post/view( bno=${row.bno} )}" th:text="${row.title}"></a></td>
+                                    <td th:text="${row.writer}"></td>
+                                    <td th:text="${#dates.format(row.created_date,'yyyy년MM월dd일 HH:mm')}"></td>
+                                    <td th:text="${row.view_cnt}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </th:block>
+
+</th:block>
+
+</html>

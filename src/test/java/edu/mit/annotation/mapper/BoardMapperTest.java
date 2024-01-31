@@ -5,13 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class TestMapperTests {
-
+public class BoardMapperTest {
     @Autowired
-    private TestMapper testMapper;
+    private BoardMapper boardMapper;
 
     @Test
-    public void testFindAll(){
-        System.out.println(testMapper.findAll());
+    public void testFindById(){
+        System.out.println(boardMapper.findById(15));
     }
+
 }

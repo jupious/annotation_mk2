@@ -38,7 +38,10 @@
                                                 <option value="IN" >품목명</option>
                                                 <option value="PN">제품명</option>
                                             </select>
-                                            <input id="searchText" type="text" class="form-control-sm" aria-label="Text input with dropdown button">
+                                            <input id="searchText" type="text" class="form-control-sm" aria-label="Text input with dropdown button" list="releaseAutoList">
+                                            <datalist id="releaseAutoList">
+
+                                            </datalist>
                                             <button id="searchBtn" class="btn btn-primary btn-sm"><i class="feather icon-search"></i></button>
                                         </form>
                                     </div>
@@ -90,6 +93,31 @@
                 var criteria = {"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":"IC","keyword":"","pageNum":0,"amount":amount};
                 loadList(criteria);
                 makeCenter();
+            })
+
+            $('#searchText').on('keyup', function(){
+                $.ajax({
+                    type:'get',
+                    url:'/invapi/auto-search-release',
+                    data:{"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$(this).val()},
+                    success: function(res){
+                        $('#releaseAutoList').empty();
+                        res.forEach(function(data) {
+                            let option = $('<option>');
+                            if($('#type').val() == 'IC'){
+                                option.val(data.item_code);
+                                option.text(data.item_name);
+                            }else if($('#type').val() == 'PN'){
+                                option.val(data.product_name);
+                                option.text(data.item_name);
+                            }else if($('#type').val() == 'IN'){
+                                option.val(data.item_name);
+                                option.text(data.item_code);
+                            }
+                            $('#releaseAutoList').append(option);
+                        });
+                    }
+                })
             })
 
             $('#dateSearchBtn').on("click",function(){

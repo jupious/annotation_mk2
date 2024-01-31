@@ -124,29 +124,60 @@
         update procurement_plan set proc_progress = 1 where proc_plan_number = #{proc_plan_number}
     </update>
 
+    <insert id="saveClosedProcPlan">
+        insert into closed_proc_plan
+        select proc_plan_number, company_name, business_number, item_code, item_name, purch_order_date, receive_duedate
+        from(
+        select proc_plan_number, item_code, item_name, business_number, company_name, purch_order_number, receive_duedate
+        from(
+        select proc_plan_number, item_code, item_name, business_number, company_name
+        from(
+        select proc_plan_number, item_code, item_name, business_number
+        from(
+        select proc_plan_number, item_code, item_name, contract_number
+        from(
+        select proc_plan_number, item_code, item_name
+        from(
+        select proc_plan_number, item_code
+        from procurement_plan where proc_plan_number = #{proc_plan_number}) a
+        join item b using(item_code)) aa
+        join contract_item bb using(item_code)) aaa
+        join contract bbb using(contract_number)) c
+        join `co-op_company` d using (business_number)) cc
+        join purchase_order_item dd using(proc_plan_number)) ccc
+        join purchase_order ddd using(purch_order_number)
+    </insert>
+
+    <select id="autoReceiveSearch" resultType="edu.mit.annotation.realdto.ReceiveItemDTO">
+        <![CDATA[
+        select item_code, item_name, material
+        from(
+        select item_code, proc_plan_number, proc_duedate
+        from procurement_plan
+        where proc_progress = 0 and proc_duedate between date(#{startDate}) and date(#{endDate}))a left join item b using(item_code)
+        where]]>
+        <include refid="calcSearchType"/>
+    </select>
+
 
     <select id="getClosedProcPlan" resultType="edu.mit.annotation.realdto.ClosedProcPlanDTO">
         <![CDATA[
-        select SQL_CALC_FOUND_ROWS proc_plan_number, company_name, item_code, item_name, purch_order_date, receive_duedate, business_number
-        from(
-        select proc_plan_number, item_code, item_name, purch_order_date, receive_duedate, business_number
-        from(
-        select proc_plan_number, item_code, item_name, purch_order_date, receive_duedate, contract_number
-        from(
-        select proc_plan_number, item_code, item_name, purch_order_date, receive_duedate
-        from(
-        select proc_plan_number, item_code, purch_order_date, receive_duedate
-        from(
-        select proc_plan_number, item_code, purch_order_number, receive_duedate
-        from(
-        select proc_plan_number, item_code
-        from procurement_plan where proc_progress = 1) a join purchase_order_item b using (proc_plan_number)) aa join purchase_order bb using (purch_order_number)) aaa
-        join item bbb using (item_code)) c join contract_item d using(item_code)) cc join contract dd using(contract_number)) ccc
-        join `co-op_company` using(business_number)
-        where ]]>
+        select *
+        from closed_proc_plan
+        where  ]]>
         <include refid="searchType" />
         <![CDATA[ receive_duedate between date(#{startDate}) and date(#{endDate})
-        order by company_name, receive_duedate limit #{pageNum},#{amount} ]]>
+        order by business_number, receive_duedate limit #{pageNum},#{amount} ]]>
+    </select>
+
+    <select id="autoSearchClosedProcPlan" resultType="edu.mit.annotation.realdto.ClosedProcPlanDTO">
+        <![CDATA[
+        select proc_plan_number, company_name, item_code, item_name
+        from closed_proc_plan
+        where ]]>
+        <include refid="searchType" />
+        <![CDATA[receive_duedate between date(#{startDate}) and date(#{endDate})
+        limit 0, 10 ]]>
     </select>
 
     <select id="getCompanyInfo" resultType="edu.mit.annotation.realdto.CompanyInfoDTO">
@@ -212,6 +243,26 @@
                                             <include refid="searchType" />
         <![CDATA[prod_start_date between date(#{startDate}) and date(#{endDate})
                                             order by prod_start_date, product_name limit #{pageNum}, #{amount}]]>
+    </select>
+
+    <select id="autoSearchRelease" resultType="edu.mit.annotation.realdto.ReleasingDTO">
+        <![CDATA[
+        select item_code, item_name, product_name
+        from(
+        select item_code, item_name, product_name, product_code
+        from(
+        select item_code, item_name, product_code
+        from(
+        select item_code, item_name
+        from item) a
+        join composition_item b using (item_code)) aa
+        left join product bb using(product_code)) aaa
+        join production_plan bbb using(product_code)
+        where
+        ]]>
+        <include refid="searchType" />
+        <![CDATA[prod_start_date between date(#{startDate}) and date(#{endDate})
+        limit 0, 10]]>
     </select>
 
     <insert id="saveReleaseItem">
@@ -317,6 +368,16 @@
         <include refid="calcSearchType" />
         <include refid="orderType" />
         <![CDATA[limit #{pageNum}, #{amount}]]>
+    </select>
+
+    <select id="autoSearchInvCalc" resultType="edu.mit.annotation.realdto.InventoryCalcDTO">
+        <![CDATA[
+        select item_code, item_name, material
+        from item
+        where ]]>
+        <include refid="calcSearchType"/>
+        <![CDATA[
+        order by length(item_code), item_code limit 0, 10]]>
     </select>
 
     <select id="getInvReport" resultType="edu.mit.annotation.realdto.InventoryReportDTO">
