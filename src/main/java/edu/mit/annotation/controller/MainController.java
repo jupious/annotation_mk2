@@ -2,8 +2,15 @@ package edu.mit.annotation.controller;
 
 import edu.mit.annotation.dto.CoOpCompany;
 import edu.mit.annotation.dto.ProductionPlan;
+import edu.mit.annotation.realdto.MemberDTO;
 import edu.mit.annotation.service.ComService;
+import edu.mit.annotation.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.bouncycastle.math.raw.Mod;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +25,15 @@ import java.util.Map;
 @RequestMapping("/main")
 public class MainController {
     private final ComService service;
+    private final MemberService memberService;
     @GetMapping("/portal")
-    public void mainPortal(){}
+    public void mainPortal(@AuthenticationPrincipal UserDetails userDetails, HttpServletRequest request){
+        String username = userDetails.getUsername();
+        MemberDTO dto = memberService.getMemberData(username);
+        HttpSession session = request.getSession();
+        session.setAttribute("name",dto.getName());
+        session.setAttribute("email",dto.getEmail());
+    }
 
 
     @GetMapping("/login")

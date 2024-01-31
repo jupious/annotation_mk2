@@ -10,7 +10,7 @@
                 /*<![CDATA[*/
                     function savePost() {
                         const form = document.getElementById('saveForm');
-                        const fields = [form.bno, form.title, form.writer, form.content];
+                        const fields = [form.bno, form.title, form.writer, form.email, form.content];
                         const fieldNames = ['제목', '작성자', '내용'];
 
                         document.getElementById('saveBtn').disabled = true;
@@ -51,7 +51,9 @@
 
                                         <tr>
                                             <th>작성자 <span class="es"></span></th>
-                                            <td colspan="3"><input type="text" id="writer" name="writer" maxlength="10" th:value="${post.writer}"></td>
+                                            <td colspan="3"><input type="text" id="writer" name="writer" maxlength="10" th:value="${post.writer}" readonly>
+                                                <input type="hidden" name="email" id="email" th:value="${post.email}">
+                                            </td>
                                         </tr>
 
                                         <tr>

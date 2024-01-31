@@ -15,7 +15,7 @@
                                     </div>
                                 <div class="col-md-auto">
                                 <p class="btn_set">
-                                    <a th:href="@{/post/modify( bno=${post.bno} )}" class="btn btn-warning btn-sm">수정</a>
+                                    <a th:href="@{/post/modify( bno=${post.bno} )}" class="btn btn-warning btn-sm" id="modifyBtn">수정</a>
                                     <button type="button" onclick="deletePost()" class="btn btn-danger btn-sm">삭제</button>
                                     <a th:href="@{/post/list}" class="btn btn-info btn-sm">뒤로</a>
                                 </p>
@@ -37,7 +37,7 @@
                                         </tr>
                                         <tr>
                                             <th scope="row">이름</th>
-                                            <td colspan="3">[[ ${post.writer} ]]</td>
+                                            <td colspan="3" id="writer" th:data-email="${post.email}">[[ ${post.writer} ]]</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -54,13 +54,19 @@
             <div class="card my-4">
                 <h5 class="card-header">댓글작성:</h5>
                 <div class="card-body">
-                    <form name="comment-form" action="/reply/write" method="post" autocomplete="off">
-                        <div class="form-group">
-                            <input type="hidden" name="rno" th:value="*{rno}" />
-                            <textarea name="content" class="form-control" rows="3"></textarea>
+                    <div class="row col-xl-12">
+                        <form name="comment-form">
+                            <div class="form-group">
+                                <textarea name="content"style="resize:none;" class="form-control" rows="3" id="commentText"></textarea>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm" id="regComment">등록</button>
+                        </form>
+                    </div><br/><hr/>
+                    <div class="row col-xl-12">
+                        <div id="comment-container">
+
                         </div>
-                        <button type="button" class="btns">등록</button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -71,23 +77,103 @@
             const _csrf_value = [[${_csrf.token}]];
             const bno = [[ ${post.bno} ]];
 
+            $(function(){
+                readComment();
+            })
+
+            $('#regComment').on('click',function(){
+                let email = [[${session.email}]];
+                $.ajax({
+                    type:'get',
+                    url:'/boardapi/reg-comment',
+                    data:{"bno":bno,"email":email,"content":$('#commentText').val()},
+                    success:function(){
+                        console.log("댓글등록성공");
+                        readComment();
+                    },
+                    error:function(a,b,c){
+                        console.log("에러");
+                        console.log("a",a);
+                        console.log("b",b);
+                        console.log("c",c);
+                    }
+                })
+            })
+
+            function readComment(){
+                $.ajax({
+                    type:'get',
+                    url:'/boardapi/read-comment',
+                    data:{"bno":bno},
+                    success: function(res){
+                        console.log(res);
+                        let commStr = "";
+                        for(let i = 0; i < res.length; i++){
+                            commStr += "<span class='bg-light d-inline-block mr-2 border border-primary commentBorder'><p><span class='comment' > "+res[i].name+"  |  "+dateFormatter(res[i].comm_regdate)+"</span><hr/><span>"+res[i].content+"</span></p></span><br/>";
+                        }
+                        $('#comment-container').html(commStr);
+                    },
+                    error:function(a,b,c){
+                        console.log("에러");
+                        console.log("a",a);
+                        console.log("b",b);
+                        console.log("c",c);
+                    }
+                })
+            }
+
+            function dateFormatter(date){
+                if(date != null){
+                    var d = new Date(date);
+                    let month = d.getMonth()+1;
+                    let year = d.getFullYear();
+                    let day = d.getDate();
+                    let time = d.getHours();
+                    let min = d.getMinutes();
+                    let tm = [time,min].join(':');
+                    return [year,month,day].join('-') +' '+ tm;
+                }else{
+                    return "-";
+                }
+            }
+
+            $('#modifyBtn').on('click', function(e){
+                e.preventDefault();
+                let user = $('#writer').data('email');
+                let crntUser = [[${session.email}]];
+                
+                if(user == crntUser){
+                    location.href= '/post/modify?bno='+bno;
+                }else{
+                    alert('작성자만 글을 수정 할 수 있습니다.');
+                    return false;
+                }
+            })
+
                 // 게시글 삭제
                 function deletePost() {
+                    let user = $('#writer').data('email');
+                    let crntUser = [[${session.email}]];
+                    if(user == crntUser){
 
-                    if ( !confirm(bno + '번 게시글을 삭제할까요?') ) {
+                        if ( !confirm(bno + '번 게시글을 삭제할까요?') ) {
+                            return false;
+                        }
+
+                        const formHtml2 = `
+                            <form id="deleteForm" action="/post/delete" method="post">
+                                <input type="hidden" id="bno" name="bno" value="${bno}" />
+                                <input type="hidden" id="_csrf" name="_csrf" data-token-name="${token_name}" value="${_csrf_value}">
+                            </form>
+                        `;
+                        const doc = new DOMParser().parseFromString(formHtml2, 'text/html');
+                        const form = doc.body.firstChild;
+                        document.body.append(form);
+                        document.getElementById('deleteForm').submit();
+                    }else{
+                        alert('작성자만 글을 삭제 할 수 있습니다.');
                         return false;
                     }
-
-                    const formHtml2 = `
-                        <form id="deleteForm" action="/post/delete" method="post">
-                            <input type="hidden" id="bno" name="bno" value="${bno}" />
-                            <input type="hidden" id="_csrf" name="_csrf" data-token-name="${token_name}" value="${_csrf_value}">
-                        </form>
-                    `;
-                    const doc = new DOMParser().parseFromString(formHtml, 'text/html');
-                    const form = doc.body.firstChild;
-                    document.body.append(form);
-                    document.getElementById('deleteForm').submit();
                 }
 
         </script>

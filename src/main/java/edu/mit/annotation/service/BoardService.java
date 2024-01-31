@@ -3,6 +3,7 @@ package edu.mit.annotation.service;
 import edu.mit.annotation.mapper.BoardMapper;
 import edu.mit.annotation.realdto.BoardRequest;
 import edu.mit.annotation.realdto.BoardResponse;
+import edu.mit.annotation.realdto.CommentDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,6 +79,14 @@ public class BoardService {
     }
 
 
+    //댓글저장
+    public void registerComment(CommentDTO dto){
+        boardMapper.regComment(dto);
+    }
 
+    //댓글읽기
+    public List<CommentDTO> readComment(Long bno){
+       return boardMapper.readComment(bno);
+    }
 
 }

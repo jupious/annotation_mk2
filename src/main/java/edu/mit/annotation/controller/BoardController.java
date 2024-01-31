@@ -36,14 +36,16 @@ public class BoardController {
 
     // 신규 게시글 생성
     @PostMapping("save")
-    public String savePost(final BoardRequest params) {
+    public String savePost(final BoardRequest params, String email) {
+        params.setWriter(email);
         boardService.savePost(params);
         return "redirect:/post/list";
     }
 
     //게시글 수정
     @PostMapping("update")
-    public String updatePost(BoardRequest params){
+    public String updatePost(BoardRequest params, String email){
+        params.setWriter(email);
         boardService.updatePost(params);
         return "redirect:/post/list";
     }

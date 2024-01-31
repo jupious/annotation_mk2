@@ -10,7 +10,7 @@
                 /*<![CDATA[*/
                     function savePost() {
                         const form = document.getElementById('saveForm');
-                        const fields = [form.title, form.writer, form.content];
+                        const fields = [form.title,form.write, form.email , form.content];
                         const fieldNames = ['제목', '작성자', '내용'];
 
                         document.getElementById('saveBtn').disabled = true;
@@ -50,7 +50,7 @@
 
                                         <tr>
                                             <th>작성자 <span class="es"></span></th>
-                                            <td colspan="3"><input type="text" id="writer" name="writer" maxlength="10" placeholder="이름을 입력해 주세요." /></td>
+                                            <td colspan="3"><input type="text" id="writer" name="writer" maxlength="10"th:value="${session.name}" readonly/><input type="hidden" th:value="${session.email}" id="email" name="email"> </td>
                                         </tr>
 
                                         <tr>

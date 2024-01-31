@@ -33,12 +33,10 @@
 
     <!-- 게시글 상세정보 조회 -->
     <select id="findById">
-        SELECT
-        <include refid="postColumns" />
-        FROM
-        tb_post
-        WHERE
-        bno = #{bno}
+        select bno, title, content, `name` writer ,email, view_cnt, created_date, modified_date
+        from(
+        select *
+        from tb_post where bno = #{bno}) a left join `member` b on (a.writer = b.email)
     </select>
 
 
@@ -65,10 +63,10 @@
 
     <!-- 게시글 리스트 조회 -->
     <select id="findAll" resultType="edu.mit.annotation.realdto.BoardResponse">
-        SELECT
-        <include refid="postColumns" />
-        FROM
-        tb_post
+        select bno, title, content, `name` writer, view_cnt, created_date, modified_date
+        from(
+        select *
+        from tb_post) a left join `member` b on (a.writer = b.email)
         ORDER BY
         bno DESC
     </select>
@@ -79,4 +77,16 @@
         WHERE bno = #{bno};
     </update>
 
+
+    <!--댓글처리-->
+    <insert id="regComment">
+        insert into comment (bno,email,content) values (#{bno},#{email},#{content})
+    </insert>
+
+    <select id="readComment" resultType="edu.mit.annotation.realdto.CommentDTO">
+        select cno, bno, email, name, content, comm_regdate
+        from(
+        select *
+        from comment where bno = #{bno})a join member b using(email)
+    </select>
 </mapper>

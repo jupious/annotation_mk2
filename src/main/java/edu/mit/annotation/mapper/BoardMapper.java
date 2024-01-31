@@ -2,6 +2,7 @@ package edu.mit.annotation.mapper;
 
 import edu.mit.annotation.realdto.BoardRequest;
 import edu.mit.annotation.realdto.BoardResponse;
+import edu.mit.annotation.realdto.CommentDTO;
 
 import java.util.List;
 
@@ -19,6 +20,11 @@ public interface BoardMapper {
 
     void addcount(BoardRequest params);
 
+    //댓글등록
+    void regComment(CommentDTO dto);
 
+    //댓글가져오기
+
+    List<CommentDTO> readComment(Long bno);
 
 }
