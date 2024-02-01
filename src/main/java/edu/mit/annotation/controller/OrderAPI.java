@@ -14,6 +14,7 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -134,6 +135,45 @@ public class OrderAPI {
         return "뭐요";
     }
 
+    @Scheduled(cron = "0 30 11 * * *")
+    public void autoMailProgCheck(){
+
+        Calendar cal = Calendar.getInstance();
+        Calendar cal1 = Calendar.getInstance();
+        Date sDate = new Date(cal.getTimeInMillis());
+        cal1.add(Calendar.DATE,3);
+        Date eDate = new Date(cal1.getTimeInMillis());
+
+        System.out.println(sDate);
+        System.out.println(eDate);
+        System.out.println("날짜잘 찍힘?");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        List<AutoProgPlanAlertDTO> ppList = orderService.autoMailPrcp(Criteria.builder().startDate(sDate).endDate(eDate).build());
+        if(!ppList.isEmpty()){
+            String message = "";
+            for(AutoProgPlanAlertDTO dto : ppList){
+                message +=  "=================================================================================="+"\n"+
+                            "발주번호 : " + dto.getPurch_order_number() +"\n"+
+                            "발주회사 : " + dto.getCompany_name() +" | 주소 : "+dto.getCompany_address()+"\n"+
+                            "사업자번호 : " + dto.getBusiness_number() +"\n"+
+                            "담당자 : " +dto.getManger() + " | 담당자 연락처 : "+dto.getManager_tel() +"\n"+
+                            "검수 차수 : " + dto.getProc_check_order() +"\n"+
+                            "검수 일자 : " + sdf.format(dto.getProc_check_date()) +"\n"+
+                            "품목코드 : " + dto.getItem_code() +" | 품목명 : " + dto.getItem_name() +"\n"+
+                            "발주 수량 : " + dto.getPurch_order_quantity() +"개\n"+
+                            "==================================================================================" + "\n";
+            }
+
+            EmailMessage emailMessage = EmailMessage.builder()
+                    .to("black5225@gmail.com")
+                    .subject(sdf.format(sDate)+" 진척검수 일정 안내메일")
+                    .message(message)
+                    .build();
+            mailService.sendMail(emailMessage, "email", "jupious@gmail.com","ujwwpljvqbrcsrwn");
+        }
+    }
+
     @GetMapping("/search-with-mail")
     public List<CompanyInfoDTO> searchWithMail(String email){
         return orderService.getCompWithEmail("%"+email+"%");
@@ -222,6 +262,8 @@ public class OrderAPI {
         outputStream.close();
         return outputFolder;
     }
+
+
 
 
 

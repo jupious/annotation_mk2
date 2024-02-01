@@ -71,15 +71,16 @@
                     <h5 class="card-header">계약관리</h5>
                     <div class="card-body table-border-style">
                         <div class="table-responsive">
-                            <select id="type" name="type" title="검색분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" style="float:left; height:31px;">
-                                <option value="">검색어</option>
-                                <option value="IN" th:selected="${pageMaker.cri.type eq 'IN'}">품목명</option>
-                                <option value="CN" th:selected="${pageMaker.cri.type eq 'CN'}">업체명</option>
-                                <option value="BN" th:selected="${pageMaker.cri.type eq 'BN'}">사업자번호</option>
-                                <option value="CNn" th:selected="${pageMaker.cri.type eq 'CNn'}">계약번호</option>
-                            </select>
-                            <input type="text" class="form-control-sm" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;" id="keyword">
-                            <button class="btn btn-primary btn-sm" type="button" style="float:left;" id="search">검색</button>
+                            <form>
+                                <select id="type" name="type" title="검색분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" style="float:left; height:31px;">
+                                    <option value="IN" th:selected="${pageMaker.cri.type eq 'IN'}">품목명</option>
+                                    <option value="CN" th:selected="${pageMaker.cri.type eq 'IN'}">회사명</option>
+                                    <option value="BM" th:selected="${pageMaker.cri.type eq 'M'}">사업자번호</option>
+                                    <option value="CNn" th:selected="${pageMaker.cri.type eq 'M'}">계약번호</option>
+                                </select>
+                                <input type="text" class="form-control-sm" id="keyword" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;" th:value="${pageMaker.cri.keyword}">
+                                <button class="btn btn-primary btn-sm" type="button" style="float:left;" id="search">검색</button>
+                            </form>
                             <a href="/reg/contract?pageNum=1&amount=10&flag=0"><button type="button" class="btn btn-danger btn-sm" style="float:right;" id="ShowOnlyRed">미완료건만보기</button></a>
                             <a href="/reg/contract?pageNum=1&amount=10&flag=1"><button type="button" class="btn btn-primary btn-sm" style="float:right;" id="ShowAll">전체보기</button></a>
 
@@ -112,11 +113,9 @@
                                         <td>완료</td>
                                         <td><button type="button" class="btn btn-danger btn-sm" onclick="removeContract()">삭제</button></td>
                                         <td>
-                                            <td>
-                                                <a th:href="@{'/upload/contract/' + ${contractList.contract_save_name}}" class="show-contract" th:data-contract_save_name="${contractList.contract_save_name}">
-                                                    <button type="button" class="btn btn-info btn-sm">계약서보기</button>
-                                                </a>
-                                            </td>
+                                            <a th:href="@{'/upload/contract/' + ${contractList.contract_save_name}}" class="show-contract" th:data-contract_save_name="${contractList.contract_save_name}">
+                                                <button type="button" class="btn btn-info btn-sm">계약서보기</button>
+                                            </a>
                                         </td>
                                 </tr>
                                 </tbody>
@@ -125,7 +124,7 @@
                                 <ul class="pagination">
                                     <th:if test="${pageMaker.prev}">
                                         <th:block th:if="${pageMaker.startPage > 1}">
-                                            <a class = "page-link" th:href="@{'/reg/contract?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount}+'&flag=' + ${pageMaker.cri.flag}}">이전</a>
+                                            <a class = "page-link" th:href="@{'/reg/contract?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount} + '&flag=' + ${pageMaker.cri.flag} + '&type=' + ${pageMaker.cri.type} + '&keyword=' + ${pageMaker.cri.keyword}}">이전</a>
                                         </th:block>
                                     </th:if>
                                     <span th:each="num : ${#numbers.sequence(pageMaker.startPage, pageMaker.endPage)}">
@@ -139,14 +138,14 @@
                                         <th:block th:unless="${num == pageMaker.cri.pageNum}">
                                             <li class = "page-item">
                                                 <span class="page-link">
-                                                    <a th:href="@{'/reg/contract?pageNum=' + ${num} + '&amount=' + ${pageMaker.cri.amount}+'&flag=' + ${pageMaker.cri.flag}}" th:text="${num}"></a>
+                                                    <a th:href="@{'/reg/contract?pageNum=' + ${num} + '&amount=' + ${pageMaker.cri.amount}+'&flag=' + ${pageMaker.cri.flag} + '&type=' + ${pageMaker.cri.type} + '&keyword=' + ${pageMaker.cri.keyword}}" th:text="${num}"></a>
                                                 </span>
                                             </li>
                                         </th:block>
                                     </span>
                                     <th:if test="${pageMaker.next}">
                                         <th:block th:if="${pageMaker.endPage*pageMaker.cri.amount < pageMaker.total}">
-                                            <a class="page-link" th:href="@{'/reg/contract?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount}+'&flag='+ ${pageMaker.cri.flag}}">다음</a>
+                                            <a class="page-link" th:href="@{'/reg/contract?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount}+'&flag='+ ${pageMaker.cri.flag} + '&type=' + ${pageMaker.cri.type} + '&keyword=' + ${pageMaker.cri.keyword}}">다음</a>
                                         </th:block>
                                     </th:if>
                                 </ul>
@@ -188,29 +187,6 @@
 <script>
     $(document).ready(function () {
 
-        function search() {
-                var type = $("#type").val();
-                var keyword = $("#keyword").val();
-                console.log(type);
-                console.log(keyword);
-                $.ajax({
-                    type: "GET",
-                    url: "/reg/contractSearch",
-                    data: { "type": type, "keyword": keyword },
-                    success: function (response) {
-                        searchTable(response);
-                    },
-                    error: function (error) {
-                        console.error("검색 실패");
-                        console.error(error);
-                    }
-                });
-            }
-
-        $("#search").on("click", function () {
-                search();
-            });
-
         $(document).on("click", ".show-contract", function () {
             showContract($(this).closest('tr').find('.show-contract'));
         });
@@ -238,7 +214,7 @@
 
                 if (statusValue === '완료') {
                 $(this).find('td:eq(9)').html('<button type="button" class="btn btn-danger btn-sm" onclick="removeContract()">삭제</button>');
-                $(this).find('td:eq(10)').html('<button type="button" class="btn btn-info btn-sm">계약서보기</button>');
+                $(this).find('td:eq(10)').html('<a th:href="@{"/upload/contract/" + ${contractList.contract_save_name}" class="show-contract" th:data-contract_save_name="${contractList.contract_save_name}"><button type="button" class="btn btn-info btn-sm">계약서보기</button></a>');
             } else {
                 $(this).find('td:eq(10)').empty();
             }
@@ -421,13 +397,10 @@
         formData.append('contract', contractFile);
         formData.append('contract_origin_name', contract_origin_name);
 
-        
-        // FormData 확인
         for (var pair of formData.entries()) {
             console.log(pair[0] + ': ' + pair[1]);
         }
         
-
         $.ajax({
             type:"POST",
             url:"/reg/contractInput",
@@ -470,6 +443,15 @@
     }
 </script>
 <script>
+    $("#search").on("click", function (e) {
+        e.preventDefault();
+        let type = $("#type").val();
+        let keyword = $("#keyword").val();
+        let pageNum = $("#table2_paginate .active a").text();
+        console.log(type,keyword,pageNum);
+        window.location.replace('/reg/contract?pageNum=1&amount=10&type='+type+'&keyword='+keyword);
+    });
+
     function removeContract() {
     var $this = $(this);
     var contractNumber = $this.closest('tr').find('td:eq(1)').text();

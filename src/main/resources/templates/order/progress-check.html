@@ -7,6 +7,18 @@
                 <div class="card-body">
                     <h5 class="card-header">발주 리스트</h5>
                     <div class="card-body table-border-style">
+                        <form>
+                            <input type="date" id="startDate" class="form-control-sm" th:value="${startDate}">
+                            ~
+                            <input type="date" id="endDate" class="form-control-sm" th:value="${endDate}"><br>
+                            <select id="type" name="type" title="검색분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" style="float:left; height:31px;">
+                                <option value="PON" th:selected="${pageMaker.cri.type eq 'PON'}">발주번호</option>
+                                <option value="IC" th:selected="${pageMaker.cri.type eq 'IC'}">품목코드</option>
+                                <option value="IN" th:selected="${pageMaker.cri.type eq 'IM'}">품목명</option>
+                            </select>
+                            <input type="text" class="form-control-sm" id="keyword" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;" th:value="${pageMaker.cri.keyword}">
+                            <button class="btn btn-primary btn-sm" type="button" style="float:left;" id="search">검색</button>
+                        </form>
                         <div class="table-responsive">
                             <table id="table1" class="table table-bordered table-sm text-center" width="100%">
                                 <tr>
@@ -16,17 +28,16 @@
                                     <td bgcolor="#f6f6f6" align="center" valign="middle" width="15%;">품목코드</td>
                                     <td bgcolor="#f6f6f6" align="center" valign="middle" width="35%;">품목명</td>
                                     <td bgcolor="#f6f6f6" align="center" valign="middle" width="10%;">발주수량</td>
+                                    <td bgcolor="#f6f6f6" align="center" valign="middle" width="10%;">검수현황</td>
                                 </tr>
                                 <tr th:each="list:${table1List}">
                                     <td th:text="${list.purch_order_number}"></td>
                                     <td th:text="${list.purch_order_date}"></td>
                                     <td th:text="${list.receive_duedate}"></td>
-                                    <td th:text="${list.item_code}"></td>
+                                    <td class="prcp" th:data-prcp="${list.proc_plan_number}"  th:text="${list.item_code}"></td>
                                     <td th:text="${list.item_name}"></td>
                                     <td th:text="${list.purch_order_quantity}"></td>
-                                    <td th:text="${list.business_number}" data-business_number="${list.business_number}" style="display: none;"></td>
-                                    <td th:text="${list.company_name}" data-company_name="${list.company_name}" style="display: none;"></td>
-                                    <td th:text="${list.proc_plan_number}" data-proc_plan_number="${list.proc_plan_number}" style="display: none;"></td>
+                                    <td th:text="${list.prog_check_count}+' / '+${list.prog_check_total}"></td>
                                 </tr>
                             </table>
                         </div>
@@ -35,7 +46,7 @@
                         <ul class="pagination">
                             <th:if test="${pageMaker.prev}">
                                 <th:block th:if="${pageMaker.startPage > 1}">
-                                    <a class = "page-link" th:href="@{'/order/progress-check?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount}}">이전</a>
+                                    <a class = "page-link" th:href="@{'/order/progress-check?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount} +'&type='+${pageMaker.cri.type}+'&keyword='+${pageMaker.cri.keyword}}">이전</a>
                                 </th:block>
                             </th:if>
                         
@@ -50,7 +61,7 @@
                                 <th:block th:unless="${num == pageMaker.cri.pageNum}">
                                     <li class = "page-item">
                                         <span class="page-link">
-                                            <a th:href="@{'/order/progress-check?pageNum=' + ${num} + '&amount=' + ${pageMaker.cri.amount}}" th:text="${num}"></a>
+                                            <a th:href="@{'/order/progress-check?pageNum=' + ${num} + '&amount=' + ${pageMaker.cri.amount} +'&type='+${pageMaker.cri.type}+'&keyword='+${pageMaker.cri.keyword}}" th:text="${num}"></a>
                                         </span>
                                     </li>
                                 </th:block>
@@ -58,7 +69,7 @@
                         
                             <th:if test="${pageMaker.next}">
                                 <th:block th:if="${pageMaker.endPage*pageMaker.cri.amount < pageMaker.total}">
-                                    <a class="page-link" th:href="@{'/order/progress-check?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount}}">다음</a>
+                                    <a class="page-link" th:href="@{'/order/progress-check?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount} +'&type='+${pageMaker.cri.type}+'&keyword='+${pageMaker.cri.keyword}}">다음</a>
                                 </th:block>
                             </th:if>
                         </ul>
@@ -106,7 +117,7 @@
                                     <td bgcolor="#f6f6f6" align="center" valign="middle" width="20%;">발주수량</th>
                                 </tr>
                                 <tr>
-                                    <td><input type="text" style="border:none; text-align: center;" id="Make_item_code" readonly></td>
+                                    <td><input type="text" style="border:none; text-align: center;" id="item_code" readonly></td>
                                     <td><input type="text" style="border:none; text-align: center;" id="Make_item_name" readonly></td>
                                     <td><input type="text" style="border:none; text-align: center;" id="Make_purch_order_quantity" readonly></td>
                                 </tr>
@@ -119,7 +130,7 @@
                                 </tr>
                                 <tr>
                                     <td><input type="text" style="border:none; width:3%;" id="proc_check_order" value="1" readonly>차</td>
-                                    <td><input type="date" style="border:none;" id="table4_proc_check_date" value="today"></td>
+                                    <td><input type="date" style="border:none;" id="table4_proc_check_date" value="${today}"></td>
                                     <td><button type="button" class="btn btn-info btn-sm" id="addRowBtn" onclick="addRow()">추가</button></td>
                                     <td><button type="button" class="btn btn-danger btn-sm" id="deleteRowBtn" onclick="deleteRow(this)">삭제</button></td>
                                 </tr>
@@ -175,9 +186,10 @@
                                     <tr>
                                         <td bgcolor="#f6f6f6" align="center" valign="middle" width="10%;">차수</td>
                                         <td bgcolor="#f6f6f6" align="center" valign="middle" width="15%;">검수일자</td>
-                                        <td bgcolor="#f6f6f6" align="center" valign="middle" width="10%;">검수수량</td>
-                                        <td bgcolor="#f6f6f6" align="center" valign="middle" width="50%;">보완사항</td>
-                                        <td bgcolor="#f6f6f6" align="center" valign="middle" width="10%;">검수결과</td>
+                                        <td bgcolor="#f6f6f6" align="center" valign="middle" width="10%;">완료수량</td>
+                                        <td bgcolor="#f6f6f6" align="center" valign="middle" width="30%;">검수결과</td>
+                                        <td bgcolor="#f6f6f6" align="center" valign="middle" width="30%;">보완사항</td>
+                                        <td bgcolor="#f6f6f6" align="center" valign="middle" width="10%;">진척도</td>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -185,8 +197,9 @@
                                         <td th:text="${checkList.proc_check_order}"></td>
                                         <td th:text="${checkList.proc_check_date}"></td>
                                         <td th:text="${checkList.complete_quantity}"></td>
-                                        <td th:text="${checkList.supplementation}"></td>
                                         <td th:text="${checkList.prog_check_result}"></td>
+                                        <td th:text="${checkList.supplementation}"></td>
+                                        <td th:text="${checkList.percent}"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -195,7 +208,117 @@
                 </div>
             </div>  
         </div>
+<script th:inline="javascript">
+    var header = $('meta[name="_csrf_header"]').attr("content");
+    var _csrfToken = $('#_csrf_token').val();
 
+    $(document).ready(function() {
+
+        $('th').addClass('text-center');
+        $('td').addClass('text-center');
+        $('th').addClass('align-middle');
+        $('td').addClass('align-middle');
+        console.log('table1List:', /*[[${table1List}]]*/);
+        console.log('today : ',/*[[${today}]]*/);
+
+        $('#table1 tbody tr').each(function() {
+            var prog_check_results_cell = $(this).find('#prog_check_results');
+            var prog_check_results = prog_check_results_cell.text();
+
+            if (prog_check_results !== '-') {
+                var splitResults = prog_check_results.split('!@#');
+                var finalResult = splitResults[0];
+                prog_check_results_cell.text(finalResult);
+            }
+        });
+
+
+        // 탭 이동
+        $('#MakeCheckPlan').on('click', function() {
+            clearTable2Contents();
+            clearTable3Contents();
+            $('#CheckPlanSection').show();
+            $('#CompleteCheckPlanSection').hide();
+            console.log("검수계획 탭 보임"); 
+            console.log("검수계획 데이터 지움");
+        }),
+
+        $('#CompleteCheckPlan').on('click', function() {
+            clearTable5Contents();
+            clearTable6Contents();
+            $('#CompleteCheckPlanSection').show();
+            $('#CheckPlanSection').hide();
+            console.log("검수처리 탭 보임");
+            console.log("검수처리 데이터 지움");
+        })
+
+        $('#table1 tbody tr').on('click', function() {
+            // 검수계획 탭 보일때
+            if ($('#CheckPlanSection').is(':visible')) {
+                var proc_plan_number = $(this).children('.prcp').data('prcp');
+                var purch_order_number = $(this).find('td:eq(0)').text();
+                var purch_order_date = $(this).find('td:eq(1)').text();
+                var receive_duedate = $(this).find('td:eq(2)').text();
+                var item_code = $(this).find('td:eq(3) ').text();
+                var item_name = $(this).find('td:eq(4)').text();
+                var purch_order_quantity = $(this).find('td:eq(5)').text();
+                $('#table2 tbody tr:eq(0) td:eq(1) input').val(purch_order_number);
+                $('#table2 tbody tr:eq(1) td:eq(1) input').val(purch_order_date);
+                $('#table2 tbody tr:eq(2) td:eq(1) input').val(receive_duedate);
+                $('#table3 tbody tr:eq(1) td:eq(0) input').val(item_code);
+                $('#table3 tbody tr:eq(1) td:eq(1) input').val(item_name);
+                $('#table3 tbody tr:eq(1) td:eq(2) input').val(purch_order_quantity);
+
+                checkPlanDB(proc_plan_number);
+
+                function checkPlanDB(proc_plan_number)  {
+                    console.log("checkPlanDB 호출");
+                    console.log("클릭한 행의 조달계획번호 : ", proc_plan_number);
+
+                    $.ajax({
+                        type:'POST',
+                        url:'/order/checkPlanDB',
+                        data:{proc_plan_number:proc_plan_number},
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader(header, _csrfToken);
+                        },
+                        success : function(response)    {
+                            if(response==0) {
+                                getCompany(proc_plan_number);
+                            }
+                            else if(response>0) {
+                                alert("이미 진척검수일정이 등록된 조달계획입니다.");
+                            }
+                        },
+                        error:function(error)   {
+                            console.error("에러 : ", error);
+                        }
+                    })
+                }
+            }
+
+            // 검수처리 탭 보일때
+            if ($('#CompleteCheckPlanSection').is(':visible')) {
+                var proc_plan_number = $(this).children('.prcp').data('prcp');
+                var purch_order_number = $(this).find('td:eq(0)').text();
+                var purch_order_date = $(this).find('td:eq(1)').text();
+                var receive_duedate = $(this).find('td:eq(2)').text();
+                var item_code = $(this).find('td:eq(3) ').text();
+                var item_name = $(this).find('td:eq(4)').text();
+                var purch_order_quantity = $(this).find('td:eq(5)').text();
+
+                $('#table5 tbody tr:eq(0) td:eq(1) input').val(purch_order_number);
+                $('#table5 tbody tr:eq(1) td:eq(1) input').val(purch_order_date);
+                $('#table5 tbody tr:eq(2) td:eq(1) input').val(receive_duedate);
+                $('#table6 tbody tr:eq(1) td:eq(0) input').val(item_code);
+                $('#table6 tbody tr:eq(1) td:eq(1) input').val(item_name);
+                $('#table6 tbody tr:eq(1) td:eq(2) input').val(purch_order_quantity);
+
+                getCompany(proc_plan_number, purch_order_number);
+            }
+        })
+    });
+</script>
 <script th:inline="javascript">
         function clearTable2Contents() {
             $('#table2 tbody tr:eq(0) td:eq(1) input').val('');
@@ -225,15 +348,51 @@
             $('#table6 tbody tr:eq(1) td:eq(2) input').val('');
         }
 
+        function getCompany(proc_plan_number, purch_order_number)  {
+            console.log("getCompany 호출");
+            $.ajax({
+                type:'POST',
+                url:'/order/getCompany',
+                data: {proc_plan_number:proc_plan_number, purch_order_number:purch_order_number},
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader(header, _csrfToken);
+                    },
+                    success: function (response) {
+                        if ($('#CheckPlanSection').is(':visible')) {
+                            $('#Make_company_name').val(response.companyData[0].company_name);
+                            $('#Make_business_number').val(response.companyData[0].business_number);
+                            $('#proc_plan_number').val(response.companyData[0].proc_plan_number);
+                            proc_plan_number = response.companyData[0].proc_plan_number;
+                            console.log("클릭한 행의 조달계획번호 : ", response.companyData[0].proc_plan_number);
+                            console.log("클릭한 행의 발주번호 : ", purch_order_number);
+                        }
+                        if ($('#CompleteCheckPlanSection').is(':visible')) {
+                            $('#Complete_company_name').val(response.companyData[0].company_name);
+                            $('#Complete_business_number').val(response.companyData[0].business_number);
+                            $('#proc_plan_number').val(response.companyData[0].proc_plan_number);
+                            proc_plan_number = response.companyData[0].proc_plan_number;
+                            console.log("클릭한 행의 조달계획번호 : ", proc_plan_number);
+                            console.log("클릭한 행의 발주번호 : ", purch_order_number);
+                            showCheckPlanDetails(item_code, proc_plan_number, purch_order_number);
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Error:', error);
+                    }
+            })
+        }
         var checkOrder = 1;
 
         function addRow() {
+            var date = new Date();
+            var formattedDate = date.toISOString().split('T')[0];
+            console.log(date);
+            console.log(formattedDate);
             checkOrder++;
             $('#table4 tbody tr:eq(0) td:eq(0) input').val(checkOrder);
-            
             var newRow = "<tr>" +
                 "<td><input type='text' style='border:none; width:3%;' value='" + checkOrder + "' readonly>차</td>" +
-                "<td><input type='date' style='border:none;' class='proc_check_date' value='" + today + "'></td>" +
+                "<td><input type='date' style='border:none;' class='proc_check_date' value='" + formattedDate + "'></td>" +
                 "<td><button type='button' class='btn btn-info btn-sm' onclick='addRow()'>추가</button></td>" +
                 "<td><button type='button' class='btn btn-danger btn-sm' onclick='deleteRow(this)'>삭제</button></td>" +
                 "</tr>";
@@ -268,11 +427,10 @@
 
        function SaveCheckPlan()    {
             
-            
-                
                 var Make_proc_check_order_array = [];
                 var Make_proc_check_date_array = [];
                 var Make_purch_order_number = $('#table2 tbody tr:eq(0) td:eq(1) input').val();
+                var proc_plan_number = $('#table3 tr:eq(1) td:eq(3) input').val();
 
                 $('#table4 tbody tr:gt(0)').each(function(index, element) {
                     var Make_proc_check_order = $(element).find('td:eq(0) input').val();
@@ -282,7 +440,7 @@
                 });
 
                 var checkPlans = new FormData();
-                checkPlans.append('Make_proc_plan_number', Make_proc_plan_number);
+                checkPlans.append('proc_plan_number', proc_plan_number);
                 checkPlans.append('Make_proc_check_order[]', Make_proc_check_order_array);
                 checkPlans.append('Make_proc_check_date[]', Make_proc_check_date_array);
                 checkPlans.append('Make_purch_order_number',Make_purch_order_number);
@@ -320,7 +478,7 @@
                         // 새로운 진척검수 차수를 초기값으로 설정
                         checkOrder = 1;
                         $('#table4 tbody tr:eq(0) td:eq(0) input').val(checkOrder);
-                        $('#table4 tbody tr:eq(0) td:eq(1) input').val(today);
+                        $('#table4 tbody tr:eq(0) td:eq(1) input').val(formattedDate);
                     },
                     error: function(error) {
                         alert("진척검수 일정이 등록에 실패했습니다");
@@ -330,62 +488,43 @@
             }
     
 
-    function showCheckPlanDetails() {
+    function showCheckPlanDetails(item_code, proc_plan_number, purch_order_number) {
 
         console.log("showCheckPlanDetails 호출");
-        var po_number = $('#table5 tr:eq(0) td:eq(1) input').val();
-        console.log("Make_company_name : ",Make_company_name);
-        console.log("Make_business_number",Make_business_number);
-        console.log("Make_proc_plan_number :", Make_proc_plan_number);
-        
-        var matchedRow = $('#table1 tbody tr').filter(function() {
-            return $(this).find('td:eq(0)').text() === po_number;
+        console.log("proc_plan_number : ", proc_plan_number);
+        console.log("purch_order_number : ", purch_order_number);
+
+        $.ajax({
+            type: 'POST',
+            url: '/order/showCheckPlanDetails',
+            data: {proc_plan_number:proc_plan_number, purch_order_number:purch_order_number},
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader(header, _csrfToken);
+            },
+            success: function (response) {
+                console.log('Received data:', response);
+                updateTable(response);
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
         });
 
-        var matchedProcPlanNumber;
+        function updateTable(data) {
+            $('#table7 tbody').empty();
 
-        if (matchedRow.length > 0) {
-            matchedProcPlanNumber = matchedRow.eq(0).find('td:eq(8)').text();
-            proc_plan_number = matchedProcPlanNumber;
-
-            console.log("proc_plan_number : ",proc_plan_number);
-            console.log("purch_order_number : ",po_number);
-            $.ajax({
-                type: 'POST',
-                url: '/order/showCheckPlanDetails',
-                data: {proc_plan_number:proc_plan_number, purch_order_number: po_number},
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader(header, _csrfToken);
-                },
-                success: function (response) {
-                    console.log('Received data:', response);
-                    updateTable(response);
-                },
-                error: function(error) {
-                    console.error('Error:', error);
-                }
-            });
-
-            function updateTable(data) {
-                // 테이블을 비우고 받은 데이터로 채우는 로직
-                $('#table7 tbody').empty();
-
-                // 받은 데이터를 이용하여 테이블의 각 행을 추가
-                for (var i = 0; i < data.length; i++) {
-                    var row = "<tr>" +
-                        "<td>" + data[i].proc_check_order + "</td>" +
-                        "<td>" + data[i].proc_check_date + "</td>" +
-                        "<td><input type='number' style='width:100%; border:none;'></td>" +
-                        "<td><input type='text' style='width:100%; border:none;'></td>" +
-                        "<td>" +
-                        "<input type='radio' name='isPassCheck" + i + "' value='완료'>     O     " +
-                        "<input type='radio' name='isPassCheck" + i + "' value='미완료'>     X     " +
-                        "</td>" +
-                        "</tr>";
-                    $('#table7 tbody').append(row);
-                }
+            for (var i = 0; i < data.length; i++) {
+                var row = "<tr>" +
+                    "<td>" + data[i].proc_check_order + "</td>" +
+                    "<td>" + data[i].proc_check_date + "</td>" +
+                    "<td><input type='number' value='" + data[i].completed_quantity +"' style='text-align:center; border:none; width:100%;'></td>" +
+                    "<td><input type='text' value='"+ data[i].prog_check_result +"' style='text-align:left; border:none; width:100%;'></td>" +
+                    "<td><input type='text' value='" + data[i].supplementation +"' style='text-align:left; border:none; width:100%;'></td>" +
+                    "<td><div class='progress mb-4'><div class='progress-bar progress-bar-striped' role='progressbar' style='width:" + data[i].percent + "%;' aria-valuenow='" + data[i].percent + "' aria-valuemin='0' aria-valuemax='100'></div></div></td>" +
+                    "<input type='hidden' class='procplannumber' value='" + data[i].proc_plan_number + "'>" +
+                    "</tr>";
+                $('#table7 tbody').append(row);
             }
-
         }
     }
 
@@ -398,20 +537,16 @@
             var Complete_supplementation_array = [];
             var Complete_prog_check_result_array = [];
             var Complete_completed_quantity = $(element).find('td:eq(2) input').val();
-            var Complete_supplementation = $(element).find('td:eq(3) input').val();
-            var Complete_prog_check_result = $(element).find('td:eq(4) input:checked').val();
-            
-            console.log(Complete_completed_quantity);
-            console.log(Complete_supplementation);
-            console.log(Complete_prog_check_result);
+            var Complete_prog_check_result = $(element).find('td:eq(3) input').val();
+            var Complete_supplementation = $(element).find('td:eq(4) input').val();
+            var proc_plan_number = $('.procplannumber').val();
+            var purch_order_number = $('#table5 tr:eq(0) td:eq(1) input').val();
 
+            console.log("조달계획번호 : ", proc_plan_number);
+            console.log("발주번호 : ", purch_order_number);
             Complete_completed_quantity_array.push(Complete_completed_quantity);
             Complete_supplementation_array.push(Complete_supplementation);
             Complete_prog_check_result_array.push(Complete_prog_check_result);
-
-            console.log(Complete_completed_quantity_array);
-            console.log(Complete_supplementation_array);
-            console.log(Complete_prog_check_result_array);
 
             var updatePlans = new FormData();
             updatePlans.append('Complete_proc_check_order', Complete_proc_check_order);
@@ -419,8 +554,8 @@
             updatePlans.append('Complete_completed_quantity[]', Complete_completed_quantity_array);
             updatePlans.append('Complete_supplementation[]', Complete_supplementation_array);
             updatePlans.append('Complete_prog_check_result[]', Complete_prog_check_result_array);
-            updatePlans.append('Complete_purch_order_number', Complete_purch_order_number);
-            updatePlans.append('Make_proc_plan_number', Make_proc_plan_number);
+            updatePlans.append('purch_order_number', purch_order_number);
+            updatePlans.append('proc_plan_number',proc_plan_number);
             
             for (var pair of updatePlans.entries()) {
                     console.log(pair[0] + ': ' + pair[1]);
@@ -445,120 +580,19 @@
         });
     }
 
-    function CheckProgDB()  {
-
-        console.log("클릭한 행의 조달계획번호 : ", Make_proc_plan_number);
-        $.ajax({
-            type:'POST',
-            url:'/order/CheckProgDB',
-            data: {proc_plan_number:Make_proc_plan_number},
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader(header, _csrfToken);
-                },
-                success: function (response) {
-                    console.log('Received data:', response);
-                    if(response==0) {
-                        return;
-                    }
-                    else if(response>0) {
-                        alert("이미 진척검수가 등록된 조달계획입니다.");
-                    }
-                },
-                error: function(error) {
-                    console.error('Error:', error);
-                }
-        })
-
-    }
 </script>
-<script th:inline="javascript">
-
-    var header = $('meta[name="_csrf_header"]').attr("content");
-    var _csrfToken = $('#_csrf_token').val();
-    <!--
-        var today = new Date().toISOString().split('T')[0];
-    document.getElementById('table4_proc_check_date').value = today;
-        -->
-    var Make_business_number;
-    var Make_company_name;
-    var Make_proc_plan_number;
-    var Complete_purch_order_number;
-
-    $(document).ready(function() {
-        console.log('table1List:', /*[[${table1List}]]*/);
-
-        // 탭 이동
-        $('#MakeCheckPlan').on('click', function() {
-            clearTable2Contents();
-            clearTable3Contents();
-            $('#CheckPlanSection').show();
-            $('#CompleteCheckPlanSection').hide();
-            console.log("검수계획 탭 보임");
-            console.log("검수계획 데이터 지움");
-        }),
-
-        $('#CompleteCheckPlan').on('click', function() {
-            clearTable5Contents();
-            clearTable6Contents();
-            $('#CompleteCheckPlanSection').show();
-            $('#CheckPlanSection').hide();
-            console.log("검수처리 탭 보임");
-            console.log("검수처리 데이터 지움");
-        })
-
-        $('#table1 tbody tr').on('click', function() {
-
-            // 검수계획 탭 보일때
-            if ($('#CheckPlanSection').is(':visible')) {
-                var Make_purch_order_number = $(this).find('td:eq(0)').text();
-                var Make_purch_order_date = $(this).find('td:eq(1)').text();
-                var Make_receive_duedate = $(this).find('td:eq(2)').text();
-                var Make_item_code = $(this).find('td:eq(3)').text();
-                var Make_item_name = $(this).find('td:eq(4)').text();
-                var Make_purch_order_quantity = $(this).find('td:eq(5)').text();
-                Make_business_number = $(this).find('td:eq(6)').text();
-                Make_company_name = $(this).find('td:eq(7)').text();
-                Make_proc_plan_number = $(this).find('td:eq(8)').text();
-
-                $('#table2 tbody tr:eq(0) td:eq(1) input').val(Make_purch_order_number);
-                $('#table2 tbody tr:eq(1) td:eq(1) input').val(Make_purch_order_date);
-                $('#table2 tbody tr:eq(2) td:eq(1) input').val(Make_receive_duedate);
-                $('#table2 tbody tr:eq(3) td:eq(1) input').val(Make_business_number);
-                $('#table2 tbody tr:eq(4) td:eq(1) input').val(Make_company_name);
-                $('#table3 tbody tr:eq(1) td:eq(0) input').val(Make_item_code);
-                $('#table3 tbody tr:eq(1) td:eq(1) input').val(Make_item_name);
-                $('#table3 tbody tr:eq(1) td:eq(2) input').val(Make_purch_order_quantity);
-
-                CheckProgDB();
-            }
-
-            // 검수처리 탭 보일때
-            if ($('#CompleteCheckPlanSection').is(':visible')) {
-                Complete_purch_order_number = $(this).find('td:eq(0)').text();
-                var Complete_purch_order_date = $(this).find('td:eq(1)').text();
-                var Complete_receive_duedate = $(this).find('td:eq(2)').text();
-                var Complete_item_code = $(this).find('td:eq(3)').text();
-                var Complete_item_name = $(this).find('td:eq(4)').text();
-                var Complete_purch_order_quantity = $(this).find('td:eq(5)').text();
-                Make_business_number = $(this).find('td:eq(6)').text();
-                Make_company_name = $(this).find('td:eq(7)').text();
-                Make_proc_plan_number = $(this).find('td:eq(8)').text();
-
-                $('#table5 tbody tr:eq(0) td:eq(1) input').val(Complete_purch_order_number);
-                $('#table5 tbody tr:eq(1) td:eq(1) input').val(Complete_purch_order_date);
-                $('#table5 tbody tr:eq(2) td:eq(1) input').val(Complete_receive_duedate);
-                $('#table5 tbody tr:eq(3) td:eq(1) input').val(Make_business_number);
-                $('#table5 tbody tr:eq(4) td:eq(1) input').val(Make_company_name);
-                $('#table6 tbody tr:eq(1) td:eq(0) input').val(Complete_item_code);
-                $('#table6 tbody tr:eq(1) td:eq(1) input').val(Complete_item_name);
-                $('#table6 tbody tr:eq(1) td:eq(2) input').val(Complete_purch_order_quantity);
-
-                showCheckPlanDetails();
-
-            }
-        })
-    });
+<script>
+$("#search").on("click", function (e) {
+    e.preventDefault();
+    let type = $("#type").val();
+    let keyword = $("#keyword").val();
+    let pageNum = $("#table1_paginate .active a").text();
+    let startDate = $("#startDate").val();
+    let endDate = $("#endDate").val();
+    console.log(type,keyword,pageNum);
+    window.location.replace('/order/progress-check?pageNum=1&amount=10&type='+type+'&keyword='+keyword+'&startDate='+startDate+'&endDate='+endDate);
+});
 </script>
-    </th:block>
+</th:block>
 </th:block>
 </html>

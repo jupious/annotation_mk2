@@ -6,6 +6,7 @@ import edu.mit.annotation.realdto.*;
 import edu.mit.annotation.testdto.ProgressCheckDTO;
 import edu.mit.annotation.testdto.PurchaseOrderListDTO;
 import edu.mit.annotation.testdto.RegisterCriteria;
+import edu.mit.annotation.testdto.getCompanyDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -158,14 +159,26 @@ public class OrderServiceImpl implements OrderService{
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 아래부터 나중에 이어붙일 부분
     @Override
-    public List<PurchaseOrderListDTO> getListforTable1()    {
-        return orderMapper.getListforTable1();
+    public List<PurchaseOrderListDTO> getListforTable1(RegisterCriteria cri)    {
+
+        return orderMapper.getListforTable1(cri);
     }
 
     @Override
     public List<ProgressCheckDTO> getListforProgressCheck(String proc_plan_number, String purch_order_number) {
         return orderMapper.getListforProgressCheck(proc_plan_number, purch_order_number);
     }
+
+    @Override
+    public int checkPlanDB(String proc_plan_number) {
+        return orderMapper.checkPlanDB(proc_plan_number);
+    }
+
+    @Override
+    public List<AutoProgPlanAlertDTO> autoMailPrcp(Criteria cri) {
+        return orderMapper.getAutoProcPlan(cri);
+    }
+
 
     @Override
     public int inspectCheckPlans(String purch_order_number)    {
@@ -195,8 +208,8 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public int CheckProgDB(String proc_plan_number) {
-        return orderMapper.CheckProgDB(proc_plan_number);
+    public List<getCompanyDTO> getCompany(String proc_plan_number) {
+        return orderMapper.getCompany(proc_plan_number);
     }
 
 
@@ -216,23 +229,23 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public int getCountProcPlan()  {
-        return orderMapper.getCountProcPlan();
+    public int getCountProcPlan(RegisterCriteria cri)  {
+        return orderMapper.getCountProcPlan(cri);
     }
 
     @Override
-    public int getCountPublishedPurOrder() {
-        return orderMapper.getCountPublishedPurOrder();
+    public int getCountPublishedPurOrder(RegisterCriteria cri) {
+        return orderMapper.getCountPublishedPurOrder(cri);
     }
 
     @Override
-    public int getCountProgCheckingProcPlan()  {
-        return orderMapper.getCountProgCheckingProcPlan();
+    public int getCountProgCheckingProcPlan(RegisterCriteria cri)  {
+        return orderMapper.getCountProgCheckingProcPlan(cri);
     }
 
     @Override
-    public int getCountFinishedProcPlan()  {
-        return orderMapper.getCountFinishedProcPlan();
+    public int getCountFinishedProcPlan(RegisterCriteria cri)  {
+        return orderMapper.getCountFinishedProcPlan(cri);
     }
 
 }

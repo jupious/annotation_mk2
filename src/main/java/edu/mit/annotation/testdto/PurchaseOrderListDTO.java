@@ -21,4 +21,7 @@ public class PurchaseOrderListDTO {
     private String business_number;
     private String company_name;
     private String proc_plan_number;
+    private String prog_check_results;
+    private Integer prog_check_total;
+    private Integer prog_check_count;
 }

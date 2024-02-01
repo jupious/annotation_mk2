@@ -4,6 +4,7 @@ import edu.mit.annotation.realdto.*;
 import edu.mit.annotation.testdto.ProgressCheckDTO;
 import edu.mit.annotation.testdto.PurchaseOrderListDTO;
 import edu.mit.annotation.testdto.RegisterCriteria;
+import edu.mit.annotation.testdto.getCompanyDTO;
 
 import java.util.List;
 
@@ -56,7 +57,7 @@ public interface OrderMapper {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 아래부터 나중에 이어붙일 부분
 
     // 진척검수 관련
-    List<PurchaseOrderListDTO> getListforTable1();
+    List<PurchaseOrderListDTO> getListforTable1(RegisterCriteria cri);
 
     List<ProgressCheckDTO> getListforProgressCheck(String proc_plan_number, String purch_order_number);
     void saveProgressCheck(ProgressCheckDTO dto);
@@ -67,22 +68,26 @@ public interface OrderMapper {
 
     void updateProgressCheck(ProgressCheckDTO dto);
 
-    int CheckProgDB(String proc_plan_number);
+    List<getCompanyDTO> getCompany(String proc_plan_number);
 
+    int checkPlanDB(String proc_plan_number);
+
+    //진척검수 3일안에 있는일정확인
+    List<AutoProgPlanAlertDTO> getAutoProcPlan(Criteria cri);
 
     // 발주현황리포트 관련
     List<PurchaseOrderListDTO> getListPurOrder();
     int getCountListPurOrder();
 
     // 총 조달계획 갯수
-    int getCountProcPlan();
+    int getCountProcPlan(RegisterCriteria cri);
 
     // 발주서 발행 갯수
-    int getCountPublishedPurOrder();
+    int getCountPublishedPurOrder(RegisterCriteria cri);
 
     // 진척검수 진행중 갯수
-    int getCountProgCheckingProcPlan();
+    int getCountProgCheckingProcPlan(RegisterCriteria cri);
 
     // 조달마감 갯수
-    int getCountFinishedProcPlan();
+    int getCountFinishedProcPlan(RegisterCriteria cri);
 }

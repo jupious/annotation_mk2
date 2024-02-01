@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -36,21 +38,6 @@ public class RegisterController {
         model.addAttribute("unitCodeList", service.getListUnitCode());
         model.addAttribute("assyCodeList", service.getListAssyCode());
         model.addAttribute("partCodeList", service.getListPartCode());
-    }
-
-    @ResponseBody
-    @GetMapping("/itemSearch")
-    public List<ItemDTO> itemSearch(@RequestParam(name="type", defaultValue = "") String type,
-                                    @RequestParam(name="keyword", defaultValue = "") String keyword,
-                                    @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
-                                    Model model, RegisterCriteria cri)  {
-        cri.setOffset((cri.getPageNum()-1)*cri.getAmount());
-        System.out.println(type);
-        System.out.println(keyword);
-        System.out.println(pageNum);
-        cri.setType(type);
-        cri.setKeyword(keyword);
-        return service.searchListItemWithPaging(cri);
     }
 
     @PostMapping("/itemInput")
@@ -210,22 +197,6 @@ public class RegisterController {
 
     }
 
-
-
-    @ResponseBody
-    @GetMapping("/contractSearch")
-    public List<ContractListDTO> contractSearch(@RequestParam(name="type", defaultValue = "") String type,
-                                        @RequestParam(name="keyword", defaultValue = "") String keyword,
-                                        @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
-                                        Model model, RegisterCriteria cri)  {
-        cri.setOffset((cri.getPageNum()-1)*cri.getAmount());
-        System.out.println(type);
-        System.out.println(keyword);
-        System.out.println(pageNum);
-        cri.setType(type);
-        cri.setKeyword(keyword);
-        return service.searchListContractWithPaging(cri);
-    }
     @GetMapping("/updateContractList")
     public String updateContractList(Model model) {
         model.addAttribute("updatedContractList", service.getListContract());
@@ -291,45 +262,18 @@ public class RegisterController {
         return "redirect:/reg/contract";
     }
 
-//    @GetMapping("/contractView/{contract_save_name}")
-//    public String contractView(@PathVariable String contract_save_name, Model model) {
-//        contract_save_name = "/upload/contract/"+ contract_save_name;
-//        model.addAttribute("img_path", contract_save_name);
-//        return "/reg/contractView";
-//    }
-
     @GetMapping("/plan")
     public void plan(RegisterCriteria cri, Model model)   {
         cri.setOffset((cri.getPageNum()-1)*cri.getAmount());
-        int total = service.getTotalProdPlanCount(cri);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar calendar = Calendar.getInstance();
 
-        String startDate = sdf.format(calendar.getTime());
-        calendar.add(Calendar.MONTH, 1);
-        String endDate = sdf.format(calendar.getTime());
-        System.out.println(startDate);
-        System.out.println(endDate);
+        LocalDate startDate = cri.getParsedStartDate();
+        LocalDate endDate = cri.getParsedEndDate();
+
+
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
-        model.addAttribute("pageMaker", new PageDTO(cri, total));
         model.addAttribute("prodPlan", service.getListProdPlanWithPaging(cri));
-        model.addAttribute("table1List", service.getListforTable1());
-    }
-
-    @ResponseBody
-    @GetMapping("/planSearch")
-    public List<ProductionPlanDTO> prodplanSearch(@RequestParam(name="type", defaultValue = "") String type,
-                                                @RequestParam(name="keyword", defaultValue = "") String keyword,
-                                                @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
-                                                Model model, RegisterCriteria cri)  {
-        cri.setOffset((cri.getPageNum()-1)*cri.getAmount());
-        System.out.println(type);
-        System.out.println(keyword);
-        System.out.println(pageNum);
-        cri.setType(type);
-        cri.setKeyword(keyword);
-        return service.searchListProdPlanWithPaging(cri);
+        model.addAttribute("pageMaker", new PageDTO(cri, service.getTotalNoContractCount()));
     }
 
     @PostMapping("/planInput")

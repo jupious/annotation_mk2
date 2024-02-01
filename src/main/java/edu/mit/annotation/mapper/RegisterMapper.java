@@ -18,7 +18,6 @@ public interface RegisterMapper {
     List<ItemDTO> getListItem();
     int getTotalItemCount(RegisterCriteria cri);
     List<ItemDTO> getListItemWithPaging(RegisterCriteria cri);
-    List<ItemDTO> searchListItemWithPaging(RegisterCriteria cri);
     List<CodeDTO> getListUnitCode();
     void inputUnitCode(CodeDTO codeDTO);
     List<CodeDTO> getListAssyCode();
@@ -45,7 +44,6 @@ public interface RegisterMapper {
     int getTotalNoContractCount();
     List<ContractListDTO> getListContractWithPaging(RegisterCriteria cri);
 
-    List<ContractListDTO> searchListContractWithPaging(RegisterCriteria cri);
     int removeContract(String contract_number);
 
    List<ContractListDTO> checkContract(RegisterCriteria cri);

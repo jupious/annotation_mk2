@@ -12,7 +12,6 @@ public interface RegisterService {
     // 품목 리스트 보기
     List<ItemDTO> getListItem();
     List<ItemDTO> getListItemWithPaging(RegisterCriteria cri);
-    List<ItemDTO> searchListItemWithPaging(RegisterCriteria cri);
     int getTotalItemCount(RegisterCriteria cri);
     // 품목등록
     void registerItem(ItemDTO dto);
@@ -40,7 +39,6 @@ public interface RegisterService {
     List<ContractListDTO> getListContract();
     List<ContractListDTO> getListContractWithPaging(RegisterCriteria cri);
     List<ContractListDTO> checkContract(RegisterCriteria cri);
-    List<ContractListDTO> searchListContractWithPaging(RegisterCriteria cri);
     int getTotalNoContractCount();
 
     boolean removeContract(@Param("contract_number") String contract_number);
@@ -57,7 +55,6 @@ public interface RegisterService {
     String getUniqueProcPlanNumber(String proc_plan_number);
 
     List<ProductionPlanDTO> getListProdPlanWithPaging(RegisterCriteria cri);
-    List<ProductionPlanDTO> searchListProdPlanWithPaging(RegisterCriteria cri);
     int getTotalProdPlanCount(RegisterCriteria cri);
 
   /*

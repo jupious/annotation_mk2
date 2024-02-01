@@ -30,10 +30,6 @@ public class RegisterServiceImpl implements RegisterService {
         return mapper.getListItemWithPaging(cri);
     }
 
-    @Override
-    public List<ItemDTO> searchListItemWithPaging(RegisterCriteria cri)    {
-        return mapper.searchListItemWithPaging(cri);
-    }
 
     @Override
     public int getTotalItemCount(RegisterCriteria cri)  {
@@ -66,20 +62,6 @@ public class RegisterServiceImpl implements RegisterService {
             }
         return item_code;
     }
-    /*
-    public String getUniqueContractNumber(String contract_number) {
-        int index = Integer.parseInt(contract_number.split("-")[1]);
-
-        String baseContractNumber = "co-";
-        String contractNumber = baseContractNumber + (index+1);
-
-        while (mapper.checkDuplicateContractNumber(contractNumber) > 0) {
-            index++;
-            contractNumber = baseContractNumber + index;
-        }
-        return contractNumber;
-    }
-     */
 
     @Override
     public List<CodeDTO> getListUnitCode() {
@@ -177,12 +159,6 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
-    public List<ContractListDTO> searchListContractWithPaging(RegisterCriteria cri)    {
-        return mapper.searchListContractWithPaging(cri);
-    }
-
-
-    @Override
     public int getTotalNoContractCount()    {
         return mapper.getTotalNoContractCount();
     }
@@ -264,13 +240,10 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
-    public List<ProductionPlanDTO> searchListProdPlanWithPaging(RegisterCriteria cri){
-        return mapper.searchListProdPlanWithPaging(cri);
-    }
-    @Override
     public int getTotalProdPlanCount(RegisterCriteria cri){
         return mapper.getTotalProdPlanCount(cri);
     }
+
     @Override
     public void registerPlan(ProcurementPlanDTO dto)    {
         try{

@@ -38,19 +38,19 @@
                 <div class="card-body">
                     <h5 class="card-header">생산계획조회</h5>
                     <div class="card-body table-border-style">
-                        <input type="date" id="startDate" class="form-control-sm" th:value="${startDate}">
-                        ~
-                        <input type="date" id="endDate" class="form-control-sm" th:value="${endDate}">
-                        <button class="btn  btn-primary btn-sm" id="searchDate">조회</button><br>
-                        <select id="type" name="type" title="검색분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" style="float:left; height:31px;">
-                            <option value="">검색어</option>
-                            <option value="PC" th:selected="${pageMaker.cri.type eq 'PC'}">제품코드</option>
-                            <option value="PN" th:selected="${pageMaker.cri.type eq 'PN'}">제품명</option>
-                            <option value="IC" th:selected="${pageMaker.cri.type eq 'IC'}">품목코드</option>
-                            <option value="IN" th:selected="${pageMaker.cri.type eq 'IN'}">품목명</option>
-                        </select>
-                        <input type="text" class="form-control-sm" id="keyword" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;">
-                        <button class="btn btn-primary btn-sm" type="button" style="float:left;" id="search">검색</button>
+                        <form>
+                            <input type="date" id="startDate" class="form-control-sm" th:value="${startDate}">
+                            ~
+                            <input type="date" id="endDate" class="form-control-sm" th:value="${endDate}"><br>
+                                <select id="type" name="type" title="검색분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" style="float:left; height:31px;">
+                                    <option value="PC" th:selected="${pageMaker.cri.type eq 'PC'}">제품코드</option>
+                                    <option value="PN" th:selected="${pageMaker.cri.type eq 'PN'}">제품명</option>
+                                    <option value="IC" th:selected="${pageMaker.cri.type eq 'IC'}">품목코드</option>
+                                    <option value="IN" th:selected="${pageMaker.cri.type eq 'IN'}">품목명</option>
+                                </select>
+                                <input type="text" class="form-control-sm" id="keyword" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;" th:value="${pageMaker.cri.keyword}">
+                                <button class="btn btn-primary btn-sm" type="button" style="float:left;" id="search">검색</button>
+                        </form>
                         <button type="button" class="btn  btn-danger btn-sm" style="float:right;">미등록건만보기</button>
                         <button type="button" id="ShowAll" class="btn  btn-primary btn-sm" style="float:right;">전체보기</button>
                         <div class="table-responsive">
@@ -58,7 +58,7 @@
                                 <thead>
                                 <tr>
                                     <th class="text-center">생산시작일</th>
-                                    <th class="text-center">생산종료일</th>
+                                    <th class="text-center">생산종료일</th> 
                                     <th class="text-center">생산제품코드</th>
                                     <th class="text-center">생산제품명</th>
                                     <th class="text-center">생산수량</th>
@@ -88,7 +88,7 @@
                                 <ul class="pagination">
                                     <th:if test="${pageMaker.prev}">
                                         <th:block th:if="${pageMaker.startPage > 1}">
-                                            <a class = "page-link" th:href="@{'/reg/plan?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount}}">이전</a>
+                                            <a class = "page-link" th:href="@{'/reg/plan?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount} +'&type='+${pageMaker.cri.type}+'&keyword='+${pageMaker.cri.keyword}+'&startDate='+${pageMaker.cri.startDate}+'&endDate='+${pageMaker.cri.endDate}}">이전</a>
                                         </th:block>
                                     </th:if>
                                 
@@ -103,7 +103,7 @@
                                         <th:block th:unless="${num == pageMaker.cri.pageNum}">
                                             <li class = "page-item">
                                                 <span class="page-link">
-                                                    <a th:href="@{'/reg/plan?pageNum=' + ${num} + '&amount=' + ${pageMaker.cri.amount}}" th:text="${num}"></a>
+                                                    <a th:href="@{'/reg/plan?pageNum=' + ${num} + '&amount=' + ${pageMaker.cri.amount} +'&type='+${pageMaker.cri.type}+'&keyword='+${pageMaker.cri.keyword}+'&startDate='+${pageMaker.cri.startDate}+'&endDate='+${pageMaker.cri.endDate}}" th:text="${num}"></a>
                                                 </span>
                                             </li>
                                         </th:block>
@@ -111,7 +111,7 @@
                                 
                                     <th:if test="${pageMaker.next}">
                                         <th:block th:if="${pageMaker.endPage*pageMaker.cri.amount < pageMaker.total}">
-                                            <a class="page-link" th:href="@{'/reg/plan?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount}}">다음</a>
+                                            <a class="page-link" th:href="@{'/reg/plan?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount} +'&type='+${pageMaker.cri.type}+'&keyword='+${pageMaker.cri.keyword}+'&startDate='+${pageMaker.cri.startDate}+'&endDate='+${pageMaker.cri.endDate}}">다음</a>
                                         </th:block>
                                     </th:if>
                                 </ul>
@@ -133,27 +133,6 @@
     var _csrfToken = $('#_csrf_token').val();
 </script>
 <script>
-    function search() {
-                var type = $("#type").val();
-                var keyword = $("#keyword").val();
-                var pageNum = $("#table2_paginate .active a").text(); // 현재 선택된 페이지 번호 가져오기
-
-                console.log(type);
-                console.log(keyword);
-                console.log(pageNum);
-                $.ajax({
-                    type: "GET",
-                    url: "/reg/planSearch",
-                    data: { "type": type, "keyword": keyword },
-                    success: function (response) {
-                        updateTable(response);
-                    },
-                    error: function (error) {
-                        console.error("검색 실패");
-                        console.error(error);
-                    }
-                });
-            }
             function updateTable(response) {
                 // itemList를 이용하여 테이블 등을 업데이트하는 로직 추가
                 // 예시: 테이블의 tbody를 찾아서 아이템 리스트로 업데이트
@@ -187,9 +166,6 @@
 </script>
 <script>
     $(document).ready(function () {
-        $("#search").on("click", function () {
-                    search();
-                });
         function showAllRows() {
             $("#table2 tbody tr").show();
         }
@@ -244,7 +220,7 @@
 
         var cal1 = rowData[4]*rowData[7];
         var cal2 = cal1*(rowData[9]/100);
-        var cal3 = cal1+cal2;
+        var cal3 = Math.ceil(cal1+cal2);
         console.log("cal1 : ",cal1);
         console.log("cal2 : ",cal2);
         console.log("cal3 : ",cal3);
@@ -287,6 +263,21 @@
         // 복사된 행의 식별자 초기화
         copiedRowId = null;
     });
+
+    $("#search").on("click", function (e) {
+            e.preventDefault();
+            let type = $("#type").val();
+            let keyword = $("#keyword").val();
+            let pageNum = $("#table2_paginate .active a").text();
+            let startDate = $("#startDate").val();
+            let endDate = $("#endDate").val();
+            console.log("type:", type);
+            console.log("keyword:", keyword);
+            console.log("pageNum:", pageNum);
+            console.log("startDate:", startDate);
+            console.log("endDate:", endDate);
+            window.location.replace('/reg/plan?pageNum=1&amount=10&type='+type+'&keyword='+keyword+'&startDate='+startDate+'&endDate='+endDate);
+        });
 
     // 저장 버튼 클릭 시
     $("#save").on("click", function () {

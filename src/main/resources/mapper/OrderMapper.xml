@@ -49,6 +49,22 @@
         </choose>
     </sql>
 
+    <sql id="list1_Criteria">
+        <if test='keyword!=""'>
+            <choose>
+                <when test='type=="PON"'>
+                    and po.purch_order_number like '%${keyword}%'
+                </when>
+                <when test='type=="IC"'>
+                    and i.item_code like '%${keyword}%'
+                </when>
+                <when test='type=="IN"'>
+                    and i.item_name like '%${keyword}%
+                </when>
+            </choose>
+        </if>
+    </sql>
+
 
     <select id="getProcPlanList" resultType="edu.mit.annotation.realdto.ProcPlanNoPO">
         <![CDATA[
@@ -224,35 +240,52 @@
         group by purch_order_number
     </select>
 
+
+    <select id="getAutoProcPlan" resultType="edu.mit.annotation.realdto.AutoProgPlanAlertDTO">
+        select purch_order_number, proc_check_date, item_code, purch_order_quantity, item_name, business_number, company_name, company_address, manager, manager_tel, proc_check_order
+        from(
+        select purch_order_number, proc_check_date, item_code, purch_order_quantity, item_name, business_number, proc_check_order
+        from(
+        select purch_order_number, proc_check_date, item_code, purch_order_quantity, item_name, contract_number, proc_check_order
+        from(
+        select purch_order_number, proc_check_date, item_code, purch_order_quantity, item_name, proc_check_order
+        from(
+        select purch_order_number, proc_check_date, item_code, purch_order_quantity, proc_check_order
+        from(
+        select purch_order_number, proc_check_date, item_code, proc_plan_number, proc_check_order
+        from(
+        select purch_order_number, proc_plan_number, proc_check_date, proc_check_order
+        from progress_check_item
+        where prog_check_result = '검수전' and proc_check_date between date(#{startDate}) and date(#{endDate}))a
+        join procurement_plan b using(proc_plan_number)) aa
+        join purchase_order_item bb using(purch_order_number , proc_plan_number)) aaa
+        join item bbb using(item_code))c
+        join contract_item d using(item_code)) cc
+        join contract dd using(contract_number)) ccc
+        join `co-op_company` ddd using(business_number)
+    </select>
+
     <!--여기부턴내꺼아님-->
     <select id="getListforTable1" resultType="edu.mit.annotation.testdto.PurchaseOrderListDTO">
-        SELECT
-        po.purch_order_number,
-        po_i.purch_order_quantity,
-        pp.item_code,
-        i.item_name,
-        cc.business_number,
-        cc.company_name,
-        pp.proc_plan_number,
-        DATE_FORMAT(po.purch_order_date, '%Y-%m-%d') as purch_order_date,
-        DATE_FORMAT(po_i.receive_duedate, '%Y-%m-%d') as receive_duedate
-        FROM
-        purchase_order AS po
-        JOIN
-        purchase_order_item AS po_i ON po.purch_order_number = po_i.purch_order_number
-        JOIN
-        procurement_plan AS pp ON pp.proc_plan_number = po_i.proc_plan_number
-        JOIN
-        item AS i ON pp.item_code = i.item_code
-        JOIN
-        contract_item AS ci ON ci.item_code = pp.item_code
-        JOIN
-        contract AS c ON c.contract_number = ci.contract_number
-        JOIN
-        `co-op_company` AS cc ON cc.business_number = c.business_number
-        ORDER BY
-        po.purch_order_number ASC,
-        po.purch_order_date ASC
+        <![CDATA[
+    select purch_order_number, purch_order_date, receive_duedate, item_code, item_name, purch_order_quantity, prog_check_total, prog_check_results, proc_plan_number, prog_check_count
+FROM(
+	select purch_order_number, purch_order_date, receive_duedate, item_code, purch_order_quantity, prog_check_total, prog_check_results, proc_plan_number, prog_check_count
+	FROM(
+		select purch_order_number, purch_order_date, receive_duedate, purch_order_quantity, proc_plan_number, count(proc_check_order) prog_check_total,COUNT(case when prog_check_result<>'검수전' then 1 END) as prog_check_count, ifnull(group_concat(prog_check_result SEPARATOR '!@#'), '-') prog_check_results
+		from(
+			select aa.purch_order_number, purch_order_date, receive_duedate, purch_order_quantity, proc_plan_number, proc_check_order, prog_check_result
+			from(
+				select purch_order_number, purch_order_date, receive_duedate, purch_order_quantity, proc_plan_number
+				from(
+					select purch_order_number, purch_order_date
+					from purchase_order) a join purchase_order_item b using (purch_order_number))aa left join progress_check_item bb using(proc_plan_number)) aaa
+		GROUP by proc_plan_number, purch_order_date, purch_order_number, receive_duedate) c join procurement_plan d using (proc_plan_number)) cc
+	join item dd using(item_code)
+	where purch_order_date between #{startDate} and #{endDate}
+        ]]><include refid="list1_Criteria"></include>
+        order by prog_check_count ASC, LENGTH(purch_order_number), purch_order_number
+        limit #{amount} offset #{offset}
     </select>
 
 
@@ -263,18 +296,11 @@
     </insert>
 
     <select id="getListforProgressCheck" resultType="edu.mit.annotation.testdto.ProgressCheckDTO">
-        SELECT
-        purch_order_number,
-        proc_plan_number,
-        proc_check_order,
-        prog_check_result,
-        completed_quantity,
-        supplementation,
-        DATE_FORMAT(proc_check_date, '%Y-%m-%d') AS proc_check_date
-        FROM
-        progress_check_item
-        WHERE
-        proc_plan_number = #{proc_plan_number} and purch_order_number =#{purch_order_number}
+        SELECT proc_check_order, DATE_FORMAT(proc_check_date, '%Y-%m-%d') AS proc_check_date,
+        prog_check_result, completed_quantity, supplementation, ROUND(((completed_quantity)/(purch_order_quantity)*100)) AS percent
+        FROM progress_check_item AS pci
+        JOIN purchase_order_item AS poi USING(proc_plan_number, purch_order_number)
+        WHERE purch_order_number = #{purch_order_number} and proc_plan_number = #{proc_plan_number}
     </select>
 
     <select id="inspectCheckPlans" resultType="int">
@@ -284,8 +310,7 @@
     </select>
 
     <select id="getCountListPurOrder" resultType="int">
-        SELECT COUNT(purch_order_number)
-        FROM purchase_order
+        SELECT found_rows()
     </select>
 
     <update id="updateProgressCheck">
@@ -302,46 +327,33 @@
         pci.proc_check_date = #{proc_check_date};
     </update>
 
-    <select id="CheckProgDB" resultType="int">
-        SELECT
-        count(proc_plan_number)
-        FROM
-        progress_check_item
+    <select id="getCompany" resultType="edu.mit.annotation.testdto.getCompanyDTO">
+        SELECT company_name, business_number, item_code, proc_plan_number
+        FROM (
+        (SELECT company_name, business_number, item_code
+        FROM (
+        SELECT distinct company_name, business_number, contract_number
+        FROM `co-op_company`
+        JOIN contract USING(business_number)
+        ) a
+        JOIN contract_item USING(contract_number)) b
+        JOIN procurement_plan USING(item_code))
         WHERE
         proc_plan_number = #{proc_plan_number}
     </select>
 
-
+    <select id="checkPlanDB" resultType="int">
+        select count(proc_check_order)
+        from progress_check_item
+        where proc_plan_number = #{proc_plan_number}
+    </select>
 
     <!-- 발주현황리포트 -->
     <select id="getListPurOrder" resultType="edu.mit.annotation.testdto.PurchaseOrderListDTO">
-        SELECT
-        po.purch_order_number,
-        po_i.purch_order_quantity,
-        pp.item_code,
-        i.item_name,
-        cc.business_number,
-        cc.company_name,
-        pp.proc_plan_number,
-        DATE_FORMAT(po.purch_order_date, '%Y-%m-%d') as purch_order_date,
-        DATE_FORMAT(po_i.receive_duedate, '%Y-%m-%d') as receive_duedate
-        FROM
-        purchase_order AS po
-        JOIN
-        purchase_order_item AS po_i ON po.purch_order_number = po_i.purch_order_number
-        JOIN
-        procurement_plan AS pp ON pp.proc_plan_number = po_i.proc_plan_number
-        JOIN
-        item AS i ON pp.item_code = i.item_code
-        JOIN
-        contract_item AS ci ON ci.item_code = pp.item_code
-        JOIN
-        contract AS c ON c.contract_number = ci.contract_number
-        JOIN
-        `co-op_company` AS cc ON cc.business_number = c.business_number
-        ORDER BY
-        po.purch_order_number ASC,
-        po.purch_order_date ASC
+        SELECT purch_order_date, receive_duedate, purch_order_number, purch_order_quantity, purch_order_detail, note
+        FROM purchase_order
+        JOIN purchase_order_item USING(purch_order_number)
+        ORDER BY purch_order_date, purch_order_number asc
     </select>
 
     <select id="getTotalPurOrder" resultType="int">
@@ -354,13 +366,15 @@
         count(*)
         FROM
         procurement_plan
+        where procurement_plan.proc_regist_date BETWEEN #{startDate} and #{endDate}
     </select>
 
     <select id="getCountPublishedPurOrder" resultType="int">
         SELECT
         count(*)
         FROM
-        purchase_order_item
+        purchase_order
+        where purch_order_date between #{startDate} and #{endDate}
     </select>
 
     <select id="getCountProgCheckingProcPlan" resultType="int">
@@ -368,8 +382,8 @@
         count(DISTINCT proc_plan_number)
         FROM
         progress_check_item
-        WHERE
-        progress_check_item.proc_check_date>CURDATE()
+        where
+        progress_check_item.proc_check_date>#{endDate}
     </select>
 
     <select id="getCountFinishedProcPlan" resultType="int">
@@ -379,5 +393,6 @@
         procurement_plan
         WHERE
         proc_progress = '1'
+        and proc_regist_date between #{startDate} and #{endDate}
     </select>
 </mapper>

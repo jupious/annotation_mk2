@@ -4,6 +4,7 @@ import edu.mit.annotation.realdto.*;
 import edu.mit.annotation.testdto.ProgressCheckDTO;
 import edu.mit.annotation.testdto.PurchaseOrderListDTO;
 import edu.mit.annotation.testdto.RegisterCriteria;
+import edu.mit.annotation.testdto.getCompanyDTO;
 
 import java.util.List;
 
@@ -45,7 +46,7 @@ public interface OrderService {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 아래부터 나중에 이어붙일 부분
     // 진척검수 관련
-    List<PurchaseOrderListDTO> getListforTable1();
+    List<PurchaseOrderListDTO> getListforTable1(RegisterCriteria cri);
 
     List<ProgressCheckDTO> getListforProgressCheck(String proc_plan_number, String purch_order_number);
     void saveProgressCheck(ProgressCheckDTO dto);
@@ -55,19 +56,23 @@ public interface OrderService {
 
     void updateProgressCheck(ProgressCheckDTO dto);
 
-    int CheckProgDB(String proc_plan_number);
+    List<getCompanyDTO> getCompany(String proc_plan_number);
+    int checkPlanDB(String proc_plan_number);
+
+    //진척검수자동메일
+    List<AutoProgPlanAlertDTO> autoMailPrcp(Criteria cri);
 
 
     // 발주현황리포트 관련
     List<PurchaseOrderListDTO> getListPurOrder();
     int getCountListPurOrder();
 
-    int getCountProcPlan();
+    int getCountProcPlan(RegisterCriteria cri);
 
-    int getCountPublishedPurOrder();
+    int getCountPublishedPurOrder(RegisterCriteria cri);
 
-    int getCountProgCheckingProcPlan();
+    int getCountProgCheckingProcPlan(RegisterCriteria cri);
 
-    int getCountFinishedProcPlan();
+    int getCountFinishedProcPlan(RegisterCriteria cri);
 
 }

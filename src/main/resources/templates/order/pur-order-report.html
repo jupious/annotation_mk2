@@ -3,80 +3,18 @@
 <th:block th:replace="~{./layout/layout::setContent(~{::content})}">
     <th:block th:fragment = "content">
         <div class="pcoded-content">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-header">생산계획조회</h5>
-                            <div class="card-body table-border-style">
-                                <input type="date" id="startDate" class="form-control-sm" th:value="${startDate}">
-                                ~
-                                <input type="date" id="endDate" class="form-control-sm" th:value="${endDate}">
-                                <button class="btn  btn-primary btn-sm" id="searchDate">조회</button><br>
-
-                                <div class="table-responsive">
-                                    <table id="table2" class="table table-bordered table-sm" width="100%">
-                                        <thead>
-                                        <tr>
-                                            <th class="text-center">발주일자</th>
-                                            <th class="text-center">발주납기일자</th>
-                                            <th class="text-center">발주번호</th>
-                                            <th class="text-center">발주수량</th>
-                                            <th class="text-center">세부사항</th>
-                                            <th class="text-center">비고</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr th:each="orderList : ${orderList}">
-                                                <td th:text="${orderList.purch_order_date}"></td>
-                                                <td th:text="${orderList.receive_duedate}"></td>
-                                                <td th:text="${orderList.purch_order_number}"></td>
-                                                <td th:text="${orderList.purch_order_quantity}"></td>
-                                                <td th:text="${orderList.purch_order_detail}"></td>
-                                                <td th:text="${orderList.note}"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <nav th:if="${pageMaker.total}">
-                                        <ul class="pagination">
-                                            <th:if test="${pageMaker.prev}">
-                                                <th:block th:if="${pageMaker.startPage > 1}">
-                                                    <a class = "page-link" th:href="@{'/order/pur-order-report?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount}}">이전</a>
-                                                </th:block>
-                                            </th:if>
-                                            <span th:each="num : ${#numbers.sequence(pageMaker.startPage, pageMaker.endPage)}">
-                                                <th:block th:if="${num == pageMaker.cri.pageNum}">
-                                                    <li class="page-item active">
-                                                        <span class="page-link">
-                                                            <b th:text="${num}"></b>
-                                                        </span>
-                                                    </li>    
-                                                </th:block>
-                                                <th:block th:unless="${num == pageMaker.cri.pageNum}">
-                                                    <li class = "page-item">
-                                                        <span class="page-link">
-                                                            <a th:href="@{'/order/pur-order-report?pageNum=' + ${num} + '&amount=' + ${pageMaker.cri.amount}}" th:text="${num}"></a>
-                                                        </span>
-                                                    </li>
-                                                </th:block>
-                                            </span>
-                                            <th:if test="${pageMaker.next}">
-                                                <th:block th:if="${pageMaker.endPage*pageMaker.cri.amount < pageMaker.total}">
-                                                    <a class="page-link" th:href="@{'/order/pur-order-report?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount}}">다음</a>
-                                                </th:block>
-                                            </th:if>
-                                        </ul>
-                                    </nav>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
                 <div class="col-xl-6 col-md-6">
                     <div class="card">
                         <div class="card-header">
                             <h5>발주현황 그래프</h5>
                         </div>
                         <div class="card-body" style="position: relative;">
+                            <form>
+                                <input type="date" id="startDate" class="form-control-sm" th:value="${startDate}">
+                                ~
+                                <input type="date" id="endDate" class="form-control-sm" th:value="${endDate}">
+                                <button class="btn btn-primary btn-sm" type="button" style="float:left;" id="search">검색</button>
+                            </form>
                             <div id="bar-chart-1" style="min-height: 365px;">
                                 <div id="apexchartsx6deuf3y" class="apexcharts-canvas apexchartsx6deuf3y light" style="width: 600px; height: 350px;">
                                     <!-- 바 차트를 그릴 캔버스 요소 -->
@@ -135,19 +73,11 @@
 </script>
 <script>
     $(document).ready(function () {
-        $("#searchDate").on("click", function () {
-            var startDate = new Date($("#startDate").val());
-            var endDate = new Date($("#endDate").val());
-            $("#table2 tbody tr").each(function () {
-                var rowStartDateStr = $(this).find("td:eq(0)").text();
-                var rowStartDate = new Date(rowStartDateStr);
-                if (startDate <= rowStartDate && rowStartDate <= endDate) {
-                    $(this).show();
-                } 
-                else {
-                    $(this).hide();
-                }
-            });
+        $("#search").on("click", function (e) {
+            e.preventDefault();
+            let startDate = $("#startDate").val();
+            let endDate = $("#endDate").val();
+            window.location.replace('/order/pur-order-report?startDate='+startDate+'&endDate='+endDate);
         });
     });
 </script>

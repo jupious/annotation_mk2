@@ -3,7 +3,7 @@
 <mapper namespace="edu.mit.annotation.mapper.RegisterMapper">
 
     <sql id="item_Criteria">
-        <if test='keyword!=null'>
+        <if test='keyword!=""'>
             where
             <choose>
                 <when test='type=="IC"'>
@@ -20,7 +20,7 @@
     </sql>
 
     <sql id="contract_Criteria">
-        <if test='keyword!=null'>
+        <if test='keyword!=""'>
             where
             <choose>
                 <when test='type=="IN"'>
@@ -40,20 +40,19 @@
     </sql>
 
     <sql id="prodplan_Criteria">
-        <if test='keyword!=null'>
-            where
+        <if test='keyword!=""'>
             <choose>
                 <when test='type=="PC"'>
-                    p.product_code like '%${keyword}%'
+                    and p.product_code like '%${keyword}%'
                 </when>
                 <when test='type=="PN"'>
-                    p.product_name like '%${keyword}%'
+                    and p.product_name like '%${keyword}%'
                 </when>
                 <when test='type=="IC"'>
-                    i.item_code like '%${keyword}%'
+                    and i.item_code like '%${keyword}%'
                 </when>
                 <when test='type=="IN"'>
-                    i.item_name like '%${keyword}%'
+                    and i.item_name like '%${keyword}%'
                 </when>
             </choose>
         </if>
@@ -70,14 +69,6 @@
     <select id="getListItemWithPaging" resultType="edu.mit.annotation.testdto.ItemDTO">
         <![CDATA[
     select SQL_CALC_FOUND_ROWS item_code, item_name, width, length, height, material, blueprint_origin_name, blueprint_save_name
-    from item
-    ]]><include refid="item_Criteria"></include>
-        limit #{amount} offset #{offset}
-    </select>
-
-    <select id="searchListItemWithPaging" resultType="edu.mit.annotation.testdto.ItemDTO">
-        <![CDATA[
-    select item_code, item_name, width, length, height, material, blueprint_origin_name, blueprint_save_name
     from item
     ]]><include refid="item_Criteria"></include>
         limit #{amount} offset #{offset}
@@ -234,33 +225,6 @@
         limit #{amount} offset #{offset}
     </select>
 
-    <select id="searchListContractWithPaging" resultType="edu.mit.annotation.testdto.ContractListDTO">
-        <![CDATA[
-        SELECT
-                item.item_code,
-                item.item_name,
-                contract_item.lead_time,
-                contract_item.item_price,
-                contract_item.details,
-                contract.contract_save_name,
-                contract.contract_origin_name,
-                contract_item.contract_number,
-                contract.note,
-                `co-op_company`.business_number,
-                `co-op_company`.company_name,
-                `co-op_company`.company_account
-            FROM
-                item
-            LEFT JOIN
-                contract_item ON item.item_code = contract_item.item_code
-            LEFT JOIN
-                contract ON contract_item.contract_number = contract.contract_number
-            LEFT JOIN
-                `co-op_company` ON contract.business_number = `co-op_company`.business_number
-                ]]><include refid="contract_Criteria"></include>
-        limit #{amount} offset #{offset}
-    </select>
-
     <select id="getTotalNoContractCount" resultType="int">
         SELECT found_rows()
     </select>
@@ -310,6 +274,7 @@
         composition_item ci ON pp.product_code = ci.product_code
         LEFT JOIN
         item i ON ci.item_code = i.item_code
+        ORDER BY pp.prod_start_date ASC, i.item_code ASC
     </select>
 
     <select id="getListprodPlan" resultType="edu.mit.annotation.testdto.ProductionPlanDTO">
@@ -332,24 +297,17 @@
 
     <select id="getListProdPlanWithPaging" resultType="edu.mit.annotation.testdto.ProductionPlanDTO">
         <![CDATA[
-        SELECT pp.prod_start_date, pp.prod_end_date, p.product_code, p.product_name, pp.prod_quantity, i.item_code, i.item_name, ci.item_required_quantity, ci.avg_return_rate, pp.procure_term
+        SELECT  SQL_CALC_FOUND_ROWS pp.prod_start_date, pp.prod_end_date, p.product_code, p.product_name, pp.prod_quantity, i.item_code, i.item_name, ci.item_required_quantity, ci.avg_return_rate, pp.procure_term
         FROM product AS p
         JOIN composition_item AS ci ON ci.product_code = p.product_code
         JOIN item AS i ON i.item_code = ci.item_code
         JOIN production_plan AS pp ON pp.product_code = ci.product_code
+        where
+        pp.prod_start_date between #{startDate} and #{endDate}
         ]]><include refid="prodplan_Criteria"></include>
+        order by pp.prod_start_date asc
         limit #{amount} offset #{offset}
-    </select>
 
-    <select id="searchListProdPlanWithPaging" resultType="edu.mit.annotation.testdto.ProductionPlanDTO">
-        <![CDATA[
-        SELECT pp.prod_start_date, pp.prod_end_date, p.product_code, p.product_name, pp.prod_quantity, i.item_code, i.item_name, ci.item_required_quantity, ci.avg_return_rate, pp.procure_term
-        FROM product AS p
-        JOIN composition_item AS ci ON ci.product_code = p.product_code
-        JOIN item AS i ON i.item_code = ci.item_code
-        JOIN production_plan AS pp ON pp.product_code = ci.product_code
-        ]]><include refid="prodplan_Criteria"></include>
-        limit #{amount} offset #{offset}
     </select>
 
     <select id="getTotalProdPlanCount" resultType="int">

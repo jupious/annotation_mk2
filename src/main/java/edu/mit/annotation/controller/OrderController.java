@@ -11,6 +11,7 @@ import edu.mit.annotation.test2dto.OrderList;
 import edu.mit.annotation.testdto.PageDTO;
 import edu.mit.annotation.testdto.ProgressCheckDTO;
 import edu.mit.annotation.testdto.RegisterCriteria;
+import edu.mit.annotation.testdto.getCompanyDTO;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,10 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @AllArgsConstructor
 @Log4j2
@@ -91,31 +89,71 @@ public class OrderController {
         cri.setOffset((cri.getPageNum()-1)*cri.getAmount());
         int total = orderService.getTotalPurOrder(cri);
 
-        model.addAttribute("table1List", orderService.getListforTable1());
+        LocalDate startDate = cri.getParsedStartDate();
+        LocalDate endDate = cri.getParsedEndDate();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        String today = dtf.format(LocalDate.now());
+        String endDate1=dtf.format(startDate);
+
+        if(today.equals(endDate1))  {
+            startDate = LocalDate.now().minusMonths(1);
+            endDate = LocalDate.now();
+            cri.setStartDate(String.valueOf(startDate));
+            cri.setEndDate(String.valueOf(endDate));
+        }
+
+
+
+        System.out.println("startDate : "+startDate);
+        System.out.println("endDate : " + endDate);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+        model.addAttribute("table1List", orderService.getListforTable1(cri));
         model.addAttribute("pageMaker", new PageDTO(cri, total));
     }
 
     @PostMapping("/order/showCheckPlanDetails")
     @ResponseBody
-    public List<ProgressCheckDTO> showCheckPlansDetail(@RequestParam("proc_plan_number") String proc_plan_number, @RequestParam("purch_order_number") String purch_order_number)   {
+    public List<ProgressCheckDTO> showCheckPlansDetail(@RequestParam("proc_plan_number") String proc_plan_number,
+                                                       @RequestParam("purch_order_number") String purch_order_number)   {
 
         System.out.println("전송된 조달계획번호 : " + proc_plan_number);
         System.out.println("전송된 발주번호 : " + purch_order_number);
 
         List<ProgressCheckDTO> ProgressCheckList = orderService.getListforProgressCheck(proc_plan_number, purch_order_number);
+        System.out.println(ProgressCheckList);
         System.out.println("반환된 데이터 개수: " + ProgressCheckList.size());
+        ProgressCheckList.forEach(x->{
+            x.setProc_plan_number(proc_plan_number);
+        });
         return ProgressCheckList;
     }
 
-    @PostMapping("/order/CheckProgDB")
+    @PostMapping("/order/checkPlanDB")
     @ResponseBody
-    public int checkProgDB(@RequestParam("proc_plan_number") String proc_plan_number)   {
+    public int checkPlanDB(@RequestParam("proc_plan_number") String proc_plan_number)   {
+        System.out.println("전송된 조달계획번호 : " + proc_plan_number);
+        return orderService.checkPlanDB(proc_plan_number);
+    }
 
+    @PostMapping("/order/getCompany")
+    @ResponseBody
+    public Map<String, Object> getCompany(@RequestParam("proc_plan_number") String proc_plan_number) {
         System.out.println("전송된 조달계획번호 : " + proc_plan_number);
 
-        int result = orderService.CheckProgDB(proc_plan_number);
+        Map<String, Object> response = new HashMap<>();
+        List<getCompanyDTO> companyData = orderService.getCompany(proc_plan_number);
 
-        return  result;
+        if (companyData != null && !companyData.isEmpty()) {
+            response.put("success", true);
+            response.put("companyData", companyData);
+        } else {
+            response.put("success", false);
+            response.put("message", "No data found for the given item code.");
+        }
+
+        return response;
     }
 
     @PostMapping("/order/inspectCheckPlans")
@@ -129,7 +167,7 @@ public class OrderController {
     public String inputCheckPlans(@RequestParam("Make_purch_order_number") String purch_order_number,
                                   @RequestParam("Make_proc_check_order[]") List<Integer> proc_check_order,
                                   @RequestParam("Make_proc_check_date[]") List<String> proc_check_date,
-                                  @RequestParam("Make_proc_plan_number") String proc_plan_number,
+                                  @RequestParam("proc_plan_number") String proc_plan_number,
                                   Model model)  {
         System.out.println("purch_order_number : " + purch_order_number);
         System.out.println("proc_check_order : " + proc_check_order);
@@ -157,8 +195,8 @@ public class OrderController {
                                   @RequestParam("Complete_completed_quantity[]") List<Integer> completed_quantity,
                                   @RequestParam("Complete_supplementation[]") List<String> supplementation,
                                   @RequestParam("Complete_prog_check_result[]") List<String> prog_check_result,
-                                  @RequestParam("Make_proc_plan_number") String proc_plan_number,
-                                  @RequestParam("Complete_purch_order_number") String purch_order_number,
+                                  @RequestParam("proc_plan_number") String proc_plan_number,
+                                  @RequestParam("purch_order_number") String purch_order_number,
                                   Model model)  {
 
         System.out.println("proc_check_order : " + proc_check_order);
@@ -189,24 +227,32 @@ public class OrderController {
 
     @GetMapping("/order/pur-order-report")
     public void purorderreport(Model model, RegisterCriteria cri)  {
-        cri.setOffset((cri.getPageNum()-1)*cri.getAmount());
-        int total = orderService.getTotalPurOrder(cri);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar calendar = Calendar.getInstance();
-        String startDate = sdf.format(calendar.getTime());
-        calendar.add(Calendar.MONTH, 1);
-        String endDate = sdf.format(calendar.getTime());
+        LocalDate startDate = cri.getParsedStartDate();
+        LocalDate endDate = cri.getParsedEndDate();
+        System.out.println("startDate : "+startDate);
+        System.out.println("endDate : " + endDate);
 
-        model.addAttribute("pageMaker", new PageDTO(cri, total));
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        String today = dtf.format(LocalDate.now());
+        String endDate1=dtf.format(startDate);
+
+        if(today.equals(endDate1))  {
+            startDate = LocalDate.now().minusMonths(1);
+            endDate = LocalDate.now();
+            cri.setStartDate(String.valueOf(startDate));
+            cri.setEndDate(String.valueOf(endDate));
+        }
+
+
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
-        model.addAttribute("orderList", orderService.getListPurOrder());
-        model.addAttribute("allPurOrder", orderService.getCountListPurOrder());
-        model.addAttribute("CountProcPlan", orderService.getCountProcPlan());
-        model.addAttribute("CountPublishedPurOrder", orderService.getCountPublishedPurOrder());
-        model.addAttribute("CountProgCheckingProcPlan", orderService.getCountProgCheckingProcPlan());
-        model.addAttribute("FinishedProcPlan", orderService.getCountFinishedProcPlan());
+        model.addAttribute("CountProcPlan", orderService.getCountProcPlan(cri));
+        model.addAttribute("CountPublishedPurOrder", orderService.getCountPublishedPurOrder(cri));
+        model.addAttribute("CountProgCheckingProcPlan", orderService.getCountProgCheckingProcPlan(cri));
+        model.addAttribute("FinishedProcPlan", orderService.getCountFinishedProcPlan(cri));
     }
+
 
 
 

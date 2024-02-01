@@ -87,12 +87,9 @@
                                 <input type="text" class="form-control-sm" id="keyword" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;" th:value="${pageMaker.cri.keyword}">
                                 <button class="btn btn-primary btn-sm" type="button" style="float:left;" id="search">검색</button>
                             </form>
-                            <button type="button" onclick="showallList()" class="btn btn-primary btn-sm" style="float:right;">전체보기</button>
-                            <button type="button" class="btn btn-danger btn-sm" style="float:right;" id="removeSelectedRows">삭제</button>
                             <table id="table2" class="table table-bordered table-sm text-center" width="100%;">
                                 <thead>
                                     <tr>
-                                        <td class="text-center" width="1%" align="center" valign="middle"></td>
                                         <td class="text-center" width="2%" align="center" valign="middle">품목코드</td>
                                         <td class="text-center" width="15%" align="center" valign="middle">품목명</td>
                                         <td class="text-center" width="5%" align="center" valign="middle">규격</td>
@@ -102,7 +99,6 @@
                                 </thead>
                                 <tbody>
                                     <tr th:each="itemList : ${itemList}">
-                                        <td><input type="checkbox"></td>
                                         <td th:text="${itemList.item_code}"></td>
                                         <td th:text="${itemList.item_name}"></td>
                                         <td th:text="${itemList.width} + 'x' + ${itemList.length} + 'x' + ${itemList.height}"></td>
@@ -180,29 +176,6 @@
     var _csrfToken = $('#_csrf_token').val();
     var itemList=/*[[${itemList}]]*/ [];
     console.log(itemList);
-</script>
-<script>
-    function search() {
-        var type = $("#type").val();
-        var keyword = $("#keyword").val();
-        var pageNum = $("#table2_paginate .active a").text(); // 현재 선택된 페이지 번호 가져오기
-
-        console.log(type);
-        console.log(keyword);
-        console.log(pageNum);
-        $.ajax({
-            type: "GET",
-            url: "/reg/itemSearch",
-            data: { "type": type, "keyword": keyword },
-            success: function (response) {
-                updateTable(response);
-            },
-            error: function (error) {
-                console.error("검색 실패");
-                console.error(error);
-            }
-        });
-    }
 </script>
 <script>
     function clearInput() {
@@ -350,16 +323,8 @@
             let keyword = $("#keyword").val();
             let pageNum = $("#table2_paginate .active a").text();
             console.log(type,keyword,pageNum);
-            //window.location.replace('/reg/item?pageNum=1&amount=10&type='+type+'&keyword='+keyword);
+            window.location.replace('/reg/item?pageNum=1&amount=10&type='+type+'&keyword='+keyword);
         });
-        function showallList() {
-            var table = document.getElementById('table2');
-            var rows = table.getElementsByTagName('tr');
-
-            for (var i = 1; i < rows.length; i++) {
-                rows[i].style.display = '';
-            }
-        }
     })
 </script>
 </th:block>
