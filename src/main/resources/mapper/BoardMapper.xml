@@ -60,6 +60,10 @@
         bno = #{bno}
     </delete>
 
+    <delete id="deleteComment">
+        delete from comment where bno = #{bno}
+    </delete>
+
 
     <!-- 게시글 리스트 조회 -->
     <select id="findAll" resultType="edu.mit.annotation.realdto.BoardResponse">

@@ -33,7 +33,7 @@
                         </div>
                     </div>
                 </div>
-            </div>  
+            </div>
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-header">생산계획조회</h5>
@@ -42,14 +42,14 @@
                             <input type="date" id="startDate" class="form-control-sm" th:value="${startDate}">
                             ~
                             <input type="date" id="endDate" class="form-control-sm" th:value="${endDate}"><br>
-                                <select id="type" name="type" title="검색분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" style="float:left; height:31px;">
-                                    <option value="PC" th:selected="${pageMaker.cri.type eq 'PC'}">제품코드</option>
-                                    <option value="PN" th:selected="${pageMaker.cri.type eq 'PN'}">제품명</option>
-                                    <option value="IC" th:selected="${pageMaker.cri.type eq 'IC'}">품목코드</option>
-                                    <option value="IN" th:selected="${pageMaker.cri.type eq 'IN'}">품목명</option>
-                                </select>
-                                <input type="text" class="form-control-sm" id="keyword" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;" th:value="${pageMaker.cri.keyword}">
-                                <button class="btn btn-primary btn-sm" type="button" style="float:left;" id="search">검색</button>
+                            <select id="type" name="type" title="검색분류" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split btn-sm" style="float:left; height:31px;">
+                                <option value="PC" th:selected="${pageMaker.cri.type eq 'PC'}">제품코드</option>
+                                <option value="PN" th:selected="${pageMaker.cri.type eq 'PN'}">제품명</option>
+                                <option value="IC" th:selected="${pageMaker.cri.type eq 'IC'}">품목코드</option>
+                                <option value="IN" th:selected="${pageMaker.cri.type eq 'IN'}">품목명</option>
+                            </select>
+                            <input type="text" class="form-control-sm" id="keyword" aria-label="Text input with dropdown button" style="float:left; width:20%; height:31px;" th:value="${pageMaker.cri.keyword}">
+                            <button class="btn btn-primary btn-sm" type="button" style="float:left;" id="search">검색</button>
                         </form>
                         <button type="button" class="btn  btn-danger btn-sm" style="float:right;">미등록건만보기</button>
                         <button type="button" id="ShowAll" class="btn  btn-primary btn-sm" style="float:right;">전체보기</button>
@@ -58,7 +58,7 @@
                                 <thead>
                                 <tr>
                                     <th class="text-center">생산시작일</th>
-                                    <th class="text-center">생산종료일</th> 
+                                    <th class="text-center">생산종료일</th>
                                     <th class="text-center">생산제품코드</th>
                                     <th class="text-center">생산제품명</th>
                                     <th class="text-center">생산수량</th>
@@ -91,14 +91,14 @@
                                             <a class = "page-link" th:href="@{'/reg/plan?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount} +'&type='+${pageMaker.cri.type}+'&keyword='+${pageMaker.cri.keyword}+'&startDate='+${pageMaker.cri.startDate}+'&endDate='+${pageMaker.cri.endDate}}">이전</a>
                                         </th:block>
                                     </th:if>
-                                
+
                                     <span th:each="num : ${#numbers.sequence(pageMaker.startPage, pageMaker.endPage)}">
                                         <th:block th:if="${num == pageMaker.cri.pageNum}">
                                             <li class="page-item active">
                                                 <span class="page-link">
                                                     <b th:text="${num}"></b>
                                                 </span>
-                                            </li>    
+                                            </li>
                                         </th:block>
                                         <th:block th:unless="${num == pageMaker.cri.pageNum}">
                                             <li class = "page-item">
@@ -108,7 +108,7 @@
                                             </li>
                                         </th:block>
                                     </span>
-                                
+
                                     <th:if test="${pageMaker.next}">
                                         <th:block th:if="${pageMaker.endPage*pageMaker.cri.amount < pageMaker.total}">
                                             <a class="page-link" th:href="@{'/reg/plan?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount} +'&type='+${pageMaker.cri.type}+'&keyword='+${pageMaker.cri.keyword}+'&startDate='+${pageMaker.cri.startDate}+'&endDate='+${pageMaker.cri.endDate}}">다음</a>
@@ -126,13 +126,13 @@
         <!-- 메인 종료 -->
 
         <!-- 스크립트 -->
-<script th:inline="javascript">
-    var prodPlan=/*[[${prodPlan}]]*/;
-    console.log(prodPlan);
-    var header = $('meta[name="_csrf_header"]').attr("content");
-    var _csrfToken = $('#_csrf_token').val();
-</script>
-<script>
+        <script th:inline="javascript">
+            var prodPlan=/*[[${prodPlan}]]*/;
+            console.log(prodPlan);
+            var header = $('meta[name="_csrf_header"]').attr("content");
+            var _csrfToken = $('#_csrf_token').val();
+        </script>
+        <script>
             function updateTable(response) {
                 // itemList를 이용하여 테이블 등을 업데이트하는 로직 추가
                 // 예시: 테이블의 tbody를 찾아서 아이템 리스트로 업데이트
@@ -157,174 +157,175 @@
                 }
             }
         </script>
-</script>
-<script>
-    $('th').addClass('text-center');
-    $('td').addClass('text-center');
-    $('th').addClass('align-middle');
-    $('td').addClass('align-middle');
-</script>
-<script>
-    $(document).ready(function () {
-        function showAllRows() {
-            $("#table2 tbody tr").show();
-        }
-        $("#ShowAll").on("click", function () {
-            showAllRows();
-        });
-        $("#searchDate").on("click", function () {
-            var startDate = new Date($("#startDate").val());
-            var endDate = new Date($("#endDate").val());
-            $("#table2 tbody tr").each(function () {
-                var rowStartDateStr = $(this).find("td:eq(0)").text();
-                var rowStartDate = new Date(rowStartDateStr);
-                if (startDate <= rowStartDate && rowStartDate <= endDate) {
-                    $(this).show();
-                } 
-                else {
-                    $(this).hide();
+        </script>
+        <script>
+            $('th').addClass('text-center');
+            $('td').addClass('text-center');
+            $('th').addClass('align-middle');
+            $('td').addClass('align-middle');
+        </script>
+        <script>
+            $(document).ready(function () {
+                function showAllRows() {
+                    $("#table2 tbody tr").show();
                 }
+                $("#ShowAll").on("click", function () {
+                    showAllRows();
+                });
+                $("#searchDate").on("click", function () {
+                    var startDate = new Date($("#startDate").val());
+                    var endDate = new Date($("#endDate").val());
+                    $("#table2 tbody tr").each(function () {
+                        var rowStartDateStr = $(this).find("td:eq(0)").text();
+                        var rowStartDate = new Date(rowStartDateStr);
+                        if (startDate <= rowStartDate && rowStartDate <= endDate) {
+                            $(this).show();
+                        }
+                        else {
+                            $(this).hide();
+                        }
+                    });
+                });
             });
+        </script>
+        <script>
+            $(document).ready(function () {
+            // 복사된 행의 플래그를 저장할 객체
+            var copiedRows = {};
+
+            // table2의 행 클릭 시
+            $("#table2 tbody").on("click", "tr", function () {
+                // 이미 복사된 행인 경우 무시
+                if (copiedRows[$(this).index()]) {
+                    return;
+                }
+
+                // 새로운 행의 고유 식별자 생성
+                var rowId = new Date().getTime();
+
+                var rowData = $(this).find("td").map(function () {
+                    return $(this).text();
+                }).get();
+
+                var startDate = rowData[0];
+
+                function calculateDateDifference(startDate, days) {
+                    var date = new Date(startDate);
+                    date.setDate(date.getDate() - days);
+
+                    return date.toISOString().split('T')[0];
+                }
+
+                var defaultDueDate = calculateDateDifference(startDate, 3);
+
+                var cal1 = rowData[4]*rowData[7];
+                var cal2 = cal1*(rowData[9]/100);
+                var cal3 = Math.ceil(cal1+cal2);
+                console.log("cal1 : ",cal1);
+                console.log("cal2 : ",cal2);
+                console.log("cal3 : ",cal3);
+
+                // 새로운 행 생성
+                var newRow = $("<tr>");
+                newRow.append("<td class='prod_start_date'>" + rowData[0] + "</td>");
+                newRow.append("<td class='prod_end_date'>" + rowData[1] + "</td>");
+                newRow.append("<td class='product_code'>" + rowData[2] + "</td>");
+                newRow.append("<td class='product_name'>" + rowData[3] + "</td>");
+                newRow.append("<td class='prod_quantity'>" + rowData[4] + "</td>");
+                newRow.append("<td class='item_code'>" + rowData[5] + "</td>");
+                newRow.append("<td class='item_name'>" + rowData[6] + "</td>");
+                newRow.append("<td class='item_required_quantity'>" + rowData[7] + "</td>");
+                newRow.append("<td class='procure_term'>" + rowData[8] + "</td>");
+                newRow.append("<td class='avg_return_rate'>" + rowData[9] + "</td>");
+                newRow.append('<td><input type="text" class="proc_quantity" value="'+ cal3 +'"></td>');
+                newRow.append('<td><input type="date" class="proc_duedate" value="' + defaultDueDate + '"></td>');
+                newRow.append('<td><button type="button" class="btn btn-sm btn-danger deleteRow">삭제</button></td>');
+
+                // table1에 새로운 행 추가
+                $("#table1 tbody").append(newRow);
+
+                // 복사된 행의 플래그 설정
+                copiedRows[$(this).index()] = true;
+
+                // 삭제 버튼 클릭 시 복사 상태 초기화
+                $(".deleteRow").on("click", function () {
+                    var rowIdToDelete = $(this).closest("tr").index();
+                    // 복사된 행의 플래그 해제
+                    delete copiedRows[rowIdToDelete];
+                });
+            });
+
+            // table1의 삭제 버튼 클릭 시
+            $("#table1 tbody").on("click", ".deleteRow", function () {
+                // 클릭한 행 삭제
+                $(this).closest("tr").remove();
+
+                // 복사된 행의 식별자 초기화
+                copiedRowId = null;
+            });
+
+            $("#search").on("click", function (e) {
+                    e.preventDefault();
+                    let type = $("#type").val();
+                    let keyword = $("#keyword").val();
+                    let pageNum = $("#table2_paginate .active a").text();
+                    let startDate = $("#startDate").val();
+                    let endDate = $("#endDate").val();
+                    console.log("type:", type);
+                    console.log("keyword:", keyword);
+                    console.log("pageNum:", pageNum);
+                    console.log("startDate:", startDate);
+                    console.log("endDate:", endDate);
+                    window.location.replace('/reg/plan?pageNum=1&amount=10&type='+type+'&keyword='+keyword+'&startDate='+startDate+'&endDate='+endDate);
+                });
+
+            // 저장 버튼 클릭 시
+            $("#save").on("click", function () {
+                // FormData 초기화
+                var formData = new FormData();
+
+                // table1의 각 행에 대해 처리
+                $("#table1 tbody tr").each(function () {
+                    var row = $(this);
+                    formData.append('prod_start_date[]',row.find(".prod_start_date").text());
+                    formData.append('prod_end_date[]',row.find(".prod_end_date").text());
+                    formData.append('product_code[]', row.find(".product_code").text());
+                    formData.append('product_name[]',row.find(".product_name").text());
+                    formData.append('prod_quantity[]', row.find(".prod_quantity").text());
+                    formData.append('item_code[]', row.find(".item_code").text());
+                    formData.append('item_name[]',row.find(".item_name").text());
+                    formData.append('item_required_quantity[]',row.find(".item_required_quantity").text());
+                    formData.append('procure_term[]',row.find(".procure_term").text());
+                    formData.append('avg_return_rate[]',row.find(".avg_return_rate").text());
+                    formData.append('proc_quantity[]',row.find(".proc_quantity").val());
+                    formData.append('proc_duedate[]',row.find(".proc_duedate").val());
+                });
+                for (var pair of formData.entries()) {
+                    console.log(pair[0] + ': ' + pair[1]);
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/reg/planInput",
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    beforeSend:function(xhr){
+                                        xhr.setRequestHeader(header,_csrfToken)
+                                    },
+                    success: function (response) {
+                        console.log("조달계획 저장 성공");
+                        $("#table1 tbody").empty();
+                        copiedRows = {};
+                    },
+                    error: function (error) {
+                        console.log("조달계획 저장 실패");
+                        console.error(error);
+                    }
+                });
+            });
+            /////////////////////////////////////
         });
-    });
-</script>
-<script>
-    $(document).ready(function () {
-    // 복사된 행의 플래그를 저장할 객체
-    var copiedRows = {};
-
-    // table2의 행 클릭 시
-    $("#table2 tbody").on("click", "tr", function () {
-        // 이미 복사된 행인 경우 무시
-        if (copiedRows[$(this).index()]) {
-            return;
-        }
-
-        // 새로운 행의 고유 식별자 생성
-        var rowId = new Date().getTime();
-
-        var rowData = $(this).find("td").map(function () {
-            return $(this).text();
-        }).get();
-
-        var startDate = rowData[0];
-
-        function calculateDateDifference(startDate, days) {
-            var date = new Date(startDate);
-            date.setDate(date.getDate() - days);
-
-            return date.toISOString().split('T')[0];
-        }
-
-        var defaultDueDate = calculateDateDifference(startDate, 3);
-
-        var cal1 = rowData[4]*rowData[7];
-        var cal2 = cal1*(rowData[9]/100);
-        var cal3 = Math.ceil(cal1+cal2);
-        console.log("cal1 : ",cal1);
-        console.log("cal2 : ",cal2);
-        console.log("cal3 : ",cal3);
-
-        // 새로운 행 생성
-        var newRow = $("<tr>");
-        newRow.append("<td class='prod_start_date'>" + rowData[0] + "</td>");
-        newRow.append("<td class='prod_end_date'>" + rowData[1] + "</td>");
-        newRow.append("<td class='product_code'>" + rowData[2] + "</td>");
-        newRow.append("<td class='product_name'>" + rowData[3] + "</td>");
-        newRow.append("<td class='prod_quantity'>" + rowData[4] + "</td>");
-        newRow.append("<td class='item_code'>" + rowData[5] + "</td>");
-        newRow.append("<td class='item_name'>" + rowData[6] + "</td>");
-        newRow.append("<td class='item_required_quantity'>" + rowData[7] + "</td>");
-        newRow.append("<td class='procure_term'>" + rowData[8] + "</td>");
-        newRow.append("<td class='avg_return_rate'>" + rowData[9] + "</td>");
-        newRow.append('<td><input type="text" class="proc_quantity" value="'+ cal3 +'"></td>');
-        newRow.append('<td><input type="date" class="proc_duedate" value="' + defaultDueDate + '"></td>');
-        newRow.append('<td><button type="button" class="btn btn-sm btn-danger deleteRow">삭제</button></td>');
-
-        // table1에 새로운 행 추가
-        $("#table1 tbody").append(newRow);
-
-        // 복사된 행의 플래그 설정
-        copiedRows[$(this).index()] = true;
-
-        // 삭제 버튼 클릭 시 복사 상태 초기화
-        $(".deleteRow").on("click", function () {
-            var rowIdToDelete = $(this).closest("tr").index();
-            // 복사된 행의 플래그 해제
-            delete copiedRows[rowIdToDelete];
-        });
-    });
-
-    // table1의 삭제 버튼 클릭 시
-    $("#table1 tbody").on("click", ".deleteRow", function () {
-        // 클릭한 행 삭제
-        $(this).closest("tr").remove();
-
-        // 복사된 행의 식별자 초기화
-        copiedRowId = null;
-    });
-
-    $("#search").on("click", function (e) {
-            e.preventDefault();
-            let type = $("#type").val();
-            let keyword = $("#keyword").val();
-            let pageNum = $("#table2_paginate .active a").text();
-            let startDate = $("#startDate").val();
-            let endDate = $("#endDate").val();
-            console.log("type:", type);
-            console.log("keyword:", keyword);
-            console.log("pageNum:", pageNum);
-            console.log("startDate:", startDate);
-            console.log("endDate:", endDate);
-            window.location.replace('/reg/plan?pageNum=1&amount=10&type='+type+'&keyword='+keyword+'&startDate='+startDate+'&endDate='+endDate);
-        });
-
-    // 저장 버튼 클릭 시
-    $("#save").on("click", function () {
-        // FormData 초기화
-        var formData = new FormData();
-
-        // table1의 각 행에 대해 처리
-        $("#table1 tbody tr").each(function () {
-            var row = $(this);
-            formData.append('prod_start_date[]',row.find(".prod_start_date").text());
-            formData.append('prod_end_date[]',row.find(".prod_end_date").text());
-            formData.append('product_code[]', row.find(".product_code").text());
-            formData.append('product_name[]',row.find(".product_name").text());
-            formData.append('prod_quantity[]', row.find(".prod_quantity").text());
-            formData.append('item_code[]', row.find(".item_code").text());
-            formData.append('item_name[]',row.find(".item_name").text());
-            formData.append('item_required_quantity[]',row.find(".item_required_quantity").text());
-            formData.append('procure_term[]',row.find(".procure_term").text());
-            formData.append('avg_return_rate[]',row.find(".avg_return_rate").text());
-            formData.append('proc_quantity[]',row.find(".proc_quantity").val());
-            formData.append('proc_duedate[]',row.find(".proc_duedate").val());
-        });
-        for (var pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
-        }
-        $.ajax({
-            type: "POST",
-            url: "/reg/planInput",
-            processData: false,
-            contentType: false,
-            data: formData,
-            beforeSend:function(xhr){
-                                xhr.setRequestHeader(header,_csrfToken)
-                            },
-            success: function (response) {
-                console.log("조달계획 저장 성공");
-                $("#table1 tbody").empty();
-                copiedRows = {};
-            },
-            error: function (error) {
-                console.log("조달계획 저장 실패");
-                console.error(error);
-            }
-        });
-    });
-});
-</script>
+        </script>
     </th:block>
 </th:block>
 </html>

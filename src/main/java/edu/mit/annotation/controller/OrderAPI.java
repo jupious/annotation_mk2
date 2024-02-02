@@ -97,6 +97,7 @@ public class OrderAPI {
     @GetMapping("/auto-search-po")
     public List<PublishedPurchaseOrderDTO> autoSearchPo(String  startDate, String  endDate, String type, String keyword) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        System.out.println(endDate);
         Criteria cri = Criteria.builder()
                 .startDate(sdf.parse(startDate))
                 .endDate(sdf.parse(endDate))
@@ -135,7 +136,7 @@ public class OrderAPI {
         return "뭐요";
     }
 
-    @Scheduled(cron = "0 30 11 * * *")
+    @Scheduled(cron = "0 40 15 * * *")
     public void autoMailProgCheck(){
 
         Calendar cal = Calendar.getInstance();
@@ -166,7 +167,7 @@ public class OrderAPI {
             }
 
             EmailMessage emailMessage = EmailMessage.builder()
-                    .to("black5225@gmail.com")
+                    .to("jupious@naver.com")
                     .subject(sdf.format(sDate)+" 진척검수 일정 안내메일")
                     .message(message)
                     .build();

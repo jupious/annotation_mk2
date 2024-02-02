@@ -37,6 +37,7 @@ public class InventoryAPI {
     @GetMapping(value = "/receive-history")
     public Long getReceivedCount(String  startDate, String  endDate, String proc_plan_number) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        System.out.println(endDate);
 
         return inventoryService.getReceiveHistory(ReceiveHistorySearchDTO.builder()
                                                     .proc_plan_number(proc_plan_number)
@@ -158,7 +159,10 @@ public class InventoryAPI {
         return inventoryService.autoSearchInvCalc(cri);
     }
 
+
+
     private String  endDateValidate(String endDate){
+        System.out.println(endDate);
         Integer date = Integer.valueOf(endDate.split("-")[2]);
         Integer month = Integer.valueOf(endDate.split("-")[1]);
         Integer year = Integer.valueOf(endDate.split("-")[0]);

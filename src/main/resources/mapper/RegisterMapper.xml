@@ -313,4 +313,10 @@
     <select id="getTotalProdPlanCount" resultType="int">
         select count(*) from production_plan
     </select>
+
+
+    <!--시연용-->
+    <insert id="insertCompItem">
+        insert into composition_item values(#{item_required_quantity},#{avg_return_rate},#{item_code}, #{product_code})
+    </insert>
 </mapper>

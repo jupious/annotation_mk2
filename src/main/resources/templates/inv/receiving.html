@@ -210,13 +210,10 @@
                                 xhr.setRequestHeader(header,_csrfToken)
                             },
                             success:function(c){
-                                if(c == 1){
-                                    console.log("마감완료");
-                                  
-                                    loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount});
-                                }else{
-                                    alert("마감 중 오류가 발생하였습니다. 관리자에게 문의해주세요");
-                                }
+                                console.log("마감완료");
+                                
+                                loadList({"startDate":$('#sDate').val(),"endDate":$('#eDate').val(),"type":$('#type').val(),"keyword":$('#searchText').val(),"pageNum":0,"amount":amount});
+                              
                             }
                         })
                     })

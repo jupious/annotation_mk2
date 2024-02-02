@@ -89,26 +89,26 @@
                             </form>
                             <table id="table2" class="table table-bordered table-sm text-center" width="100%;">
                                 <thead>
-                                    <tr>
-                                        <td class="text-center" width="2%" align="center" valign="middle">품목코드</td>
-                                        <td class="text-center" width="15%" align="center" valign="middle">품목명</td>
-                                        <td class="text-center" width="5%" align="center" valign="middle">규격</td>
-                                        <td class="text-center" width="5%" align="center" valign="middle">재질</td>
-                                        <td class="text-center" width="5%" align="center" valign="middle">도면</td>
-                                    </tr>
+                                <tr>
+                                    <td class="text-center" width="2%" align="center" valign="middle">품목코드</td>
+                                    <td class="text-center" width="15%" align="center" valign="middle">품목명</td>
+                                    <td class="text-center" width="5%" align="center" valign="middle">규격</td>
+                                    <td class="text-center" width="5%" align="center" valign="middle">재질</td>
+                                    <td class="text-center" width="5%" align="center" valign="middle">도면</td>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="itemList : ${itemList}">
-                                        <td th:text="${itemList.item_code}"></td>
-                                        <td th:text="${itemList.item_name}"></td>
-                                        <td th:text="${itemList.width} + 'x' + ${itemList.length} + 'x' + ${itemList.height}"></td>
-                                        <td th:text="${itemList.material}"></td>
-                                        <td>
-                                            <a th:href="@{'/upload/blueprint/' + ${itemList.blueprint_save_name}}" class="image-link" th:data-filename="${itemList.blueprint_save_name}">
-                                                <span th:text="${itemList.blueprint_origin_name}"></span>
-                                            </a>
-                                        </td>
-                                    </tr>
+                                <tr th:each="itemList : ${itemList}">
+                                    <td th:text="${itemList.item_code}"></td>
+                                    <td th:text="${itemList.item_name}"></td>
+                                    <td th:text="${itemList.width} + 'x' + ${itemList.length} + 'x' + ${itemList.height}"></td>
+                                    <td th:text="${itemList.material}"></td>
+                                    <td>
+                                        <a th:href="@{'/upload/blueprint/' + ${itemList.blueprint_save_name}}" class="image-link" th:data-filename="${itemList.blueprint_save_name}">
+                                            <span th:text="${itemList.blueprint_origin_name}"></span>
+                                        </a>
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -119,14 +119,14 @@
                                         <a class = "page-link" th:href="@{'/reg/item?pageNum=' + ${pageMaker.startPage-1} + '&amount=' + ${pageMaker.cri.amount} +'&type='+${pageMaker.cri.type}+'&keyword='+${pageMaker.cri.keyword}}">이전</a>
                                     </th:block>
                                 </th:if>
-                            
+
                                 <span th:each="num : ${#numbers.sequence(pageMaker.startPage, pageMaker.endPage)}">
                                     <th:block th:if="${num == pageMaker.cri.pageNum}">
                                         <li class="page-item active">
                                             <span class="page-link">
                                                 <b th:text="${num}"></b>
                                             </span>
-                                        </li>    
+                                        </li>
                                     </th:block>
                                     <th:block th:unless="${num == pageMaker.cri.pageNum}">
                                         <li class = "page-item">
@@ -136,7 +136,7 @@
                                         </li>
                                     </th:block>
                                 </span>
-                            
+
                                 <th:if test="${pageMaker.next}">
                                     <th:block th:if="${pageMaker.endPage*pageMaker.cri.amount < pageMaker.total}">
                                         <a class="page-link" th:href="@{'/reg/item?pageNum=' + ${pageMaker.endPage+1} + '&amount=' + ${pageMaker.cri.amount} +'&type='+${pageMaker.cri.type}+'&keyword='+${pageMaker.cri.keyword}}">다음</a>
@@ -169,164 +169,165 @@
             <!-- 본문내용 종료 -->
         </div>
 
-<!-- 메인 종료 -->
+        <!-- 메인 종료 -->
 
-<script th:inline="javascript">
-    var header = $('meta[name="_csrf_header"]').attr("content");
-    var _csrfToken = $('#_csrf_token').val();
-    var itemList=/*[[${itemList}]]*/ [];
-    console.log(itemList);
-</script>
-<script>
-    function clearInput() {
-        $('#unit_code option[value=""]').prop('selected', 'selected').change();
-        $('#assy_code option[value=""]').prop('selected', 'selected').change();
-        $('#part_code option[value=""]').prop('selected', 'selected').change();
-        $('.itemInputGroup').each(function () {
-            $(this).val('');
-        })
-    }
-
-    // 등록버튼 클릭 시
-    function send() {
-        var unit_code = $("#unit_code").val();
-        var assy_code = $("#assy_code").val();
-        var part_code = $("#part_code").val();
-        var item_name = $("#item_name").val();
-        var width = $("#width").val();
-        var length = $("#length").val();
-        var height = $("#height").val();
-        var material = $("#material").val();
-        var blueprint = $("#blueprint_origin_name")[0];
-        var blueprint_origin_name = blueprint.value.split("\\").pop();
-        var unit_code_flag="0";
-        var assy_code_flag="0";
-        var part_code_flag="0";
-        
-        if (unit_code == "Z") {
-            unit_code = $('#unitWrite').val();
-            unit_code_flag="1";
-        }
-        if (assy_code == "Z") {
-            assy_code = $('#assyWrite').val();
-            assy_code_flag="1";
-        }
-        if (part_code == "Z") {
-            part_code = $('#partWrite').val();
-            part_code_flag="1";
-        }
-
-        var data = {
-            "unit_code": unit_code,
-            "assy_code": assy_code,
-            "part_code": part_code,
-            "item_name": item_name,
-            "width": width,
-            "length": length,
-            "height": height,
-            "material": material,
-            "blueprint_origin_name": blueprint_origin_name,
-            "blueprint" : blueprint,
-            "unit_code_flag" : unit_code_flag,
-            "assy_code_flag" : assy_code_flag,
-            "part_code_flag" : part_code_flag,
-        };
-
-        var formData = new FormData();
-        formData.append('unit_code', unit_code);
-        formData.append('assy_code', assy_code);
-        formData.append('part_code', part_code);
-        formData.append('item_name', item_name);
-        formData.append('width', width);
-        formData.append('length', length);
-        formData.append('height', height);
-        formData.append('material', material);
-        formData.append('blueprint_origin_name', blueprint_origin_name);
-        formData.append('blueprint', blueprint.files[0]);
-        formData.append('unit_code_flag', unit_code_flag);
-        formData.append('assy_code_flag', assy_code_flag);
-        formData.append('part_code_flag', part_code_flag);
-
-        $.ajax({
-            type: "POST",
-            url: "/reg/itemInput",
-            processData: false,
-            contentType: false,
-            data: formData,
-            beforeSend:function(xhr){
-                xhr.setRequestHeader(header,_csrfToken)
-            },
-            success: function (response) {
-                console.log("전송 성공");
-                window.location.reload();
-                clearInput();
-            },
-            error: function (error) {
-                console.error("전송 실패");
-                console.error(error);
+        <script th:inline="javascript">
+            var header = $('meta[name="_csrf_header"]').attr("content");
+            var _csrfToken = $('#_csrf_token').val();
+            var itemList=/*[[${itemList}]]*/ [];
+            console.log(itemList);
+        </script>
+        <script>
+            function clearInput() {
+                $('#unit_code option[value=""]').prop('selected', 'selected').change();
+                $('#assy_code option[value=""]').prop('selected', 'selected').change();
+                $('#part_code option[value=""]').prop('selected', 'selected').change();
+                $('.itemInputGroup').each(function () {
+                    $(this).val('');
+                })
             }
-        });
-    }
-    $(document).on("click", ".image-link", function (e) {
-        e.preventDefault();
-        var filename = $(this).data("filename");
-        var imagePath = "/upload/blueprint/" + filename;
-        $("#modalImage").attr("src", imagePath);
-        $("#imageModal").modal("show");
-    });
-</script>
-<script>
-    $('th').addClass('text-center');
-    $('td').addClass('text-center');
-    $('th').addClass('align-middle');
-    $('td').addClass('align-middle');
 
-    function displayFileName() {
-        var input = document.getElementById('blueprint_origin_name');
-        var label = input.nextElementSibling;
-        var fileName = input.files[0].name;
-        label.innerHTML = fileName;
-    }
-</script>
-<script>
-    $(document).ready(function () {
-        $('#removeSelectedRows').on('click', function () {
-            var selectedRows = $('#table2 tbody tr:has(:checkbox:checked)');
+            // 등록버튼 클릭 시
+            function send() {
+                var unit_code = $("#unit_code").val();
+                var assy_code = $("#assy_code").val();
+                var part_code = $("#part_code").val();
+                var item_name = $("#item_name").val();
+                var width = $("#width").val();
+                var length = $("#length").val();
+                var height = $("#height").val();
+                var material = $("#material").val();
+                var blueprint = $("#blueprint_origin_name")[0];
+                var blueprint_origin_name = blueprint.value.split("\\").pop();
+                var unit_code_flag="0";
+                var assy_code_flag="0";
+                var part_code_flag="0";
 
-            selectedRows.each(function () {
-                var currentItemCode = $(this).find('td:eq(1)').text();
-                removeSelectedItem(currentItemCode, $(this));
-            });
-        });
-
-        function removeSelectedItem(itemCode, rowElement) {
-            $.ajax({
-                type: "POST",
-                url: "/reg/removeItem",
-                data: { "item_code": itemCode },
-                beforeSend:function(xhr){
-                    xhr.setRequestHeader(header,_csrfToken)
-                },
-                success: function (response) {
-                    console.log("삭제 성공: " + itemCode);
-                    rowElement.remove();
-                },
-                error: function (error) {
-                    console.error("삭제 실패");
-                    console.error(error);
+                if (unit_code == "Z") {
+                    unit_code = $('#unitWrite').val();
+                    unit_code_flag="1";
                 }
+                if (assy_code == "Z") {
+                    assy_code = $('#assyWrite').val();
+                    assy_code_flag="1";
+                }
+                if (part_code == "Z") {
+                    part_code = $('#partWrite').val();
+                    part_code_flag="1";
+                }
+
+                var data = {
+                    "unit_code": unit_code,
+                    "assy_code": assy_code,
+                    "part_code": part_code,
+                    "item_name": item_name,
+                    "width": width,
+                    "length": length,
+                    "height": height,
+                    "material": material,
+                    "blueprint_origin_name": blueprint_origin_name,
+                    "blueprint" : blueprint,
+                    "unit_code_flag" : unit_code_flag,
+                    "assy_code_flag" : assy_code_flag,
+                    "part_code_flag" : part_code_flag,
+                };
+
+                var formData = new FormData();
+                formData.append('unit_code', unit_code);
+                formData.append('assy_code', assy_code);
+                formData.append('part_code', part_code);
+                formData.append('item_name', item_name);
+                formData.append('width', width);
+                formData.append('length', length);
+                formData.append('height', height);
+                formData.append('material', material);
+                formData.append('blueprint_origin_name', blueprint_origin_name);
+                formData.append('blueprint', blueprint.files[0]);
+                formData.append('unit_code_flag', unit_code_flag);
+                formData.append('assy_code_flag', assy_code_flag);
+                formData.append('part_code_flag', part_code_flag);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/reg/itemInput",
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    beforeSend:function(xhr){
+                        xhr.setRequestHeader(header,_csrfToken)
+                    },
+                    success: function (response) {
+                        console.log("전송 성공");
+                        window.location.reload();
+                        clearInput();
+                    },
+                    error: function (error) {
+                        console.error("전송 실패");
+                        console.error(error);
+                    }
+                });
+            }
+            $(document).on("click", ".image-link", function (e) {
+                e.preventDefault();
+                var filename = $(this).data("filename");
+                var imagePath = "/upload/blueprint/" + filename;
+                $("#modalImage").attr("src", imagePath);
+                $("#imageModal").modal("show");
             });
-        }
-        $("#search").on("click", function (e) {
-            e.preventDefault();
-            let type = $("#type").val();
-            let keyword = $("#keyword").val();
-            let pageNum = $("#table2_paginate .active a").text();
-            console.log(type,keyword,pageNum);
-            window.location.replace('/reg/item?pageNum=1&amount=10&type='+type+'&keyword='+keyword);
-        });
-    })
-</script>
-</th:block>
+        </script>
+        <script>
+            $('th').addClass('text-center');
+            $('td').addClass('text-center');
+            $('th').addClass('align-middle');
+            $('td').addClass('align-middle');
+
+            function displayFileName() {
+                var input = document.getElementById('blueprint_origin_name');
+                var label = input.nextElementSibling;
+                var fileName = input.files[0].name;
+                label.innerHTML = fileName;
+            }
+        </script>
+        <script>
+            $(document).ready(function () {
+                $('#removeSelectedRows').on('click', function () {
+                    var selectedRows = $('#table2 tbody tr:has(:checkbox:checked)');
+
+                    selectedRows.each(function () {
+                        var currentItemCode = $(this).find('td:eq(1)').text();
+                        removeSelectedItem(currentItemCode, $(this));
+                    });
+                });
+
+                function removeSelectedItem(itemCode, rowElement) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/reg/removeItem",
+                        data: { "item_code": itemCode },
+                        beforeSend:function(xhr){
+                            xhr.setRequestHeader(header,_csrfToken)
+                        },
+                        success: function (response) {
+                            console.log("삭제 성공: " + itemCode);
+                            rowElement.remove();
+                        },
+                        error: function (error) {
+                            console.error("삭제 실패");
+                            console.error(error);
+                        }
+                    });
+                }
+                $("#search").on("click", function (e) {
+                    e.preventDefault();
+                    let type = $("#type").val();
+                    let keyword = $("#keyword").val();
+                    let pageNum = $("#table2_paginate .active a").text();
+                    console.log(type,keyword,pageNum);
+                    window.location.replace('/reg/item?pageNum=1&amount=10&type='+type+'&keyword='+keyword);
+                });
+                ////////////////////////////////
+            })
+        </script>
+    </th:block>
 </th:block>
 </html>

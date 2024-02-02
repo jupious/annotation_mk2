@@ -113,7 +113,7 @@
 
     <select id="getReceiveHistoryBefore" resultType="long">
         select receive_quantity from receive
-        where proc_plan_number = #{proc_plan_number} and receive_date between date(#{startDate}) and date(#{endDate})
+        where proc_plan_number = #{proc_plan_number} and receive_date between date(#{startDate}) and date(#{endDate})+1
     </select>
 
     <insert id="saveReceiveItem">

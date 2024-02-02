@@ -39,7 +39,7 @@ public class MainController {
     @GetMapping("/login")
     public String login(){
 
-        return "/main/login";
+        return "main/login";
     }
 
     @GetMapping("/main")
@@ -47,7 +47,7 @@ public class MainController {
         List<ProductionPlan> prod = service.calList();
         System.out.println("Controller 에서 받은 값 ::"+prod);
         model.addAttribute("calList",prod);
-        return "/main/main";
+        return "main/main";
     }
 
 

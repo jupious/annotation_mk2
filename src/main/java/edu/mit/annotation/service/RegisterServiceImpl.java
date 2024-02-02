@@ -1,6 +1,7 @@
 package edu.mit.annotation.service;
 
 import edu.mit.annotation.mapper.RegisterMapper;
+import edu.mit.annotation.realdto.InputCompItemDTO;
 import edu.mit.annotation.testdto.*;
 import lombok.AllArgsConstructor;
 import org.apache.ibatis.annotations.Param;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @AllArgsConstructor
 @Primary
@@ -38,8 +40,16 @@ public class RegisterServiceImpl implements RegisterService {
 
     @Override
     public void registerItem(ItemDTO dto) {
+        Random rd = new Random();
         try{
             mapper.registerItem(dto);
+            InputCompItemDTO input = InputCompItemDTO.builder()
+                    .item_code(dto.getItem_code())
+                    .product_code("PROD002")
+                    .item_required_quantity(rd.nextInt(40)+1)
+                    .avg_return_rate(rd.nextDouble(4)+0.3).build();
+            System.out.println("생산정보등록됨?");
+            mapper.insertCompItem(input);
         }
         catch (DuplicateKeyException e) {
             e.printStackTrace();

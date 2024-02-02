@@ -48,21 +48,31 @@
             </when>
         </choose>
     </sql>
+    <sql id="lowerAuto">
+        <choose>
+            <when test='type=="CN"'>
+                company_name like #{keyword}
+            </when>
+            <when test='type=="IN"'>
+                item_names like #{keyword}
+            </when>
+        </choose>
+    </sql>
 
     <sql id="list1_Criteria">
-        <if test='keyword!=""'>
+
             <choose>
                 <when test='type=="PON"'>
-                    and po.purch_order_number like '%${keyword}%'
+                    and purch_order_number like '%${keyword}%'
                 </when>
                 <when test='type=="IC"'>
-                    and i.item_code like '%${keyword}%'
+                    and item_code like '%${keyword}%'
                 </when>
                 <when test='type=="IN"'>
-                    and i.item_name like '%${keyword}%
+                    and item_name like '%${keyword}%'
                 </when>
             </choose>
-        </if>
+
     </sql>
 
 
@@ -188,7 +198,7 @@
         select proc_plan_number, purch_order_number
         from(
         select purch_order_number
-        from purchase_order where purch_order_date between date('20231231') and date('20240131'))a
+        from purchase_order where purch_order_date between date(#{startDate}) and date(#{endDate}))a
         join purchase_order_item using (purch_order_number))aa
         join procurement_plan bb using(proc_plan_number))aaa
         join item bbb using(item_code)) c
@@ -197,7 +207,7 @@
         group by purch_order_number,business_number) ccc
         join `co-op_company` ddd using (business_number)
         where ]]>
-        <include refid="searchTypeNoAnd"/>
+        <include refid="lowerAuto"/>
         <![CDATA[limit 0,10]]>
     </select>
     
@@ -265,7 +275,6 @@
         join `co-op_company` ddd using(business_number)
     </select>
 
-    <!--여기부턴내꺼아님-->
     <select id="getListforTable1" resultType="edu.mit.annotation.testdto.PurchaseOrderListDTO">
         <![CDATA[
     select purch_order_number, purch_order_date, receive_duedate, item_code, item_name, purch_order_quantity, prog_check_total, prog_check_results, proc_plan_number, prog_check_count
@@ -328,18 +337,20 @@ FROM(
     </update>
 
     <select id="getCompany" resultType="edu.mit.annotation.testdto.getCompanyDTO">
-        SELECT company_name, business_number, item_code, proc_plan_number
+        SELECT company_name, business_number, proc_plan_number, purch_order_number
         FROM (
-        (SELECT company_name, business_number, item_code
+        SELECT company_name, business_number, proc_plan_number
         FROM (
-        SELECT distinct company_name, business_number, contract_number
+        SELECT DISTINCT company_name, business_number, item_code
+        FROM (
+        SELECT company_name, business_number, contract_number
         FROM `co-op_company`
-        JOIN contract USING(business_number)
-        ) a
-        JOIN contract_item USING(contract_number)) b
-        JOIN procurement_plan USING(item_code))
-        WHERE
-        proc_plan_number = #{proc_plan_number}
+        JOIN contract USING(business_number))a
+        JOIN contract_item USING (contract_number))b
+        JOIN procurement_plan USING(item_code))c
+        JOIN purchase_order_item USING(proc_plan_number)
+
+        WHERE proc_plan_number = #{proc_plan_number}
     </select>
 
     <select id="checkPlanDB" resultType="int">
@@ -348,7 +359,6 @@ FROM(
         where proc_plan_number = #{proc_plan_number}
     </select>
 
-    <!-- 발주현황리포트 -->
     <select id="getListPurOrder" resultType="edu.mit.annotation.testdto.PurchaseOrderListDTO">
         SELECT purch_order_date, receive_duedate, purch_order_number, purch_order_quantity, purch_order_detail, note
         FROM purchase_order

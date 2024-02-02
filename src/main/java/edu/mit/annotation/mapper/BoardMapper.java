@@ -16,6 +16,9 @@ public interface BoardMapper {
 
     void deleteById(int bno);
 
+    //댓글삭제
+    void deleteComment(int bno);
+
     List<BoardResponse> findAll();
 
     void addcount(BoardRequest params);

@@ -108,7 +108,7 @@
                                         <form>
                                             <select id="lowerType" class="form-control-sm">
                                                 <option value="CN" selected>업체명</option>
-                                                <option value="INS">품목명</option>
+                                                <option value="IN">품목명</option>
                                             </select>
 
                                             <input type="text" class="form-control-sm" id="lowerSearchText" list="lowerAutoList">
@@ -174,9 +174,9 @@
                         $('#lowerAutoList').empty();
                         res.forEach(function(data) {
                             let option = $('<option>');
-                            if($('#lowerType').val() == 'INS'){
-                                option.val(data.item_name);
-                                option.text(data.company_names);
+                            if($('#lowerType').val() == 'IN'){
+                                option.val(data.item_names);
+                                option.text(data.company_name);
                             }else if($('#lowerType').val() == 'CN'){
                                 option.val(data.company_name);
                                 option.text(data.item_names);
@@ -210,13 +210,17 @@
             })
 
             $('#makePO').on("click", function(){
-                let popOption = "width = 2000px, height = 730px, top = 100px, left = 100px, scrollbars=yes";
-                let business_number = business_numberArr[0];
-                let popUrl = '/order/pur-order-pop/'+ business_number +"/"+prcpNumberArr.join("','");
-                var poPop = window.open(popUrl,'pop',popOption);
-                poPop.onbeforeunload = function(){
-                    loadList({"startDate":$('#upperSDate').val(),"endDate":$('#upperEDate').val(),"type":$('#upperType').val(),"keyword":$('#upperSearchText').val(),"pageNum":0,"amount":amount},upperTbody,upperPaging, 0);
-                    loadLowerList({"startDate":$('#lowerSDate').val(),"endDate":$('#lowerEDate').val(),"type":$('#lowerType').val(),"keyword":$('#lowerSearchText').val(),"pageNum":0,"amount":amount});
+                if(business_numberArr.length == 0 || prcpNumberArr.length == 0){
+                    alert("최소한 한 개 이상의 발주품목을 선택해야 합니다.");
+                }else{
+                    let popOption = "width = 2000px, height = 730px, top = 100px, left = 100px, scrollbars=yes";
+                    let business_number = business_numberArr[0];
+                    let popUrl = '/order/pur-order-pop/'+ business_number +"/"+prcpNumberArr.join("','");
+                    var poPop = window.open(popUrl,'pop',popOption);
+                    poPop.onbeforeunload = function(){
+                        loadList({"startDate":$('#upperSDate').val(),"endDate":$('#upperEDate').val(),"type":$('#upperType').val(),"keyword":$('#upperSearchText').val(),"pageNum":0,"amount":amount},upperTbody,upperPaging, 0);
+                        loadLowerList({"startDate":$('#lowerSDate').val(),"endDate":$('#lowerEDate').val(),"type":$('#lowerType').val(),"keyword":$('#lowerSearchText').val(),"pageNum":0,"amount":amount});
+                    }
                 }
             })
 
@@ -252,7 +256,8 @@
                 if($(this).children().children().children('input').is(':checked') == true){
                     $(this).children().children().children('input').prop('checked',false);
                     business_numberArr.pop();
-                    prcpNumberArr = prcpNumberArr.filter(e => e != test);
+                    prcpNumberArr = prcpNumberArr.filter(e => e != $(this).children('.prcNumber').text());
+                    console.log(prcpNumberArr);
                 }else{
                     if((business_numberArr.includes(test)) || business_numberArr.length === 0){
                         prcpNumberArr.push($(this).children('.prcNumber').text());

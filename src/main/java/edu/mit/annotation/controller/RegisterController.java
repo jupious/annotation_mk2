@@ -26,8 +26,8 @@ public class RegisterController {
     @Autowired
     RegisterService service;
 
-    private final String blueprintuploadPath = "C:\\upload\\blueprint";
-    private final String contractuploadPath = "C:\\upload\\contract";
+    private final String blueprintuploadPath = "c:\\upload\\blueprint\\";
+    private final String contractuploadPath = "c:\\upload\\contract\\";
 
     @GetMapping("/item")
     public void item(RegisterCriteria cri, Model model) {

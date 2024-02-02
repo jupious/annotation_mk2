@@ -54,6 +54,7 @@ public class BoardService {
      * @return PK
      */
     public Integer deletePost(final int bno) {
+        boardMapper.deleteComment(bno);
         boardMapper.deleteById(bno);
         return bno;
     }

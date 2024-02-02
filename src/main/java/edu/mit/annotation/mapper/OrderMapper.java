@@ -54,6 +54,9 @@ public interface OrderMapper {
     //발주서의 조달계획 마감여부
     Integer isPrcpClosed(String purch_ordre_number);
 
+    //진척검수 3일안에 있는일정확인
+    List<AutoProgPlanAlertDTO> getAutoProcPlan(Criteria cri);
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 아래부터 나중에 이어붙일 부분
 
     // 진척검수 관련
@@ -71,9 +74,6 @@ public interface OrderMapper {
     List<getCompanyDTO> getCompany(String proc_plan_number);
 
     int checkPlanDB(String proc_plan_number);
-
-    //진척검수 3일안에 있는일정확인
-    List<AutoProgPlanAlertDTO> getAutoProcPlan(Criteria cri);
 
     // 발주현황리포트 관련
     List<PurchaseOrderListDTO> getListPurOrder();

@@ -1,5 +1,6 @@
 package edu.mit.annotation.mapper;
 
+import edu.mit.annotation.realdto.InputCompItemDTO;
 import edu.mit.annotation.testdto.*;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
@@ -46,7 +47,7 @@ public interface RegisterMapper {
 
     int removeContract(String contract_number);
 
-   List<ContractListDTO> checkContract(RegisterCriteria cri);
+    List<ContractListDTO> checkContract(RegisterCriteria cri);
 
     int checkDuplicateContractNumber1(String contract_number);
     int checkDuplicateContractNumber2(String contract_number);
@@ -60,5 +61,8 @@ public interface RegisterMapper {
 
     void registerPlan(ProcurementPlanDTO dto);
     int checkDuplicateProcPlanNumber(String proc_plan_number);
+
+    //시연용 제품구성품목등록
+    void insertCompItem(InputCompItemDTO dto);
 
 }

@@ -3,84 +3,84 @@
 <th:block th:replace="~{./layout/layout::setContent(~{::content})}">
     <th:block th:fragment = "content">
         <div class="pcoded-content">
-                <div class="col-xl-6 col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>발주현황 그래프</h5>
-                        </div>
-                        <div class="card-body" style="position: relative;">
-                            <form>
-                                <input type="date" id="startDate" class="form-control-sm" th:value="${startDate}">
-                                ~
-                                <input type="date" id="endDate" class="form-control-sm" th:value="${endDate}">
-                                <button class="btn btn-primary btn-sm" type="button" style="float:left;" id="search">검색</button>
-                            </form>
-                            <div id="bar-chart-1" style="min-height: 365px;">
-                                <div id="apexchartsx6deuf3y" class="apexcharts-canvas apexchartsx6deuf3y light" style="width: 600px; height: 350px;">
-                                    <!-- 바 차트를 그릴 캔버스 요소 -->
-                                    <canvas id="myChart" style="width: 600px; height: 350px;"></canvas>
-                                    <script th:inline="javascript">
-                                        var allPurOrder = /*[[${allPurOrder}]]*/ null;
-                                        var CountProcPlan = /*[[${CountProcPlan}]]*/ null;
-                                        var CountPublishedPurOrder = /*[[${CountPublishedPurOrder}]]*/ null;
-                                        var CountProgCheckingProcPlan = /*[[${CountProgCheckingProcPlan}]]*/ null;
-                                        var FinishedProcPlan = /*[[${FinishedProcPlan}]]*/ null;
-                                        // 바 차트 데이터
-                                        var ctx = document.getElementById('myChart').getContext('2d');
-                                        var myChart = new Chart(ctx, {
-                                            type: 'bar',
-                                            data: {
-                                                labels: ['총 조달계획', '발주서발행', '진척검수진행중', '조달마감'],
-                                                datasets: [{
-                                                    data: [CountProcPlan,CountPublishedPurOrder,CountProgCheckingProcPlan,FinishedProcPlan],
-                                                    backgroundColor: [
-                                                        'rgba(54, 162, 235, 0.9)',
-                                                       'rgba(255, 165, 0, 0.9)',
-                                                        'rgba(255, 206, 86, 0.9)',
-                                                        'rgba(50, 205, 50, 0.9)',
-                                                    ],
-                                                    borderColor: [
-                                                        'rgba(54, 162, 235, 1)',
-                                                        'rgba(255, 165, 0, 1)',
-                                                        'rgba(255, 206, 86, 1)',
-                                                        'rgba(50, 205, 50, 1)',
-                                                    ],
-                                                    borderWidth: 1
-                                                }]
-                                            },
-                                            options: {
-                                                scales: {
-                                                    y: {
-                                                        beginAtZero: true
-                                                    }
+            <div class="col-xl-6 col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>발주현황 그래프</h5>
+                    </div>
+                    <div class="card-body" style="position: relative;">
+                        <form>
+                            <input type="date" id="startDate" class="form-control-sm" th:value="${startDate}">
+                            ~
+                            <input type="date" id="endDate" class="form-control-sm" th:value="${endDate}">
+                            <button class="btn btn-primary btn-sm" type="button" id="search">검색</button>
+                        </form>
+                        <div id="bar-chart-1" style="min-height: 365px;">
+                            <div id="apexchartsx6deuf3y" class="apexcharts-canvas apexchartsx6deuf3y light" style="width: 600px; height: 350px;">
+                                <!-- 바 차트를 그릴 캔버스 요소 -->
+                                <canvas id="myChart" style="width: 600px; height: 350px;"></canvas>
+                                <script th:inline="javascript">
+                                    var allPurOrder = /*[[${allPurOrder}]]*/ null;
+                                    var CountProcPlan = /*[[${CountProcPlan}]]*/ null;
+                                    var CountPublishedPurOrder = /*[[${CountPublishedPurOrder}]]*/ null;
+                                    var CountProgCheckingProcPlan = /*[[${CountProgCheckingProcPlan}]]*/ null;
+                                    var FinishedProcPlan = /*[[${FinishedProcPlan}]]*/ null;
+                                    // 바 차트 데이터
+                                    var ctx = document.getElementById('myChart').getContext('2d');
+                                    var myChart = new Chart(ctx, {
+                                        type: 'bar',
+                                        data: {
+                                            labels: ['총 조달계획', '발주서발행', '진척검수진행중', '조달마감'],
+                                            datasets: [{
+                                                data: [CountProcPlan,CountPublishedPurOrder,CountProgCheckingProcPlan,FinishedProcPlan],
+                                                backgroundColor: [
+                                                    'rgba(54, 162, 235, 0.9)',
+                                                   'rgba(255, 165, 0, 0.9)',
+                                                    'rgba(255, 206, 86, 0.9)',
+                                                    'rgba(50, 205, 50, 0.9)',
+                                                ],
+                                                borderColor: [
+                                                    'rgba(54, 162, 235, 1)',
+                                                    'rgba(255, 165, 0, 1)',
+                                                    'rgba(255, 206, 86, 1)',
+                                                    'rgba(50, 205, 50, 1)',
+                                                ],
+                                                borderWidth: 1
+                                            }]
+                                        },
+                                        options: {
+                                            scales: {
+                                                y: {
+                                                    beginAtZero: true
                                                 }
                                             }
-                                        });
-                                    </script>
-                                </div>
+                                        }
+                                    });
+                                </script>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-<!-- 스크립트 -->
-<script>
-    $('th').addClass('text-center');
-    $('td').addClass('text-center');
-    $('th').addClass('align-middle');
-    $('td').addClass('align-middle');
-</script>
-<script>
-    $(document).ready(function () {
-        $("#search").on("click", function (e) {
-            e.preventDefault();
-            let startDate = $("#startDate").val();
-            let endDate = $("#endDate").val();
-            window.location.replace('/order/pur-order-report?startDate='+startDate+'&endDate='+endDate);
-        });
-    });
-</script>
+        </div>
+        <!-- 스크립트 -->
+        <script>
+            $('th').addClass('text-center');
+            $('td').addClass('text-center');
+            $('th').addClass('align-middle');
+            $('td').addClass('align-middle');
+        </script>
+        <script>
+            $(document).ready(function () {
+                $("#search").on("click", function (e) {
+                    e.preventDefault();
+                    let startDate = $("#startDate").val();
+                    let endDate = $("#endDate").val();
+                    window.location.replace('/order/pur-order-report?startDate='+startDate+'&endDate='+endDate);
+                });
+            });
+        </script>
 
 
     </th:block>
