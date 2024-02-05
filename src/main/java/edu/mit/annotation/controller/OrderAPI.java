@@ -136,7 +136,7 @@ public class OrderAPI {
         return "뭐요";
     }
 
-    @Scheduled(cron = "0 40 15 * * *")
+    @Scheduled(cron = "0 30 11 * * *")
     public void autoMailProgCheck(){
 
         Calendar cal = Calendar.getInstance();
